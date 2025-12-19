@@ -106,7 +106,8 @@ export default function Dashboard() {
 <div className="bg-[#FFFFFF4D] border-2 border-white rounded-xl p-5 shadow-sm w-full">
   {/* Header */}
   <div className="flex justify-between items-center mb-4">
-    <h3 className="font-semibold text-gray-800">Athletes Requests</h3>
+    <h3 className="font-semibold text-gray-800 ">     <span className="border-8 border-l border-[#0085CA] mr-2 rounded-xl"></span>
+Athletes Requests</h3>
 
     <div className="flex gap-2 text-xs text-gray-500 bg-[#EAEEF8] rounded-lg">
      {filters.map((item) => (
