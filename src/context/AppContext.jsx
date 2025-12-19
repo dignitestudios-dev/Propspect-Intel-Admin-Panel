@@ -1,14 +1,14 @@
-import React, { createContext, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { onMessageListener } from "../firebase/messages";
-import getFCMToken from "../firebase/getFcmToken";
-import Cookies from "js-cookie";
-import axios from "../axios";
+// import React, { createContext, useContext, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { useEffect } from "react";
+// import { onMessageListener } from "../firebase/messages";
+// import getFCMToken from "../firebase/getFcmToken";
+// import Cookies from "js-cookie";
+// import axios from "../axios";
 
-export const AppContext = createContext();
+// export const AppContext = createContext();
 
-export const AppContextProvider = ({ children }) => {
+// export const AppContextProvider = ({ children }) => {
   // Send fcm to backend:
   // const fetchToken = async () => {
   //   const token = await getFCMToken();
@@ -46,21 +46,21 @@ export const AppContextProvider = ({ children }) => {
   //   })
   //   .catch((err) => console.log("failed: ", err));
 
-  const dummyVar = null;
+//   const dummyVar = null;
 
-  return (
-    <AppContext.Provider
-      value={{
-        dummyVar,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
-  );
-};
+//   return (
+//     <AppContext.Provider
+//       value={{
+//         dummyVar,
+//       }}
+//     >
+//       {children}
+//     </AppContext.Provider>
+//   );
+// };
 
-const useApp = () => {
-  return useContext(AppContext);
-};
+// const useApp = () => {
+//   return useContext(AppContext);
+// };
 
-export default useApp;
+// export default useApp;
