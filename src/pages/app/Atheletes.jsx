@@ -13,8 +13,11 @@ import {
   FiDownload,
   FiEdit2,
 } from "react-icons/fi";
+import { useNavigate } from "react-router";
 
 export default function Atheletes() {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full space-y-6">
       {/* Header */}
@@ -44,7 +47,8 @@ export default function Atheletes() {
           <span className="text-white">Upload CSV</span>  
           </button>
 
-          <button className="flex items-center gap-2 px-4 py-2 text-sm rounded-md bg-[#0085CA] text-white hover:bg-blue-700">
+          <button       onClick={() => navigate("/app/add-athlete")}
+ className="flex items-center gap-2 px-4 py-2 text-sm rounded-md bg-[#0085CA] text-white hover:bg-blue-700">
             <FiPlus />
           <span className="text-white"> Add Athlete</span> 
           </button>
@@ -193,7 +197,7 @@ export default function Atheletes() {
 
           <td>
             <div className="flex gap-4 text-lg text-text-black">
-                                            <FiEye className="cursor-pointer hover:text-gray-700" />
+                                            <FiEye   onClick={() => navigate("/app/athlete-details")} className="cursor-pointer hover:text-gray-700" />
 
                             <FiDownload className="cursor-pointer hover:text-gray-700" />
                                           <FiEdit2 className="cursor-pointer hover:text-gray-700" />

@@ -9,8 +9,11 @@ import { FiLoader } from "react-icons/fi";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Logo } from "../../assets/export";
 
+
 const Login = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const navigate = useNavigate();
+
 
   // const { loading, postData } = useLogin();
 
@@ -98,9 +101,12 @@ const Login = () => {
             </div>
 
             <div>
-              <button className="w-full py-3 rounded-md bg-[#0b89c6] text-white font-[500] shadow-inner">
-                Log in
-              </button>
+              <button
+      onClick={() => navigate("/app/dashboard")}
+      className="w-full py-3 rounded-md bg-[#0b89c6] text-white font-[500] shadow-inner"
+    >
+      Log in
+    </button>
             </div>
           </form>
         </div>

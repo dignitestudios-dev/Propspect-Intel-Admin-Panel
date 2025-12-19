@@ -21,9 +21,11 @@ import Media from "../../components/athletedetails/Media";
 import { User, Users } from "lucide-react";
 import { FcDocument } from "react-icons/fc";
 import { TbPdf } from "react-icons/tb";
+import { useNavigate } from "react-router";
 
 export default function AthleteDetails() {
   const [activeTab, setActiveTab] = useState("Overview");
+  const navigate = useNavigate();
 
   return (
     <div className="w-full min-h-screen p-6 font-sans space-y-6">
@@ -72,7 +74,7 @@ export default function AthleteDetails() {
 
           {/* Actions */}
           <div className="flex flex-wrap gap-3 ">
-            <button className="px-4 py-2 font-bold border-2 border-gray-200 rounded-lg text-sm hover:bg-gray-50 flex items-center gap-2">
+            <button onClick={() => navigate("/app/athlete-interests")}  className="px-4 py-2 font-bold border-2 border-gray-200 rounded-lg text-sm hover:bg-gray-50 flex items-center gap-2">
                             <Users className="" />
 
               Interests (3)
@@ -85,7 +87,7 @@ export default function AthleteDetails() {
               <FiArchive />
               Archive
             </button>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm flex items-center gap-2 hover:bg-blue-700">
+            <button  onClick={() => navigate("/app/add-athlete")} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm flex items-center gap-2 hover:bg-blue-700">
               <FiEdit />
               Edit
             </button>
