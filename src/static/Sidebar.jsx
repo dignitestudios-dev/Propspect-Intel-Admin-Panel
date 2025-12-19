@@ -2,26 +2,34 @@
 import { Home, User } from "lucide-react"; // Import required icons
 import { FaBroom } from "react-icons/fa";
 import { CiLocationOn, CiSearch } from "react-icons/ci";
+import { LayoutDashboard } from 'lucide-react';
+import { IoAmericanFootballOutline } from "react-icons/io5";
+import { CiUser } from "react-icons/ci";
+import { LuSchool } from "react-icons/lu";
+import { IoDocumentTextOutline } from "react-icons/io5";
+import { IoMdNotificationsOutline } from "react-icons/io";
+
+
 
 export const sidebarData = [
   {
     title: "Dashboard",
-    icon: <Home className="w-[18px] h-[18px]" />, // Add icon here
+    icon: <LayoutDashboard className="w-[18px] h-[18px]" />, // Add icon here
     link: "dashboard",
   },
   {
     title: "User Management",
-    icon: <User className="w-[18px] h-[18px]" />, // Add icon here
+    icon: <CiUser className="w-[18px] h-[18px]" />, // Add icon here
     link: "/app/users",
   },
   {
     title: "Athlete Management",
-    icon: <FaBroom className="w-[18px] h-[18px]" />, // Add icon here
+    icon: <IoAmericanFootballOutline className="w-[18px] h-[18px]" />, // Add icon here
     link: "/app/athletes",
   },
   {
     title: "Push Notifications",
-    icon: <FaBroom className="w-[18px] h-[18px]" />, // Add icon here
+    icon: <IoMdNotificationsOutline className="w-[18px] h-[18px]" />, // Add icon here
     link: "/app/notifications",
   },
   {
@@ -36,12 +44,12 @@ export const sidebarData = [
   },
   {
     title: "School Management",
-    icon: <CiSearch className="w-[18px] h-[18px]" />, // Add icon here
+    icon: <LuSchool className="w-[18px] h-[18px]" />, // Add icon here
     link: "/app/school-management",
   },
   {
     title: "Contact Form",
-    icon: <CiSearch className="w-[18px] h-[18px]" />, // Add icon here
+    icon: <IoDocumentTextOutline className="w-[18px] h-[18px]" />, // Add icon here
     link: "/app/contact-form",
   },
 ];

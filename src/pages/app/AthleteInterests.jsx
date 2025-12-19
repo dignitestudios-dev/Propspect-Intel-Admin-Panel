@@ -52,7 +52,7 @@ export default function AthleteInterests() {
       </div>
 
       {/* Summary Stats Grid */}
-      <div className="grid grid-cols-3 md:grid-cols-3 gap-4 bg-[#E2E8F0] bg-opacity-60  border border-gray-60  rounded-xl p-4">
+      <div className="grid grid-cols-3 md:grid-cols-3 gap-4 bg-[#E2E8F0] bg-opacity-60  border border-gray-300 rounded-xl p-4">
        {[
             { label: "Total Requests", value: "2" },
             { label: "Pending", value: "1" },
@@ -78,8 +78,9 @@ export default function AthleteInterests() {
           >
             {/* Card Header Row */}
                     <h3 className="text-md font-bold text-gray-800 p-4">Interest Requests</h3>
-
-            <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-50">
+                    
+            <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-gray-50 ml-2 mr-2 ">
+              
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-50 rounded-lg text-blue-500">
                   <FiMessageSquare size={18} />

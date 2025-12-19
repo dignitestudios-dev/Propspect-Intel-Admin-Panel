@@ -13,7 +13,7 @@ import personal from "./personal.png";
 import other from "./other.png";
 import bin from "./greyBin.png";
 import pen from "./pen.png";
-
+import athlete from "./athlete.png";
 // export {
 //     FILENAME(PASCALCASE)
 // }
@@ -28,4 +28,5 @@ export {
   other,
   bin,
   pen,
+  athlete,
 };

@@ -11,6 +11,7 @@ import {
   FiUpload,
   FiPlus,
   FiDownload,
+  FiEdit2,
 } from "react-icons/fi";
 
 export default function Atheletes() {
@@ -191,11 +192,11 @@ export default function Atheletes() {
           </td>
 
           <td>
-            <div className="flex gap-3 text-gray-500">
+            <div className="flex gap-4 text-lg text-text-black">
                                             <FiEye className="cursor-pointer hover:text-gray-700" />
 
                             <FiDownload className="cursor-pointer hover:text-gray-700" />
-                                          <FiEdit className="cursor-pointer hover:text-gray-700" />
+                                          <FiEdit2 className="cursor-pointer hover:text-gray-700" />
 
               <FiTrash2 className="cursor-pointer hover:text-red-500" />
 

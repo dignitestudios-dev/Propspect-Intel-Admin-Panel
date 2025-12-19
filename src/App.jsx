@@ -35,7 +35,7 @@ function App() {
 
       <Route path="app" element={<DashboardLayout />}>
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="atheletes" element={<Atheletes />} />
+        <Route path="athletes" element={<Atheletes />} />
         <Route path="users" element={<Users />} />
         <Route path="notifications" element={<Notifications />} />
         <Route path="athlete-details" element={<AthleteDetails />} />

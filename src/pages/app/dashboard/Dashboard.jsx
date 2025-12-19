@@ -1,10 +1,39 @@
 import React from "react";
+import { useState } from "react";
 
-import { FiUserPlus, FiSend } from "react-icons/fi";
+import { FiUserPlus, FiSend, FiEye, FiDownload, FiEdit2, FiTrash2 } from "react-icons/fi";
 import Header from "../../../components/dashboard/Header";
 import State from "../../../components/dashboard/State";
+import { athlete } from "../../../assets/export";
+
+const users = [
+  {
+    name: "Marcus Johnson",
+    email: "marcus@example.com",
+    password: "password123",
+    subscription: "Premium",
+    status: "Active",
+  },
+  {
+    name: "Liam Smith",
+    email: "liam@example.com",
+    password: "securePassword!",
+    subscription: "Basic",
+    status: "Archived",
+  },
+];
 
 export default function Dashboard() {
+    const [active, setActive] = useState("All");
+      const [popularactive, setpopularActive] = useState("All");
+      const [showPassword, setShowPassword] = useState(
+          Array(users.length).fill(false)
+        );
+
+    const filters = ["All", "Pending", "Contacted"]; // all buttons
+    const popularfilters = ["7d", "1m", "3m", "6m", "1y"]; // all buttons
+      
+
   return (
     <div className="w-full space-y-3 ">
       {/* Header */}
@@ -37,13 +66,21 @@ export default function Dashboard() {
      <div className="bg-[#FFFFFF4D] border-2 border-white rounded-xl p-5 shadow-sm h-auto mt-4">
     <div className="flex justify-between items-center mb-4">
       <h3 className="font-semibold text-gray-800">Most Viewed Athletes</h3>
-      <div className="flex gap-2 text-sm">
-        <span className="px-3 py-1 rounded-lg bg-blue-50 text-blue-600">7d</span>
-        <span className="px-3 py-1 rounded-lg text-gray-500">1m</span>
-        <span className="px-3 py-1 rounded-lg text-gray-500">3m</span>
-        <span className="px-3 py-1 rounded-lg text-gray-500">6m</span>
-        <span className="px-3 py-1 rounded-lg text-gray-500">1y</span>
-      </div>
+      <div className="text-gray-500 bg-[#EAEEF8] rounded-[8px] text-[14px]">
+       {popularfilters.map((item) => (
+          <button
+            key={item}
+            onClick={() => setpopularActive(item)}
+            className={
+              popularactive === item
+                ? "px-3 py-2 rounded-lg border border-blue-400 text-blue-500 bg-white"
+                : "px-3 py-1 rounded-lg text-black "
+            }
+          >
+            {item}
+          </button>
+        ))}
+        </div>
     </div>
 
     {[1, 2, 3, 4, 5].map((item, index) => (
@@ -58,8 +95,8 @@ export default function Dashboard() {
           <div className="w-8 h-8 rounded-full bg-gray-200" />
           <p className="text-sm font-medium">Athlete Name</p>
         </div>
-        <span className="text-xs px-3 py-1 rounded-full bg-green-100 text-green-600">
-          854 Views
+        <span className="text-xs px-3 py-3 bg-white text-green-600 rounded-lg">
+         💹 854 Views
         </span>
       </div>
     ))}
@@ -71,16 +108,20 @@ export default function Dashboard() {
   <div className="flex justify-between items-center mb-4">
     <h3 className="font-semibold text-gray-800">Athletes Requests</h3>
 
-    <div className="flex gap-2 text-xs">
-      <button className="px-3 py-1 rounded-md bg-blue-50 text-blue-600 font-medium">
-        All
-      </button>
-      <button className="px-3 py-1 rounded-md text-gray-500">
-        Pending
-      </button>
-      <button className="px-3 py-1 rounded-md text-gray-500">
-        Contacted
-      </button>
+    <div className="flex gap-2 text-xs text-gray-500 bg-[#EAEEF8] rounded-lg">
+     {filters.map((item) => (
+          <button
+            key={item}
+            onClick={() => setActive(item)}
+            className={
+              active === item
+                ? "px-3 py-2 rounded-lg border border-blue-400 text-blue-500 bg-white"
+                : "px-3 py-1 rounded-lg text-black "
+            }
+          >
+            {item}
+          </button>
+        ))}
     </div>
   </div>
 
@@ -107,14 +148,11 @@ export default function Dashboard() {
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-4 text-gray-400 w-[20%] justify-center">
-        <div className="w-8 h-8 flex items-center justify-center rounded-md border border-gray-200">
-          💬
-        </div>
-        <div className="w-8 h-8 flex items-center justify-center rounded-md border border-gray-200">
-          👁
-        </div>
-      </div>
+      <div className="flex items-center text-gray-400  justify-center">
+  <div className="w-auto h-auto ">
+    <img src={athlete} alt="Icon" className="w-[115px] h-[30px]" />
+  </div>
+</div>
 
       {/* Requested By */}
       <div className="flex items-center gap-2 w-[30%]">
@@ -129,18 +167,18 @@ export default function Dashboard() {
 
       {/* Status */}
       <span
-        className={`text-xs px-3 py-1 rounded-full font-medium
+        className={`text-xs px-3 py-3 rounded-lg font-medium
           ${
             item.color === "orange" &&
-            "bg-orange-100 text-orange-600"
+            "bg-white text-orange-600"
           }
           ${
             item.color === "red" &&
-            "bg-red-100 text-red-600"
+            "bg-white text-red-600"
           }
           ${
             item.color === "green" &&
-            "bg-green-100 text-green-600"
+            "bg-white text-green-600"
           }
         `}
       >
@@ -171,73 +209,59 @@ export default function Dashboard() {
   </div>
 
   {/* Table */}
-  <div className="w-full overflow-x-auto">
-    <table className="w-full text-sm">
-      <thead>
-        <tr className="text-left text-gray-400 border-b">
-          <th className="pb-3">User</th>
-          <th className="pb-3">Email</th>
-          <th className="pb-3">Password</th>
-          <th className="pb-3">Subscription</th>
-          <th className="pb-3">User Status</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {[
-          { status: "Active", color: "green" },
-          { status: "Inactive", color: "red" },
-          { status: "Active", color: "green" },
-        ].map((item, index) => (
-          <tr
-            key={index}
-            className="border-b last:border-none"
-          >
-            {/* User */}
-            <td className="py-4 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gray-200" />
-              <span className="font-medium text-gray-800">
-                User Name
-              </span>
-            </td>
-
-            {/* Email */}
-            <td className="text-gray-500">
-              user@email.com
-            </td>
-
-            {/* Password */}
-            <td className="text-gray-400">
-              ••••••••
-            </td>
-
-            {/* Subscription */}
-            <td className="text-gray-500">
-              Valid till 29 Dec 2026
-            </td>
-
-            {/* Status */}
-            <td>
-              <span
-                className={`text-xs px-3 py-1 rounded-full font-medium
-                  ${
-                    item.color === "green" &&
-                    "bg-green-100 text-green-600"
-                  }
-                  ${
-                    item.color === "red" &&
-                    "bg-red-100 text-red-600"
-                  }
-                `}
-              >
-                {item.status}
-              </span>
-            </td>
+ <div className="overflow-x-auto border rounded-xl mt-4">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-left text-black border-b">
+            <th className="px-5 py-3">User</th>
+            <th className="px-5 py-3">Email</th>
+            <th className="px-5 py-3">Password</th>
+            <th className="px-5 py-3">Subscription</th>
+            <th className="px-5 py-3">Status</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
+        </thead>
+
+        <tbody>
+          {users.map((user, index) => (
+            <tr key={index} className="border-b last:border-none">
+              <td className="px-5 py-4 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-gray-200" />
+                <span className="font-medium text-gray-800">{user.name}</span>
+              </td>
+
+              <td>{user.email}</td>
+
+              <td>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-800">
+                    {showPassword[index] ? user.password : "********"}
+                  </span>
+                  <FiEye
+                    className="cursor-pointer hover:text-gray-700"
+                  />
+                </div>
+              </td>
+
+              <td className='px-6'>{user.subscription}</td>
+
+              <td>
+                <span
+                  className={`px-3 py-3 text-xs rounded-md font-medium ${
+                    user.status === "Active"
+                      ? "bg-white text-green-600"
+                      : "bg-white text-orange-600"
+                  }`}
+                >
+                  ● {user.status}
+                </span>
+              </td>
+
+              
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
 </div>
 
 
