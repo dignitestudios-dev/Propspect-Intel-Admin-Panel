@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLogin } from "../../hooks/api/Post";
+// import { useLogin } from "../../hooks/api/Post";
 import { processLogin } from "../../lib/utils";
 import { useFormik } from "formik";
 import { loginValues } from "../../init/authentication/dummyLoginValues";
@@ -12,7 +12,7 @@ import { Logo } from "../../assets/export";
 const RestPassword = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const { loading, postData } = useLogin();
+  // const { loading, postData } = useLogin();
   const navigate = useNavigate();
 
   const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
