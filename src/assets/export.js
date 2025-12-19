@@ -13,6 +13,9 @@ import personal from "./personal.png";
 import other from "./other.png";
 import bin from "./greyBin.png";
 import pen from "./pen.png";
+import eye from "./eyeIcon.png";
+import sms from "./smsIcon.png";
+
 import athlete from "./athlete.png";
 // export {
 //     FILENAME(PASCALCASE)
@@ -28,5 +31,7 @@ export {
   other,
   bin,
   pen,
+  eye,
+  sms,
   athlete,
 };

@@ -2,7 +2,10 @@ import { useState } from "react";
 import { BiSolidNotification } from "react-icons/bi";
 import { FiSearch } from "react-icons/fi";
 import { HiOutlineSelector } from "react-icons/hi";
-import { bin, pen } from "../../assets/export";
+import { bin, eye, sms } from "../../assets/export";
+import MessageDetailModal from "../../components/app/ContactForm/MessageDetailModal";
+import MessageReplyModal from "../../components/app/ContactForm/MessageReplyModal";
+import DeleteModal from "../../components/global/DeleteModal";
 
 const notifications = [
   {
@@ -76,6 +79,9 @@ const messages = [
 
 const ContactForm = () => {
   const [activeTab, setActiveTab] = useState("All");
+  const [viewMessage, setViewMessage] = useState(false);
+  const [replyMessage, setReplyMessage] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
 
   return (
     <div className="w-full min-h-screen p-4 font-sans">
@@ -204,10 +210,27 @@ const ContactForm = () => {
                   </div>
 
                   <div className="flex justify-center gap-4 text-gray-400 py-2 mt-4">
-                    <div className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors">
-                      <img src={pen} alt="edit" />
+                    <div
+                      onClick={() => {
+                        setViewMessage(true);
+                      }}
+                      className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors"
+                    >
+                      <img src={eye} alt="edit" />
                     </div>
-                    <div className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors">
+                    <div
+                      onClick={() => {
+                        setViewMessage(false);
+                        setReplyMessage(true);
+                      }}
+                      className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors"
+                    >
+                      <img src={sms} alt="edit" />
+                    </div>
+                    <div
+                      onClick={() => setIsDelete(true)}
+                      className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors"
+                    >
                       <img src={bin} alt="delete" />
                     </div>
                   </div>
@@ -267,7 +290,10 @@ const ContactForm = () => {
                   {/* Action Buttons */}
                   <div className="flex justify-center gap-4 text-gray-400 py-2 mt-4">
                     <div className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors">
-                      <img src={pen} alt="edit" />
+                      <img src={eye} alt="edit" />
+                    </div>
+                    <div className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors">
+                      <img src={sms} alt="edit" />
                     </div>
                     <div className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors">
                       <img src={bin} alt="delete" />
@@ -279,6 +305,36 @@ const ContactForm = () => {
           </div>
         )}
       </div>
+      {viewMessage && (
+        <MessageDetailModal
+          isOpen={viewMessage}
+          onClick={() => {
+            setViewMessage(false);
+          }}
+          onNext={() => {
+            setViewMessage(false);
+            setReplyMessage(true);
+          }}
+          title="Email verified"
+          description="Your email has been verified successfully."
+        />
+      )}
+      {replyMessage && (
+        <MessageReplyModal
+          isOpen={replyMessage}
+          onClick={() => {
+            setReplyMessage(false);
+          }}
+        />
+      )}
+      {isDelete && (
+        <DeleteModal
+          isOpen={isDelete}
+          onClick={() => {
+            setIsDelete(false);
+          }}
+        />
+      )}
     </div>
   );
 };
