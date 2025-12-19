@@ -13,6 +13,8 @@ import personal from "./personal.png";
 import other from "./other.png";
 import bin from "./greyBin.png";
 import pen from "./pen.png";
+import eye from "./eyeIcon.png";
+import sms from "./smsIcon.png";
 
 // export {
 //     FILENAME(PASCALCASE)
@@ -28,4 +30,6 @@ export {
   other,
   bin,
   pen,
+  eye,
+  sms,
 };
