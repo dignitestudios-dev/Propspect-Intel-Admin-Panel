@@ -6,15 +6,26 @@
 
 import NoInternetImage from "./nointernet.png";
 import Logo from "./logo.png";
-import athletic from "./athletic.png"
-import football from "./football.png"
-import features from "./features.png"
-import personal from "./personal.png"
-import other from "./other.png"
-
+import athletic from "./athletic.png";
+import football from "./football.png";
+import features from "./features.png";
+import personal from "./personal.png";
+import other from "./other.png";
+import bin from "./greyBin.png";
+import pen from "./pen.png";
 
 // export {
 //     FILENAME(PASCALCASE)
 // }
 
-export { Logo, NoInternetImage, athletic, football, features,personal,other };
+export {
+  Logo,
+  NoInternetImage,
+  athletic,
+  football,
+  features,
+  personal,
+  other,
+  bin,
+  pen,
+};
