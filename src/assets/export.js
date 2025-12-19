@@ -16,6 +16,7 @@ import pen from "./pen.png";
 import eye from "./eyeIcon.png";
 import sms from "./smsIcon.png";
 
+import athlete from "./athlete.png";
 // export {
 //     FILENAME(PASCALCASE)
 // }
@@ -32,4 +33,5 @@ export {
   pen,
   eye,
   sms,
+  athlete,
 };

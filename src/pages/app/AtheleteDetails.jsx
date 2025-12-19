@@ -18,6 +18,9 @@ import Stats from "../../components/athletedetails/Stats";
 import Education from "../../components/athletedetails/Education";
 import Achievements from "../../components/athletedetails/Achievements";
 import Media from "../../components/athletedetails/Media";
+import { User, Users } from "lucide-react";
+import { FcDocument } from "react-icons/fc";
+import { TbPdf } from "react-icons/tb";
 
 export default function AthleteDetails() {
   const [activeTab, setActiveTab] = useState("Overview");
@@ -26,10 +29,11 @@ export default function AthleteDetails() {
     <div className="w-full min-h-screen p-6 font-sans space-y-6">
 
       {/* Top Back */}
-      <div className="flex items-center gap-2 text-sm text-gray-500">
-        <FiArrowLeft />
-        <span>Athlete Details</span>
-      </div>
+     {/* Top Back Navigation */}
+           <div className="flex items-center gap-2 text-lg font-bold text-black cursor-pointer">
+             <FiArrowLeft />
+             <span>Athlete Details</span>
+           </div>
 
       {/* Header Card */}
       <div className=" rounded-2xl p-2 space-y-6">
@@ -55,23 +59,29 @@ export default function AthleteDetails() {
                 </span>
               </div>
 
-              <button className="mt-1 flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700">
-                <FiDownload />
+              <button className="mt-1 border-2 border-gray-300 p-2 rounded-lg flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700">
+                                                <TbPdf />
+
+
                 Download CSV
+                                <FiDownload />
+
               </button>
             </div>
           </div>
 
           {/* Actions */}
           <div className="flex flex-wrap gap-3 ">
-            <button className="px-4 py-2 border rounded-lg text-sm hover:bg-gray-50">
+            <button className="px-4 py-2 font-bold border-2 border-gray-200 rounded-lg text-sm hover:bg-gray-50 flex items-center gap-2">
+                            <Users className="" />
+
               Interests (3)
             </button>
-            <button className="px-4 py-2 border border-red-200 text-red-600 rounded-lg text-sm hover:bg-red-50 flex items-center gap-2">
+            <button className="px-4 py-2 border font-bold border-red-200 text-red-600 rounded-lg text-sm hover:bg-red-50 flex items-center gap-2">
               <FiTrash2 />
               Delete
             </button>
-            <button className="px-4 py-2 border rounded-lg text-sm hover:bg-gray-50 flex items-center gap-2">
+            <button className="px-4 py-2 font-bold border rounded-lg text-sm hover:bg-gray-50 flex items-center gap-2">
               <FiArchive />
               Archive
             </button>
