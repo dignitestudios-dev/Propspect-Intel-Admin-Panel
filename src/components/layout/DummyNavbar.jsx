@@ -1,3 +1,4 @@
+import { FaChevronDown } from "react-icons/fa";
 import { Logo } from "../../assets/export";
 
 const DummyNavbar = () => {
@@ -8,7 +9,7 @@ const DummyNavbar = () => {
       </div>
       {/* <img src={Logo} loading="lazy" alt="logo-organization" className="h-8" /> */}
 
-      <span className="w-12 h-8 rounded-full bg-[#45c4f9]/20 flex items-center px-1 justify-start gap-1 ">
+      {/* <span className="w-12 h-8 rounded-full bg-[#45c4f9]/20 flex items-center px-1 justify-start gap-1 ">
         <img
           src={Logo}
           alt="user-avatar"
@@ -32,7 +33,22 @@ const DummyNavbar = () => {
             />
           </svg>
         </button>
-      </span>
+      </span> */}
+      <div className="relative">
+        <div
+          className="flex items-center ml-4 cursor-pointer"
+          // onClick={handleDropdownClick}
+        >
+          <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white text-sm font-bold mr-2">
+            DS
+          </div>
+          <span className="text-sm font-medium text-gray-800">My Account</span>
+          <FaChevronDown
+            className={`text-gray-500 text-[10px] ml-2 transform transition-transform ${"rotate-0"}`}
+          />
+        </div>
+        <div />
+      </div>
     </div>
   );
 };

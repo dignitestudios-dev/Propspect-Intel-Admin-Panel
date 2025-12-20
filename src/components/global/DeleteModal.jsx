@@ -1,17 +1,13 @@
 /* eslint-disable react/prop-types */
 
-const DeleteModal = ({ onClick, onNext }) => {
+const DeleteModal = ({ onClick, onNext, title, message }) => {
   return (
     <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-0 z-50 flex items-center justify-center">
       <div className="bg-white rounded-[12px] shadow-md px-4 py-4 w-[515px]">
         <div className="flex flex-col lg:h-auto md:h-screen rounded-xl p-2 ">
-          <p className="text-[16px] text-[#302C2C] font-semibold">
-            Delete Message
-          </p>
+          <p className="text-[16px] text-[#302C2C] font-semibold">{title}</p>
 
-          <p className="text-sm text-[#302C2C] font-light">
-            Message will be deleted
-          </p>
+          <p className="text-sm text-[#302C2C] font-light">{message}</p>
         </div>
         <div className="flex justify-end items-center w-full mt-4 gap-2">
           <div className="w-full"></div>

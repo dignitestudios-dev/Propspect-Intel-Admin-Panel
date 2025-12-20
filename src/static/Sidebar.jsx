@@ -2,14 +2,12 @@
 import { Home, User } from "lucide-react"; // Import required icons
 import { FaBroom } from "react-icons/fa";
 import { CiLocationOn, CiSearch } from "react-icons/ci";
-import { LayoutDashboard } from 'lucide-react';
+import { LayoutDashboard } from "lucide-react";
 import { IoAmericanFootballOutline } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
 import { LuSchool } from "react-icons/lu";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { IoMdNotificationsOutline } from "react-icons/io";
-
-
 
 export const sidebarData = [
   {

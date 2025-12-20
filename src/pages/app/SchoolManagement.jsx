@@ -4,6 +4,7 @@ import { bin, pen } from "../../assets/export";
 import { useState } from "react";
 import CreateSchoolModal from "../../components/app/SchoolManagement/CreateSchoolModal";
 import EditSchoolModal from "../../components/app/SchoolManagement/EditSchoolModal";
+import DeleteModal from "../../components/global/DeleteModal";
 
 const schools = [
   {
@@ -51,6 +52,7 @@ const schools = [
 export default function SchoolManagement() {
   const [addSchoolModal, setAddSchoolModal] = useState(false);
   const [selectedSchool, setSelectedSchool] = useState(null);
+  const [isDelete, setIsDelete] = useState(false);
 
   return (
     <div className="w-full min-h-screen  p-4 font-sans">
@@ -114,7 +116,10 @@ export default function SchoolManagement() {
                   >
                     <img src={pen} alt="edit" />
                   </div>
-                  <div className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors">
+                  <div
+                    onClick={() => setIsDelete(true)}
+                    className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors"
+                  >
                     <img src={bin} alt="delete" />
                   </div>
                 </div>
@@ -138,6 +143,16 @@ export default function SchoolManagement() {
           isOpen={!!selectedSchool}
           onClick={() => setSelectedSchool(null)}
           school={selectedSchool}
+        />
+      )}
+      {isDelete && (
+        <DeleteModal
+          isOpen={isDelete}
+          onClick={() => {
+            setIsDelete(false);
+          }}
+          message={"School will be deleted"}
+          title={"Delete School"}
         />
       )}
     </div>

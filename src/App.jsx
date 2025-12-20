@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import "./App.css";
 import DashboardLayout from "./layouts/DashboardLayout";
 
@@ -22,9 +22,7 @@ import ContactForm from "./pages/app/ContactForm";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<DashboardLayout />}>
-        <Route path="dashboard" element={<Dashboard />} />
-      </Route>
+      <Route path="/" element={<Navigate to="auth/login" />}></Route>
 
       <Route path="auth" element={<AuthLayout />}>
         <Route path="login" element={<Login />} />

@@ -289,13 +289,27 @@ const ContactForm = () => {
 
                   {/* Action Buttons */}
                   <div className="flex justify-center gap-4 text-gray-400 py-2 mt-4">
-                    <div className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors">
+                    <div
+                      onClick={() => {
+                        setViewMessage(true);
+                      }}
+                      className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors"
+                    >
                       <img src={eye} alt="edit" />
                     </div>
-                    <div className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors">
+                    <div
+                      onClick={() => {
+                        setViewMessage(false);
+                        setReplyMessage(true);
+                      }}
+                      className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors"
+                    >
                       <img src={sms} alt="edit" />
                     </div>
-                    <div className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors">
+                    <div
+                      onClick={() => setIsDelete(true)}
+                      className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors"
+                    >
                       <img src={bin} alt="delete" />
                     </div>
                   </div>
@@ -333,6 +347,8 @@ const ContactForm = () => {
           onClick={() => {
             setIsDelete(false);
           }}
+          message={"Message will be deleted"}
+          title={"Delete Message"}
         />
       )}
     </div>

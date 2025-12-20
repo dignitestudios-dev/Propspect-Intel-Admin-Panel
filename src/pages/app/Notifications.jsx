@@ -4,6 +4,7 @@ import { HiOutlineSelector } from "react-icons/hi";
 import { BiSolidNotification } from "react-icons/bi";
 import { bin } from "../../assets/export";
 import CreatePushNotificationModal from "../../components/app/Notification/CreatePushNotificationModal";
+import DeleteModal from "../../components/global/DeleteModal";
 
 const notifications = [
   {
@@ -75,6 +76,7 @@ const notifications = [
 export default function Notifications() {
   const [activeTab, setActiveTab] = useState("All");
   const [requestSendModal, setRequestSendModal] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
 
   return (
     <div className="w-full min-h-screen  p-4 font-sans">
@@ -179,7 +181,10 @@ export default function Notifications() {
                   {/* <div className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors">
                     <img src={pen} alt="edit" />
                   </div> */}
-                  <div className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors">
+                  <div
+                    onClick={() => setIsDelete(true)}
+                    className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors"
+                  >
                     <img src={bin} alt="delete" />
                   </div>
                 </div>
@@ -194,8 +199,16 @@ export default function Notifications() {
           onClick={() => {
             setRequestSendModal(false);
           }}
-          title="Email verified"
-          description="Your email has been verified successfully."
+        />
+      )}
+      {isDelete && (
+        <DeleteModal
+          isOpen={isDelete}
+          onClick={() => {
+            setIsDelete(false);
+          }}
+          message={"Notification will be deleted"}
+          title={"Delete Notification"}
         />
       )}
     </div>
