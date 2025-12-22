@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const CreatePushNotificationModal = ({ onClick }) => {
+const CreatePushNotificationModal = ({ onClick, onNext }) => {
   const [activeTab, setActiveTab] = useState("new");
   return (
     <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-0 z-50 flex items-center justify-center">
@@ -97,7 +97,10 @@ const CreatePushNotificationModal = ({ onClick }) => {
 
           {/* Action Buttons */}
           <div className="flex justify-between items-center w-full mt-4 gap-2">
-            <button className="w-full px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors">
+            <button
+              onClick={() => onNext()}
+              className="w-full px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors"
+            >
               Send
             </button>
             <button className="w-full px-5 py-2.5 rounded-md text-[#302C2C] border-[1px] border-[#E3E3E3]">

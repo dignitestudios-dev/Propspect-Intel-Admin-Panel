@@ -4,7 +4,7 @@ import { Upload } from "lucide-react";
 // import { useState } from "react";
 // import { FiTrash2 } from "react-icons/fi";
 
-const CreateSchoolModal = ({ onClick }) => {
+const CreateSchoolModal = ({ onClick, onNext }) => {
   //   const [files, setFiles] = useState([
   //     {
   //       id: 1,
@@ -82,8 +82,11 @@ const CreateSchoolModal = ({ onClick }) => {
             </div>
           </div>
           <div className="flex justify-between items-center w-full mt-4 gap-2">
-            <button className="w-full px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors">
-              Send
+            <button
+              onClick={() => onNext()}
+              className="w-full px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors"
+            >
+              Add School
             </button>
             <button
               onClick={onClick}

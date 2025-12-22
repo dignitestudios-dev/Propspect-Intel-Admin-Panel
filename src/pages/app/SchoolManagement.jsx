@@ -5,6 +5,7 @@ import { useState } from "react";
 import CreateSchoolModal from "../../components/app/SchoolManagement/CreateSchoolModal";
 import EditSchoolModal from "../../components/app/SchoolManagement/EditSchoolModal";
 import DeleteModal from "../../components/global/DeleteModal";
+import SuccessModal from "../../components/global/SuccessModal";
 
 const schools = [
   {
@@ -53,6 +54,7 @@ export default function SchoolManagement() {
   const [addSchoolModal, setAddSchoolModal] = useState(false);
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [isDelete, setIsDelete] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   return (
     <div className="w-full min-h-screen  p-4 font-sans">
@@ -131,11 +133,24 @@ export default function SchoolManagement() {
       {addSchoolModal && (
         <CreateSchoolModal
           isOpen={addSchoolModal}
+          onNext={() => {
+            setAddSchoolModal(false);
+            setIsSuccess(true);
+          }}
           onClick={() => {
             setAddSchoolModal(false);
           }}
           title="Email verified"
           description="Your email has been verified successfully."
+        />
+      )}
+      {isSuccess && (
+        <SuccessModal
+          onClick={() => {
+            setIsSuccess(false);
+          }}
+          message={"School Added"}
+          title={"School has been Added."}
         />
       )}
       {selectedSchool && (

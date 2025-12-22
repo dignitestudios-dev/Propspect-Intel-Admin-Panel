@@ -6,6 +6,7 @@ import { bin, eye, sms } from "../../assets/export";
 import MessageDetailModal from "../../components/app/ContactForm/MessageDetailModal";
 import MessageReplyModal from "../../components/app/ContactForm/MessageReplyModal";
 import DeleteModal from "../../components/global/DeleteModal";
+import ReplyDetailModal from "../../components/app/ContactForm/ReplyDetailModal";
 
 const notifications = [
   {
@@ -82,6 +83,7 @@ const ContactForm = () => {
   const [viewMessage, setViewMessage] = useState(false);
   const [replyMessage, setReplyMessage] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
+  const [viewReply, setViewReply] = useState(false);
 
   return (
     <div className="w-full min-h-screen p-4 font-sans">
@@ -291,13 +293,13 @@ const ContactForm = () => {
                   <div className="flex justify-center gap-4 text-gray-400 py-2 mt-4">
                     <div
                       onClick={() => {
-                        setViewMessage(true);
+                        setViewReply(true);
                       }}
                       className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors"
                     >
                       <img src={eye} alt="edit" />
                     </div>
-                    <div
+                    {/* <div
                       onClick={() => {
                         setViewMessage(false);
                         setReplyMessage(true);
@@ -305,7 +307,7 @@ const ContactForm = () => {
                       className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors"
                     >
                       <img src={sms} alt="edit" />
-                    </div>
+                    </div> */}
                     <div
                       onClick={() => setIsDelete(true)}
                       className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors"
@@ -328,6 +330,16 @@ const ContactForm = () => {
           onNext={() => {
             setViewMessage(false);
             setReplyMessage(true);
+          }}
+          title="Email verified"
+          description="Your email has been verified successfully."
+        />
+      )}
+      {viewReply && (
+        <ReplyDetailModal
+          isOpen={viewMessage}
+          onClick={() => {
+            setViewReply(false);
           }}
           title="Email verified"
           description="Your email has been verified successfully."

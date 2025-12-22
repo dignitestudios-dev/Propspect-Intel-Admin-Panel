@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router"; // Correct import for react
 import { useState } from "react";
 import { sidebarData } from "../../static/Sidebar"; // Import the sidebar data
 import { LogOut } from "lucide-react"; // Import logout icon
-import { Logo } from "../../assets/export"; // Import your logo
+import { prospectLogo } from "../../assets/export"; // Import your logo
 
 const DummySidebar = () => {
   const navigate = useNavigate();
@@ -11,7 +11,9 @@ const DummySidebar = () => {
   // Handle logout function
   const handleLogout = () => {
     document.cookie.split(";").forEach((c) => {
-      document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
     });
 
     localStorage.clear();
@@ -24,7 +26,7 @@ const DummySidebar = () => {
       {/* Logo */}
       <div className="flex justify-center mb-10">
         <img
-          src={Logo}
+          src={prospectLogo}
           alt="Prospect Intel"
           className="h-[90px] w-auto cursor-pointer"
         />

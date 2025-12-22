@@ -5,6 +5,7 @@ import { BiSolidNotification } from "react-icons/bi";
 import { bin } from "../../assets/export";
 import CreatePushNotificationModal from "../../components/app/Notification/CreatePushNotificationModal";
 import DeleteModal from "../../components/global/DeleteModal";
+import SuccessModal from "../../components/global/SuccessModal";
 
 const notifications = [
   {
@@ -77,6 +78,7 @@ export default function Notifications() {
   const [activeTab, setActiveTab] = useState("All");
   const [requestSendModal, setRequestSendModal] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   return (
     <div className="w-full min-h-screen  p-4 font-sans">
@@ -199,6 +201,19 @@ export default function Notifications() {
           onClick={() => {
             setRequestSendModal(false);
           }}
+          onNext={() => {
+            setRequestSendModal(false);
+            setIsSuccess(true);
+          }}
+        />
+      )}
+      {isSuccess && (
+        <SuccessModal
+          onClick={() => {
+            setIsSuccess(false);
+          }}
+          message={"Notification Sent"}
+          title={"Notification has been sent Successfully"}
         />
       )}
       {isDelete && (
