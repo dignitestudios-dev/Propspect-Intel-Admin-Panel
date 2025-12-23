@@ -1,7 +1,12 @@
 /* eslint-disable react/prop-types */
 import { FiEdit2, FiX } from "react-icons/fi";
 
-const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus }) => {
+const AddUserModal = ({
+  setIsAddUserModalOpen,
+  userStatus,
+  setUserStatus,
+  onNext,
+}) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm p-4">
       <div className="bg-white rounded-[24px] shadow-2xl w-full max-w-md relative border border-gray-100 overflow-y-auto max-h-[95vh]">
@@ -82,7 +87,10 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus }) => {
 
             {/* Action Buttons - Reduced Height */}
             <div className="flex gap-3 pt-2">
-              <button className="flex-1 bg-[#0085CA] text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors">
+              <button
+                onClick={onNext}
+                className="flex-1 bg-[#0085CA] text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors"
+              >
                 Update
               </button>
               <button

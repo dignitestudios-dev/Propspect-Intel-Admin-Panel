@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-const DeleteModal = ({ onClick, title, message }) => {
+const SuccessModal = ({ onClick, title, message }) => {
   return (
     <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-0 z-50 flex items-center justify-center">
       <div className="bg-white rounded-[12px] shadow-md px-4 py-4 w-[515px]">
@@ -36,4 +36,4 @@ const DeleteModal = ({ onClick, title, message }) => {
   );
 };
 
-export default DeleteModal;
+export default SuccessModal;

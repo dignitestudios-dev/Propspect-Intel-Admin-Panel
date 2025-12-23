@@ -7,6 +7,7 @@ import MessageDetailModal from "../../components/app/ContactForm/MessageDetailMo
 import MessageReplyModal from "../../components/app/ContactForm/MessageReplyModal";
 import DeleteModal from "../../components/global/DeleteModal";
 import ReplyDetailModal from "../../components/app/ContactForm/ReplyDetailModal";
+import SuccessModal from "../../components/global/SuccessModal";
 
 const notifications = [
   {
@@ -84,6 +85,7 @@ const ContactForm = () => {
   const [replyMessage, setReplyMessage] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [viewReply, setViewReply] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   return (
     <div className="w-full min-h-screen p-4 font-sans">
@@ -331,8 +333,6 @@ const ContactForm = () => {
             setViewMessage(false);
             setReplyMessage(true);
           }}
-          title="Email verified"
-          description="Your email has been verified successfully."
         />
       )}
       {viewReply && (
@@ -351,6 +351,19 @@ const ContactForm = () => {
           onClick={() => {
             setReplyMessage(false);
           }}
+          onNext={() => {
+            setReplyMessage(false);
+            setIsSuccess(true);
+          }}
+        />
+      )}
+      {isSuccess && (
+        <SuccessModal
+          onClick={() => {
+            setIsSuccess(false);
+          }}
+          title={"Mail Sent"}
+          message={"Mail has been sent to user."}
         />
       )}
       {isDelete && (

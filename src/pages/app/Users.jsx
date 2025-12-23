@@ -1,24 +1,19 @@
-import React, { useState } from "react";
-import { BiBall } from "react-icons/bi";
-import { FaChevronDown, FaFootballBall } from "react-icons/fa";
+import { useState } from "react";
+
 import { MdMonitor } from "react-icons/md";
 
 import {
-  FiUserPlus,
-  FiSend,
   FiSearch,
   FiEye,
-  FiEdit,
   FiTrash2,
-  FiUpload,
   FiPlus,
-  FiDownload,
   FiX,
   FiEdit2,
 } from "react-icons/fi";
 import { HiUsers } from "react-icons/hi";
 import AddUserModal from "../../components/app/User/AddUserModal";
 import DeleteModal from "../../components/global/DeleteModal";
+import SuccessModal from "../../components/global/SuccessModal";
 
 const users = [
   {
@@ -44,9 +39,11 @@ export default function Users() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  console.log("🚀 ~ Users ~ selectedUser:", selectedUser);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [userStatus, setUserStatus] = useState("Active");
   const [isDelete, setIsDelete] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const togglePasswordVisibility = (index) => {
     const newShowPassword = [...showPassword];
@@ -279,6 +276,10 @@ export default function Users() {
             setIsAddUserModalOpen={setIsAddUserModalOpen}
             userStatus={userStatus}
             setUserStatus={setUserStatus}
+            onNext={() => {
+              setIsAddUserModalOpen(false);
+              setIsSuccess(true);
+            }}
           />
         )}
         {/* ACTIVITY MODAL */}
@@ -364,6 +365,15 @@ export default function Users() {
             }}
             message={"User will be deleted"}
             title={"Delete User"}
+          />
+        )}
+        {isSuccess && (
+          <SuccessModal
+            onClick={() => {
+              setIsSuccess(false);
+            }}
+            title={"User Added"}
+            message={"User has been added successfully."}
           />
         )}
       </div>

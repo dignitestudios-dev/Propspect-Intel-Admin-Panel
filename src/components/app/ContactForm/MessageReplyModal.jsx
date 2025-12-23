@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-const MessageReplyModal = ({ onClick }) => {
+const MessageReplyModal = ({ onClick, onNext }) => {
   return (
     <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-0 z-50 flex items-center justify-center">
       <div className="bg-white rounded-[12px] shadow-md px-4 py-8 w-[515px]">
@@ -66,7 +66,10 @@ const MessageReplyModal = ({ onClick }) => {
             </div>
           </div>
           <div className="flex justify-between items-center w-full mt-4 gap-2">
-            <button className="w-full px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors">
+            <button
+              onClick={onNext}
+              className="w-full px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors"
+            >
               Send Mail
             </button>
             <button
