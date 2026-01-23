@@ -74,6 +74,54 @@ const donutOptions = {
   },
 };
 
+const CharacterCard = ({ title, score }) => {
+  const grades = [
+    { label: "A", value: 26, color: "bg-black text-white" },
+    { label: "B", value: 23, color: "bg-green-500 text-white" },
+    { label: "C", value: 22, color: "bg-gray-400 text-white" },
+    { label: "D", value: 21, color: "bg-yellow-400 text-black" },
+    { label: "F", value: 21, color: "bg-red-500 text-white" },
+  ];
+
+  return (
+    <div className="border border-white rounded-2xl p-6 bg-white bg-opacity-40 shadow-sm">
+      <h3 className="text-[16px] font-semibold text-[#302C2C]">
+        {title}
+      </h3>
+
+      <h2 className="text-[36px] font-bold text-black mt-2">
+        {score}
+      </h2>
+
+      <p className="text-sm text-gray-500 mb-6">
+        Average Range: B - C
+      </p>
+
+      <div className="space-y-3">
+        {grades.map((grade) => (
+          <div
+            key={grade.label}
+            className="flex items-center justify-between"
+          >
+            <div className="flex items-center gap-3">
+              <span
+                className={`w-8 h-8 flex items-center justify-center rounded-md text-sm font-bold ${grade.color}`}
+              >
+                {grade.label}
+              </span>
+            </div>
+
+            <div className="border border-gray-200 rounded-lg px-3 py-1 text-sm text-gray-700">
+              {grade.value}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
 export default function FiltersAnalytics() {
   const [activeTab, setActiveTab] = useState("Overview");
 
@@ -271,62 +319,17 @@ export default function FiltersAnalytics() {
                   </div>
                 </div>
               </div>
-              <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
-                <div className="flex flex-col gap-4">
-                  <p className="text-[16px] text-[#302C2C] ">Rating Filter</p>
-                  <h2 className="text-[24px] font-bold text-gray-900">157</h2>
-                  <p className="text-[14px] font-light text-[#302C2C]">
-                    Average Range: 25-75
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">0-20</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">21-40</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">41-60</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
-                <div className="flex flex-col gap-4">
-                  <p className="text-[16px] text-[#302C2C] ">Position Filter</p>
-                  <h2 className="text-[24px] font-bold text-gray-900">157</h2>
-                  <p className="text-[14px] font-light text-[#302C2C]">
-                    Popular Positions:
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">Wide Receiver</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">Running Back</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">Offensive Line</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                </div>
-              </div>
+  <div className="">
+    <CharacterCard title="Personal Character" score={146} />   
+  </div>
+  <div>
+    <CharacterCard title="Football Character" score={148} />
+  </div>
+
+          
             </div>
-            <div className="grid grid-cols-2 gap-2 mt-2">
+            <div className="grid grid-cols-3 gap-2 mt-2">
+              
               <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
                 <div className="flex flex-col gap-4">
                   <p className="text-[16px] text-[#302C2C] ">Schools Filter</p>
@@ -360,6 +363,33 @@ export default function FiltersAnalytics() {
                   <h2 className="text-[24px] font-bold text-gray-900">157</h2>
                   <p className="text-[14px] font-light text-[#302C2C]">
                     Popular Years:
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <p className="font-bold text-[14px]">Wide Receiver</p>
+                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
+                      26
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <p className="font-bold text-[14px]">Running Back</p>
+                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
+                      26
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <p className="font-bold text-[14px]">Offensive Line</p>
+                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
+                      26
+                    </div>
+                  </div>
+                </div>
+              </div>
+                  <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
+                <div className="flex flex-col gap-4">
+                  <p className="text-[16px] text-[#302C2C] ">Position Filter</p>
+                  <h2 className="text-[24px] font-bold text-gray-900">157</h2>
+                  <p className="text-[14px] font-light text-[#302C2C]">
+                    Popular Positions:
                   </p>
                   <div className="flex justify-between items-center">
                     <p className="font-bold text-[14px]">Wide Receiver</p>
