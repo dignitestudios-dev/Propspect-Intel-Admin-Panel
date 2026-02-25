@@ -1,122 +1,124 @@
 import { useState } from "react";
-// import { useLogin } from "../../hooks/api/Post";
-import { processLogin } from "../../lib/utils";
 import { useFormik } from "formik";
 import { loginValues } from "../../init/authentication/dummyLoginValues";
 import { signInSchema } from "../../schema/authentication/dummyLoginSchema";
 import { NavLink, useNavigate } from "react-router";
-// import { FiLoader } from "react-icons/fi";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Logo } from "../../assets/export";
+import axiosinstance from "../../axios";
+import Loader from "../../components/global/Loader";
+import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 
 const Login = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  // const { loading, postData } = useLogin();
 
   const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
     useFormik({
       initialValues: loginValues,
       validationSchema: signInSchema,
-      validateOnChange: true,
-      validateOnBlur: true,
-      onSubmit: async (values, action) => {
-        const data = {
-          email: values?.email,
-          password: values?.password,
-        };
-        postData("/admin/login", false, null, data, processLogin);
-
-        // Use the loading state to show loading spinner
-        // Use the response if you want to perform any specific functionality
-        // Otherwise you can just pass a callback that will process everything
+      onSubmit: async (values) => {
+        setLoading(true);
+        try {
+          const response = await axiosinstance.post("/auth/login", {
+            email: values.email,
+            password: values.password,
+          });
+          if (response.status === 200) {
+            SuccessToast(response.data?.message || "Login Successful");
+            navigate("/app/dashboard");
+          }
+        } catch (error) {
+          ErrorToast(error?.response?.data?.message || "Login failed. Try again.");
+        } finally {
+          setLoading(false);
+        }
       },
     });
 
   return (
-    <div className="relative z-10 w-full max-w-lg mx-4 rounded-2xl overflow-hidden shadow-2xl">
-      {/* frosted glass panel */}
-      <div className="bg-gradient-to-b from-black/50 to-black/30 border border-white/10 p-10 rounded-2xl backdrop-blur-md">
-        <div className="flex flex-col items-center text-center">
-          <div className="mb-4 flex items-center justify-center">
-            {/* logo placeholder */}
-            <img
-              src={Logo}
-              alt="logo"
-              className="w-[110px] h-[110px] object-contain"
-            />
-          </div>
 
-          <h1 className="text-[24px] font-extrabold text-white drop-shadow-md">
-            Admin Panel
-          </h1>
-          <p className="mt-2 text-[16px] text-white/80">
-            Mangage Prospect Intel website. Adminn Portal
-          </p>
 
-          <form
-            className="w-full mt-6 space-y-4"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <div>
-              <div className="w-full rounded-lg px-2 gap-1 py-2 text-sm placeholder-white/60 bg-white/10 border border-white/20 flex flex-col items-start justify-start">
-                <label className="text-white text-start text-[14px] font-extralight ">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  defaultValue="Davidschumate@gmail.com"
-                  className="w-full rounded-lg  text-[14px] font-[500 ] placeholder-white/60 text-white focus:outline-none bg-transparent"
-                />
-              </div>
-            </div>
+    <div className="relative w-full max-w-lg mx-4 rounded-2xl overflow-hidden shadow-2xl bg-black/70 backdrop-blur-md border border-white/20 p-8 md:p-10 lg:p-4">
 
-            <div>
-              <div className="w-full rounded-lg px-2 gap-1 py-2 text-sm placeholder-white/60 bg-white/10 border border-white/20 flex flex-col items-start justify-start relative">
-                <label className="text-white text-start text-[14px] font-extralight ">
-                  Password
-                </label>
-                <input
-                  type={isPasswordVisible ? "text" : "password"}
-                  defaultValue="password"
-                  className="w-full rounded-lg  text-[14px] font-[500 ] placeholder-white/60 text-white focus:outline-none bg-transparent "
-                />
-                <button
-                  onClick={() => setIsPasswordVisible((prev) => !prev)}
-                  type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
-                >
-                  {isPasswordVisible ? (
-                    <FaRegEye size={20} />
-                  ) : (
-                    <FaRegEyeSlash size={20} />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div className="text-left">
-              <NavLink
-                to="/auth/rest-password"
-                className="text-sm font-medium text-white underline"
-              >
-                Forgot Password?
-              </NavLink>
-            </div>
-
-            <div>
-              <button
-                onClick={() => navigate("/app/dashboard")}
-                className="w-full py-3 rounded-md bg-[#0b89c6] text-white font-[500] shadow-inner"
-              >
-                Log in
-              </button>
-            </div>
-          </form>
-        </div>
+      {/* Logo + Title */}
+      <div className="flex flex-col items-center text-center mb-6">
+        <img src={Logo} alt="logo" className="w-28 h-28 md:w-32 md:h-32 object-contain mb-4" />
+        <h1 className="text-2xl md:text-3xl font-extrabold text-white drop-shadow-md">Admin Panel</h1>
+        <p className="mt-2 text-white/80 text-sm md:text-base">Manage Prospect Intel website. Admin Portal</p>
       </div>
+
+      {/* Form */}
+      <form className="w-full space-y-4" onSubmit={handleSubmit}>
+        {/* Email */}
+        <div className="flex flex-col">
+          <label className="text-white text-sm md:text-base font-light mb-1">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={values.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            placeholder="Enter your email"
+            className={`w-full px-3 py-3 md:py-4 rounded-md text-white placeholder-white/60 bg-white/10 border 
+                      ${errors.email && touched.email ? "border-red-500" : "border-white/20"} 
+                      focus:outline-none focus:ring-2 focus:ring-[#0b89c6] text-sm md:text-base`}
+          />
+          {errors.email && touched.email && (
+            <p className="text-red-500 text-xs md:text-sm mt-1">{errors.email}</p>
+          )}
+        </div>
+
+        {/* Password */}
+        {/* Password */}
+        <div className="flex flex-col">
+          <label className="text-white text-sm md:text-base font-light mb-1">Password</label>
+          <div className="relative w-full">
+            <input
+              type={isPasswordVisible ? "text" : "password"}
+              name="password"
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Enter your password"
+              className={`w-full pr-10 px-3 py-3 md:py-4 rounded-md text-white placeholder-white/60 bg-white/10 border 
+        ${errors.password && touched.password ? "border-red-500" : "border-white/20"} 
+        focus:outline-none focus:ring-2 focus:ring-[#0b89c6] text-sm md:text-base`}
+            />
+            {/* Eye button inside relative container */}
+            <button
+              type="button"
+              onClick={() => setIsPasswordVisible((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
+            >
+              {isPasswordVisible ? <FaRegEye size={18} /> : <FaRegEyeSlash size={18} />}
+            </button>
+          </div>
+          {errors.password && touched.password && (
+            <p className="text-red-500 text-xs md:text-sm mt-1">{errors.password}</p>
+          )}
+        </div>
+        <div className="text-right">
+          <NavLink
+            to="/auth/rest-password"
+            className="text-sm md:text-base text-[#0b89c6] hover:underline"
+          >
+            Forgot Password?
+          </NavLink>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full flex items-center justify-center py-3 md:py-4 bg-[#0b89c6] rounded-md text-white font-semibold shadow-inner hover:bg-[#0972a0] transition-colors duration-200 disabled:opacity-70 text-sm md:text-base"
+        >
+          {loading ? <Loader /> : "Log in"}
+        </button>
+      </form>
     </div>
+
+
   );
 };
 

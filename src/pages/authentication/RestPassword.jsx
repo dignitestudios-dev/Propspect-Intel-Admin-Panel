@@ -1,87 +1,90 @@
 import React, { useState } from "react";
-// import { useLogin } from "../../hooks/api/Post";
-import { processLogin } from "../../lib/utils";
 import { useFormik } from "formik";
-import { loginValues } from "../../init/authentication/dummyLoginValues";
 import { signInSchema } from "../../schema/authentication/dummyLoginSchema";
-import { NavLink, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { FiLoader } from "react-icons/fi";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Logo } from "../../assets/export";
+import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
+import axiosinstance from "../../axios";
 
 const RestPassword = () => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
-  // const { loading, postData } = useLogin();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
     useFormik({
-      initialValues: loginValues,
-      validationSchema: signInSchema,
-      validateOnChange: true,
-      validateOnBlur: true,
-      onSubmit: async (values, action) => {
-        const data = {
-          email: values?.email,
-          password: values?.password,
-        };
-        postData("/admin/login", false, null, data, processLogin);
+      initialValues: { email: "" },
+      validationSchema: signInSchema.pick(["email"]),
+      onSubmit: async (values) => {
+        setLoading(true);
+        try {
+          const response = await axiosinstance.post("/auth/reset-password", {
+            email: values.email,
+          });
 
-        // Use the loading state to show loading spinner
-        // Use the response if you want to perform any specific functionality
-        // Otherwise you can just pass a callback that will process everything
+          if (response.status === 200) {
+            SuccessToast(response.data?.message || "Recovery link sent!");
+            navigate("/auth/otp-verification");
+          }
+        } catch (error) {
+          ErrorToast(error?.response?.data?.message || "Something went wrong!");
+        } finally {
+          setLoading(false);
+        }
       },
     });
 
   return (
-    <div className="relative z-10 w-full max-w-lg mx-4 rounded-2xl overflow-hidden shadow-2xl">
-      {/* frosted glass panel */}
-      <div className="bg-gradient-to-b from-black/50 to-black/30 border border-white/10 p-10 rounded-2xl backdrop-blur-md">
-        <div className="flex flex-col items-center text-center">
-          <div className="mb-4 flex items-center justify-center">
-            {/* logo placeholder */}
-            <img
-              src={Logo}
-              alt="logo"
-              className="w-[110px] h-[110px] object-contain"
-            />
-          </div>
+    <div className="relative w-full max-w-lg mx-4 rounded-2xl overflow-hidden shadow-2xl bg-black/70 backdrop-blur-md border border-white/20 p-8 md:p-10 lg:p-4">
 
-          <h1 className="text-[24px] font-extrabold text-white drop-shadow-md">
-            Reset Password
-          </h1>
-          <p className="mt-2 text-[16px] text-white/80">
-         Enter email to get password recovery link with 4 digit code
-          </p>
-
-          <form
-            className="w-full mt-6 space-y-4"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <div>
-              <div className="w-full rounded-lg px-2 gap-1 py-2 text-sm placeholder-white/60 bg-white/10 border border-white/20 flex flex-col items-start justify-start">
-              <label className="text-white text-start text-[14px] font-extralight ">Email</label>
-                <input
-                  type="email"
-                  defaultValue="Davidschumate@gmail.com"
-                  className="w-full rounded-lg  text-[14px] font-[500 ] placeholder-white/60 text-white focus:outline-none bg-transparent"
-                />
-              </div>
-            </div>
-
-           
-
-          
-
-            <div>
-              <button onClick={() => navigate("/auth/otp-verification")} className="w-full py-3 rounded-md bg-[#0b89c6] text-white font-[500] shadow-inner">
-            Confirm
-              </button>
-            </div>
-          </form>
-        </div>
+      {/* Logo & Heading */}
+      <div className="flex flex-col items-center text-center mb-6">
+        <img
+          src={Logo}
+          alt="logo"
+          className="w-28 h-28 md:w-32 md:h-32 object-contain mb-4"
+        />
+        <h1 className="text-2xl md:text-3xl font-extrabold text-white drop-shadow-md">
+          Reset Password
+        </h1>
+        <p className="mt-2 text-white/80 text-sm md:text-base">
+          Enter email to get password recovery link with 4 digit code
+        </p>
       </div>
+
+      {/* Form */}
+      <form className="w-full space-y-4" onSubmit={handleSubmit}>
+        {/* Email */}
+        <div className="flex flex-col">
+          <label className="text-white text-sm md:text-base font-light mb-1">
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={values.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            placeholder="Enter your email"
+            className={`w-full px-3 py-3 md:py-4 rounded-md text-white placeholder-white/60 bg-white/10 border 
+                          ${errors.email && touched.email ? "border-red-500" : "border-white/20"} 
+                          focus:outline-none focus:ring-2 focus:ring-[#0b89c6] text-sm md:text-base`}
+          />
+          {errors.email && touched.email && (
+            <p className="text-red-500 text-xs md:text-sm mt-1">{errors.email}</p>
+          )}
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full flex items-center justify-center py-3 md:py-4 bg-[#0b89c6] rounded-md text-white font-semibold shadow-inner hover:bg-[#0972a0] transition-colors duration-200 disabled:opacity-70 text-sm md:text-base"
+        >
+          {loading ? <FiLoader className="animate-spin mr-2" size={20} /> : "Confirm"}
+          {loading && " Loading..."}
+        </button>
+      </form>
     </div>
   );
 };
