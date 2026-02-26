@@ -1,23 +1,47 @@
-import React, { useState } from "react";
+import { useFormik } from "formik";
+import React, { useEffect, useState } from "react";
 import { FiArrowLeft, FiChevronRight, FiPlus, FiX } from "react-icons/fi";
+import { useAppDispatch, useAppSelector } from "../../lib/store/hook";
+import { updateSection } from "../../lib/store/feature/athleteFormSlice";
+import { familyInfoSchema } from "../../schema/athleteFormSchema/athleteSchema";
+import { InputField } from "./InputField";
 
-export default function Family() {
+export default function Family({ onNext, setSubmit }) {
+
   const [activeTab, setActiveTab] = useState("Family");
   const [siblings, setSiblings] = useState([
     { id: 1, type: "Sister" },
     { id: 2, type: "Brother" },
   ]);
+  const familyInfo = useAppSelector((s) => s.athleteForm.formData.familyInfo);
+  const dispatch = useAppDispatch();
 
-  const tabs = [
-    "Basic Info",
-    "Family",
-    "Athlete",
-    "Overview",
-    "Stats",
-    "Education",
-    "Achievements",
-    "Media",
-  ];
+
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      motherName: familyInfo?.motherName || "",
+      motherDob: familyInfo?.motherDob || "",
+      motherOccupation: familyInfo?.motherOccupation || "",
+      motherContact: familyInfo?.motherContact || "",
+      fatherName: familyInfo?.fatherName || "",
+      keyInfluences: familyInfo?.keyInfluences || "",
+      siblings: familyInfo?.siblings || [
+        { id: 1, type: "Sister", name: "", dob: "" },
+        { id: 2, type: "Brother", name: "", dob: "" },
+      ],
+    },
+    validationSchema: familyInfoSchema,
+    onSubmit: (values) => {
+      dispatch(updateSection({ section: "familyInfo", data: values }));
+      onNext()
+    },
+  });
+
+  useEffect(() => {
+    setSubmit(() => formik.submitForm);
+  }, [formik.submitForm]);
+
 
   const addSibling = () => {
     setSiblings([...siblings, { id: Date.now(), type: "Brother" }]);
@@ -29,93 +53,92 @@ export default function Family() {
 
   return (
     <div className="min-h-screen font-sans">
-      {/* Header */}
 
-      {/* Main Form Content */}
       <div className="rounded-3xl max-w-6xl mx-auto min-h-[600px] flex flex-col justify-between">
         {activeTab === "Family" && (
           <div className="space-y-8 animate-in fade-in duration-300">
-            {/* Mother Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-              <InputField label="Mother" placeholder="Enter name" />
-              <InputField label="Date of Birth" placeholder="Age here" />
-              <InputField label="Occupation" placeholder="Enter occupation" />
-              <InputField label="Contact" placeholder="Contact here" />
+              <InputField label="Mother" placeholder="Enter name" name={'motherName'} formik={formik} />
+              <InputField label="Date of Birth" placeholder="Age here" name={'motherDob'} formik={formik} />
+              <InputField label="Occupation" placeholder="Enter occupation" name={'motherOccupation'} formik={formik} />
+              <InputField label="Contact" placeholder="Contact here" name={'motherContact'} formik={formik} />
             </div>
 
-            {/* Father Section */}
             <div className="w-full md:w-1/2 md:pr-4">
-              <InputField label="Father" placeholder="Father Name" />
+              <InputField label="Father" placeholder="Father Name" name={'fatherName'} formik={formik} />
             </div>
 
-            {/* Sibling Section */}
             <div className="space-y-4">
               <h3 className="font-bold text-gray-800">Sibling</h3>
-              {siblings.map((sibling, index) => (
+              {formik.values.siblings.map((sibling, index) => (
                 <div key={sibling.id} className="flex items-end gap-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 flex-grow">
-                    <InputField label={sibling.type} placeholder="Enter name" />
-                    <InputField label="Date of Birth" placeholder="Age here" />
+                    <InputField
+                      label={sibling.type}
+                      name={`siblings[${index}].name`}
+                      placeholder="Enter name"
+                      formik={formik}
+                    />
+                    <InputField
+                      label="Date of Birth"
+                      name={`siblings[${index}].dob`}
+                      placeholder="Age here"
+                      formik={formik}
+                    />
                   </div>
 
                   <div className="flex gap-2 mb-1">
-                    {index === siblings.length - 1 ? (
-                      <>
-                        {" "}
-                        <button
-                          onClick={() => removeSibling(sibling.id)}
-                          className="p-3 rounded-xl border border-gray-100 bg-white text-red-500 hover:bg-red-50 transition-colors"
-                        >
-                          <FiX size={18} />
-                        </button>
-                        <button
-                          onClick={addSibling}
-                          className="p-3 rounded-xl border border-gray-100 bg-white text-green-500 hover:bg-green-50 transition-colors"
-                        >
-                          <FiPlus size={18} />
-                        </button>
-                      </>
-                    ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newSiblings = [...formik.values.siblings];
+                        newSiblings.splice(index, 1);
+                        formik.setFieldValue("siblings", newSiblings);
+                      }}
+                      className="p-3 rounded-xl border border-gray-100 bg-white text-red-500 hover:bg-red-50 transition-colors"
+                    >
+                      <FiX size={18} />
+                    </button>
+
+                    {index === formik.values.siblings.length - 1 && (
                       <button
-                        onClick={() => removeSibling(sibling.id)}
-                        className="w-24 h-[70px] rounded-xl border-2 border-[#E3E3E3]  text-red-500 hover:bg-red-50 transition-colors flex justify-center items-center"
+                        type="button"
+                        onClick={() =>
+                          formik.setFieldValue("siblings", [
+                            ...formik.values.siblings,
+                            { id: Date.now(), type: "Brother", name: "", dob: "" },
+                          ])
+                        }
+                        className="p-3 rounded-xl border border-gray-100 bg-white text-green-500 hover:bg-green-50 transition-colors"
                       >
-                        <FiX size={18} />
+                        <FiPlus size={18} />
                       </button>
                     )}
                   </div>
                 </div>
               ))}
             </div>
-
-            {/* Key Influences */}
             <div className="space-y-2">
               <label className="font-bold text-gray-800">
                 Key Influences (Coach)
               </label>
               <textarea
+                name="keyInfluences"
                 className="w-full h-32 p-4 bg-white rounded-2xl border border-gray-50 outline-none placeholder:text-gray-300 text-sm shadow-sm"
                 placeholder="Coach Quote here"
+                value={formik.values.keyInfluences}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.keyInfluences && formik.errors.keyInfluences && (
+                <span className="text-red-500 text-xs">{formik.errors.keyInfluences}</span>
+              )}
             </div>
           </div>
         )}
 
-        {/* Footer Actions */}
       </div>
     </div>
   );
 }
 
-const InputField = ({ label, placeholder }) => (
-  <div className="flex flex-col gap-2">
-    <div className="bg-white rounded-xl px-4 py-3 border border-gray-50 shadow-sm">
-      <label className="text-xs text-gray-400 ml-1">{label}</label>
-
-      <input
-        className="w-full outline-none text-sm text-gray-700 placeholder:text-gray-300"
-        placeholder={placeholder}
-      />
-    </div>
-  </div>
-);

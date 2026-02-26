@@ -1,101 +1,103 @@
-import React, { useState } from "react";
-import { FiArrowLeft, FiChevronRight, FiTrash2 } from "react-icons/fi";
+import React, { useEffect } from "react";
+import { FiTrash2 } from "react-icons/fi";
+import { useAppDispatch, useAppSelector } from "../../lib/store/hook";
+import { useFormik } from "formik";
+import { updateSection } from "../../lib/store/feature/athleteFormSlice";
+import { achievementInfoSchema } from "../../schema/athleteFormSchema/athleteSchema";
 
-export default function Achievements() {
-  const [activeTab, setActiveTab] = useState("Achievements");
-  
-  // State to manage dynamic achievement list
-  const [achievements, setAchievements] = useState([
-    { id: 1, name: "", description: "" }
-  ]);
+export default function Achievements({ onNext, setSubmit }) {
+  const dispatch = useAppDispatch();
+  const achievementData = useAppSelector((s) => {
+    const data = s.athleteForm.formData.achievements;
+    return Array.isArray(data) ? data : Object.values(data || {});
+  });
 
-  const tabs = [
-    "Basic Info", "Family", "Athlete", "Overview", 
-    "Stats", "Education", "Achievements", "Media"
-  ];
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      achievements: achievementData.length > 0 ? achievementData : [{ title: "", description: "" }],
+    },
+    validationSchema: achievementInfoSchema,
+    onSubmit: (values) => {
+      dispatch(updateSection({ section: "achievements", data: values.achievements }));
+      onNext();
+    },
+  });
+  useEffect(() => {
+    setSubmit(() => formik.submitForm);
+  }, [formik.submitForm]);
 
   const addAchievement = () => {
-    const nextId = achievements.length > 0 ? Math.max(...achievements.map(a => a.id)) + 1 : 1;
-    setAchievements([{ id: nextId, name: "", description: "" }, ...achievements]);
+    const newArray = [...formik.values.achievements, { title: "", description: "" }];
+    formik.setFieldValue("achievements", newArray);
+    dispatch(updateSection({ section: "achievements", data: newArray }));
   };
-
-  const removeAchievement = (id) => {
-    setAchievements(achievements.filter(a => a.id !== id));
+  const removeAchievement = (index) => {
+    if (formik.values.achievements.length <= 1) return;
+    const newArray = [...formik.values.achievements];
+    newArray.splice(index, 1);
+    formik.setFieldValue("achievements", newArray);
+    dispatch(updateSection({ section: "achievements", data: newArray }));
   };
 
   return (
     <div className="min-h-screen  font-sans">
-      {/* Header */}
-     
-
-      {/* Main Form Content */}
       <div className=" max-w-6xl mx-auto min-h-[600px] flex flex-col justify-between">
-        
-        {activeTab === "Achievements" && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-400">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-gray-800 text-lg">Add Achievements</h3>
-              <button 
-                onClick={addAchievement}
-                className="px-6 py-2 rounded-xl border-2 border-[#0085CA] text-[#0085CA] font-bold text-sm hover:bg-blue-50 transition-colors"
-              >
-                Add Achievement
-              </button>
-            </div>
-
-            {/* Achievements List */}
-            <div className="space-y-6">
-              {achievements.map((ach) => (
-                <div key={ach.id} className=" p-6 rounded-2xl border-2 border-gray-200 relative">
-                  <div className="flex justify-between items-center mb-4">
-                    <h4 className="font-bold text-gray-600">Achievements {ach.id}</h4>
-                    <button 
-                      onClick={() => removeAchievement(ach.id)}
-                      className="p-2 rounded-lg bg-orange-50 text-orange-500 hover:bg-orange-100 transition-colors"
-                    >
-                      <FiTrash2 size={18} />
-                    </button>
-                  </div>
-
-                  <div className="space-y-4">
-                    <InputField label="Achievement Name" placeholder="Enter Achievement Name" />
-                    
-                    <div className="flex flex-col gap-2">
-                      {/* <label className="text-xs text-gray-400 ml-1">Description</label> */}
-                      <div className="relative bg-white rounded-xl border border-gray-50 shadow-sm">
-                        <textarea 
-                          className="w-full h-32 p-4 outline-none text-sm text-gray-700 placeholder:text-gray-300 resize-none rounded-xl"
-                          placeholder="Description"
-                          maxLength={1000}
-                        />
-                        <span className="absolute bottom-3 right-4 text-[10px] text-gray-400 font-medium">
-                          0/1000
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-400">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-bold text-gray-800 text-lg">Add Achievements</h3>
+            <button
+              onClick={addAchievement}
+              className="px-6 py-2 rounded-xl border-2 border-[#0085CA] text-[#0085CA] font-bold text-sm hover:bg-blue-50 transition-colors"
+            >
+              Add Achievement
+            </button>
           </div>
-        )}
 
-        {/* Footer Actions */}
-        
+          <div className="space-y-6">
+            {formik.values.achievements.map((ach, index) => (
+              <div key={index} className="p-6 rounded-2xl border-2 border-gray-200 relative">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="font-bold text-gray-600">Achievement {index + 1}</h4>
+                  <button
+                    type="button"
+                    onClick={() => removeAchievement(index)}
+                    className={`p-2 rounded-lg ${formik.values.achievements.length > 1
+                      ? "bg-orange-50 text-orange-500 hover:bg-orange-100"
+                      : "bg-gray-100 text-gray-300 cursor-not-allowed"
+                      } transition-colors`}
+                    disabled={formik.values.achievements.length <= 1}
+                  >
+                    <FiTrash2 size={18} />
+                  </button>
+                </div>
+
+                <input
+                  name={`achievements[${index}].title`}
+                  value={ach.title}
+                  onChange={formik.handleChange}
+                  placeholder="Enter Achievement Name"
+                  className="w-full p-3 border rounded-xl text-sm mb-2"
+                />
+                {formik.errors.achievements?.[index]?.title && formik.touched.achievements?.[index]?.title && (
+                  <span className="text-red-500 text-xs">{formik.errors.achievements[index].title}</span>
+                )}
+                <textarea
+                  name={`achievements[${index}].description`}
+                  value={ach.description}
+                  onChange={formik.handleChange}
+                  placeholder="Description"
+                  className="w-full h-32 p-4 outline-none text-sm text-gray-700 placeholder:text-gray-300 resize-none rounded-xl border"
+                />
+                {formik.errors.achievements?.[index]?.description && formik.touched.achievements?.[index]?.description && (
+                  <span className="text-red-500 text-xs">{formik.errors.achievements[index].description}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-const InputField = ({ label, placeholder }) => (
-  <div className="flex flex-col gap-2">
-    <div className="bg-white rounded-xl px-4 py-3 border border-gray-50 shadow-sm">
-          <label className="text-xs text-gray-400 ml-1">{label}</label>
-
-      <input 
-        className="w-full outline-none text-sm text-gray-700 placeholder:text-gray-300" 
-        placeholder={placeholder} 
-      />
-    </div>
-  </div>
-);

@@ -1,82 +1,114 @@
-
 import { Upload } from "lucide-react";
-import React, { useState } from "react";
-import { FiArrowLeft, FiChevronRight, FiUploadCloud, FiTrash2, FiFile } from "react-icons/fi";
+import React, { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../lib/store/hook";
+import { useFormik } from "formik";
+import { FiTrash2 } from "react-icons/fi";
+import { updateSection } from "../../lib/store/feature/athleteFormSlice";
+import * as Yup from "yup";
+import { mediaSchema } from "../../schema/athleteFormSchema/athleteSchema";
 
-export default function Media() {
-  const [activeTab, setActiveTab] = useState("Media");
-  
-  // State for uploaded files
-  const [files, setFiles] = useState([
-    { id: 1, name: "Image.jpg", size: "2.4 mb", type: "image", thumbnail: "https://via.placeholder.com/40" },
-    { id: 2, name: "Video.mp4", size: "10.1 mb", type: "video", thumbnail: "https://via.placeholder.com/40" }
-  ]);
+export default function Media({ setSubmit, onNext }) {
+  const dispatch = useAppDispatch();
+  const mediaData = useAppSelector((s) => s.athleteForm.formData.media || []);
 
-  const tabs = [
-    "Basic Info", "Family", "Athlete", "Overview", 
-    "Stats", "Education", "Achievements", "Media"
-  ];
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      files: mediaData.length > 0 ? mediaData : [],
+    },
+    validationSchema: mediaSchema,
+    onSubmit: (values) => {
+      dispatch(updateSection({ section: "media", data: values.files }));
+      onNext();
+    },
+  });
+
+  useEffect(() => setSubmit(() => formik.submitForm), [formik.submitForm]);
 
   const removeFile = (id) => {
-    setFiles(files.filter(file => file.id !== id));
+    const newFiles = formik.values.files.filter((file) => file.id !== id);
+    formik.setFieldValue("files", newFiles);
+  };
+
+  const addFile = (file) => {
+    const newFiles = [
+      ...formik.values.files,
+      {
+        id: Date.now(),
+        name: file.name,
+        size: `${(file.size / 1024 / 1024).toFixed(2)} mb`,
+        type: file.type.startsWith("video") ? "video" : "image",
+        thumbnail: URL.createObjectURL(file),
+      },
+    ];
+    formik.setFieldValue("files", newFiles);
+  };
+
+  const handleFileChange = (e) => {
+    Array.from(e.target.files).forEach((file) => addFile(file));
   };
 
   return (
-    <div className="min-h-screen font-sans">
-      {/* Header */}
-      
-      {/* Main Form Content */}
-      <div className=" max-w-6xl mx-auto min-h-[600px] flex flex-col justify-between">
-        
-        {activeTab === "Media" && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-400">
-            <div className=" border-2 border-gray-200 rounded-2xl p-8">
-              <h3 className="font-bold text-gray-800 text-lg mb-1">Images & Videos</h3>
-              <p className="text-xs text-gray-400 mb-6">Upload photos and videos of the athlete. Drag and drop files or click to browse.</p>
+    <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans max-w-6xl mx-auto py-10">
 
-              {/* Upload Dropzone */}
-              <div className="border-2 border-dashed border-white rounded-2xl p-12 flex flex-col items-center justify-center bg-white/30 mb-8">
-                <Upload size={48} className="text-gray-400 mb-4" />
-                <h4 className="font-bold text-gray-700 mb-1">Drop images and videos here</h4>
-                <p className="text-[11px] text-gray-400 mb-6">Or click to browse files · Max 50MB per file</p>
-                <p className="text-[10px] text-gray-300 mb-6">Supported formats: JPG, PNG, GIF, MP4, MOV, AVI, WebM</p>
-                <button className="flex items-center gap-2 px-6 py-2 rounded-xl border-2 border-[#0085CA] text-[#0085CA] font-bold text-xs hover:bg-blue-50 transition-colors">
-                  <Upload />
-                  Choose Files
-                </button>
-              </div>
 
-              {/* File List */}
-              <div className="space-y-3">
-                {files.map((file) => (
-                  <div key={file.id} className="flex items-center justify-between bg-white/80 p-3 rounded-2xl border border-gray-50 shadow-sm">
-                    <div className="flex items-center gap-4">
-                      <img 
-                        src={file.thumbnail} 
-                        alt="thumbnail" 
-                        className="w-12 h-12 rounded-lg object-cover bg-gray-100" 
-                      />
-                      <div>
-                        <p className="text-sm font-bold text-gray-700">{file.name}</p>
-                        <p className="text-[11px] text-gray-400">{file.size}</p>
-                      </div>
-                    </div>
-                    <button 
-                      onClick={() => removeFile(file.id)}
-                      className="p-2 rounded-lg bg-orange-50 text-orange-500 hover:bg-orange-100 transition-colors"
-                    >
-                      <FiTrash2 size={18} />
-                    </button>
-                  </div>
-                ))}
+      <div className="border-2 border-dashed border-white rounded-2xl p-12 flex flex-col items-center justify-center bg-white/30 mb-8 relative">
+        <Upload size={48} className="text-gray-400 mb-4" />
+        <h4 className="font-bold text-gray-700 mb-1">Drop images and videos here</h4>
+        <p className="text-[11px] text-gray-400 mb-6">Or click to browse files · Max 50MB per file</p>
+        <p className="text-[10px] text-gray-300 mb-6">Supported formats: JPG, PNG, GIF, MP4, MOV, AVI, WebM</p>
+
+
+        <input
+          type="file"
+          multiple
+          accept="image/*,video/*"
+          onChange={handleFileChange}
+          className="absolute inset-0 opacity-0 cursor-pointer"
+        />
+
+        <button
+          type="button"
+          className="flex items-center gap-2 px-6 py-2 rounded-xl border-2 border-[#0085CA] text-[#0085CA] font-bold text-xs hover:bg-blue-50 transition-colors z-10"
+        >
+          <Upload />
+          Choose Files
+        </button>
+      </div>
+
+
+      {formik.errors.files && formik.touched.files && (
+        <p className="text-red-500 text-xs mb-4">{formik.errors.files}</p>
+      )}
+
+
+      <div className="space-y-3">
+        {formik.values.files.map((file) => (
+          <div
+            key={file.id}
+            className="flex items-center justify-between bg-white/80 p-3 rounded-2xl border border-gray-50 shadow-sm"
+          >
+            <div className="flex items-center gap-4">
+              <img
+                src={file.thumbnail}
+                alt={file.name}
+                className="w-12 h-12 rounded-lg object-cover bg-gray-100"
+              />
+              <div>
+                <p className="text-sm font-bold text-gray-700">{file.name}</p>
+                <p className="text-[11px] text-gray-400">{file.size}</p>
               </div>
             </div>
+            <button
+              type="button"
+              onClick={() => removeFile(file.id)}
+              className="p-2 rounded-lg bg-orange-50 text-orange-500 hover:bg-orange-100 transition-colors"
+            >
+              <FiTrash2 size={18} />
+            </button>
           </div>
-        )}
-
-        {/* Footer Actions */}
-        
+        ))}
       </div>
-    </div>
+    </form>
   );
 }

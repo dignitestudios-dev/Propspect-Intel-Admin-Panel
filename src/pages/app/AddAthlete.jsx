@@ -11,6 +11,7 @@ import Education from "../../components/athlete/Education";
 import Achievements from "../../components/athlete/Achievements";
 import Media from "../../components/athlete/Media";
 import SuccessModal from "../../components/global/SuccessModal";
+import { useAppSelector } from "../../lib/store/hook";
 
 const TABS = [
   "Basic Info",
@@ -24,34 +25,12 @@ const TABS = [
 ];
 
 export default function AthleteFormManager() {
-  const [activeTab, setActiveTab] = useState("Basic Info");
+  const [activeTab, setActiveTab] = useState("Athlete");
   const [athleteCreated, setAthleteCreated] = useState(false);
+  const [submitCurrentForm, setSubmitCurrentForm] = useState(() => () => { });
+  const fromData = useAppSelector((s) => s.athleteForm.formData);
 
-  // Logic to determine which component to display
-  const renderCurrentForm = () => {
-    switch (activeTab) {
-      case "Basic Info":
-        return <BasicInfo />;
-      case "Family":
-        return <Family />;
-      case "Athlete":
-        return <Athlete />;
-      case "Overview":
-        return <Overview />;
-      case "Stats":
-        return <Stats />;
-      case "Education":
-        return <Education />;
-      case "Achievements":
-        return <Achievements />;
-      case "Media":
-        return <Media />;
-      default:
-        return <BasicInfo />;
-    }
-  };
-
-  // Helper for navigation buttons
+  console.log(fromData, "fromData==>")
   const handleNext = () => {
     const currentIndex = TABS.indexOf(activeTab);
     if (currentIndex < TABS.length - 1) {
@@ -67,6 +46,31 @@ export default function AthleteFormManager() {
       setActiveTab(TABS[currentIndex - 1]);
     }
   };
+
+  const renderCurrentForm = () => {
+    switch (activeTab) {
+      case "Basic Info":
+        return <BasicInfo onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
+      case "Family":
+        return <Family onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
+      case "Athlete":
+        return <Athlete onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
+      case "Overview":
+        return <Overview onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
+      case "Stats":
+        return <Stats onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
+      case "Education":
+        return <Education onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
+      case "Achievements":
+        return <Achievements onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
+      case "Media":
+        return <Media onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
+      default:
+        return <BasicInfo />;
+    }
+  };
+
+
 
   return (
     <div className="min-h-screen p-2 font-sans">
@@ -87,11 +91,10 @@ export default function AthleteFormManager() {
             <React.Fragment key={tab}>
               <button
                 onClick={() => setActiveTab(tab)}
-                className={`px-5 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
-                  activeTab === tab
-                    ? " text-black font-extrabold"
-                    : "text-gray-400 hover:text-gray-600"
-                }`}
+                className={`px-5 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab
+                  ? " text-black font-extrabold"
+                  : "text-gray-400 hover:text-gray-600"
+                  }`}
               >
                 {tab}
               </button>
@@ -116,19 +119,19 @@ export default function AthleteFormManager() {
 
         <button
           disabled={activeTab === "Basic Info"}
-          className={`px-10 py-3 rounded-xl font-semibold border border-gray-100 transition-colors ${
-            activeTab === "Basic Info"
-              ? "text-gray-200 bg-gray-50 cursor-not-allowed"
-              : "text-gray-400 bg-white hover:bg-gray-50"
-          }`}
+          className={`px-10 py-3 rounded-xl font-semibold border border-gray-100 transition-colors ${activeTab === "Basic Info"
+            ? "text-gray-200 bg-gray-50 cursor-not-allowed"
+            : "text-gray-400 bg-white hover:bg-gray-50"
+            }`}
           onClick={handlePrevious}
         >
           Previous
         </button>
 
         <button
+          type="submit"
           className="px-14 py-3 rounded-xl font-semibold text-white bg-[#2D2D2D] hover:bg-black transition-colors"
-          onClick={handleNext}
+          onClick={() => submitCurrentForm()}
         >
           {activeTab === "Media" ? "Create Athlete" : "Next"}
         </button>
