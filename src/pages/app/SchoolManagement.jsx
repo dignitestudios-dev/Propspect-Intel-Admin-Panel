@@ -56,6 +56,7 @@ export default function SchoolManagement() {
   const [isDelete, setIsDelete] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  
   return (
     <div className="w-full min-h-screen  p-4 font-sans">
       {/* Header Section */}
