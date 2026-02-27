@@ -13,7 +13,7 @@ export default function Family({ onNext, setSubmit }) {
     { id: 1, type: "Sister" },
     { id: 2, type: "Brother" },
   ]);
-  const familyInfo = useAppSelector((s) => s.athleteForm.formData.familyInfo);
+  const familyInfo = useAppSelector((s) => s.athleteForm.formData.family);
   const dispatch = useAppDispatch();
 
 
@@ -33,7 +33,7 @@ export default function Family({ onNext, setSubmit }) {
     },
     validationSchema: familyInfoSchema,
     onSubmit: (values) => {
-      dispatch(updateSection({ section: "familyInfo", data: values }));
+      dispatch(updateSection({ section: "family", data: values }));
       onNext()
     },
   });

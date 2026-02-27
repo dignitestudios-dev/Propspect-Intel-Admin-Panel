@@ -54,6 +54,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
     "Prospect",
     "Debutant",
   ];
+  console.log(formik.values.image, "formik.values.image")
 
   return (
     <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans">
@@ -61,9 +62,15 @@ export default function BasicInfo({ setSubmit, onNext }) {
         <div className="flex flex-col items-center gap-1 mb-4">
           <div className="relative">
             <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-2xl font-semibold text-gray-400 border border-gray-100 shadow-inner overflow-hidden">
-              {formik.values.image ? (
+              {formik.values.image instanceof File ? (
                 <img
                   src={URL.createObjectURL(formik.values.image)}
+                  alt="preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : typeof formik.values.image === "string" ? (
+                <img
+                  src={formik.values.image}
                   alt="preview"
                   className="w-full h-full object-cover"
                 />

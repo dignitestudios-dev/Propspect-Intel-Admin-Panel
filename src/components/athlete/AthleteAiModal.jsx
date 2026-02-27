@@ -1,8 +1,12 @@
 /* eslint-disable react/prop-types */
 
 import { useNavigate } from "react-router";
+import { useAppDispatch } from "../../lib/store/hook";
+import { setFormData, setMode } from "../../lib/store/feature/athleteFormSlice";
+import athleteData from "../../static/mockData";
 
 const AthleteAiModal = ({ onClick }) => {
+  const dispatch = useAppDispatch()
   const navigate = useNavigate(false);
   return (
     <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-0 z-50 flex items-center justify-center">
@@ -47,7 +51,12 @@ const AthleteAiModal = ({ onClick }) => {
           </button>
 
           <button
-            onClick={() => navigate("/app/add-athlete")}
+            onClick={() => {
+              dispatch(setFormData(athleteData));
+              dispatch(setMode("ai"));
+
+              navigate("/app/add-athlete")
+            }}
             className="w-full px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors"
           >
             Fill Form

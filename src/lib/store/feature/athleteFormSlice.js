@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  mode: "create",
   athleteId: null,
   formData: {
     basicInfo: {},
@@ -18,6 +19,10 @@ const athleteFormSlice = createSlice({
   name: "athleteForm",
   initialState,
   reducers: {
+    setMode: (state, action) => {
+      state.mode = action.payload; // create | edit | ai
+    },
+
     setFormData: (state, action) => {
       state.formData = action.payload;
     },
@@ -43,7 +48,7 @@ const athleteFormSlice = createSlice({
   },
 });
 
-export const { setFormData, updateSection, setAthleteId, resetForm } =
+export const { setFormData, updateSection, setAthleteId, resetForm, setMode } =
   athleteFormSlice.actions;
 
 export default athleteFormSlice.reducer;

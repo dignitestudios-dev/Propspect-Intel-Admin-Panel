@@ -29,7 +29,6 @@ export default function Media({ setSubmit, onNext }) {
     const newFiles = formik.values.files.filter((file) => file.id !== id);
     formik.setFieldValue("files", newFiles);
   };
-
   const addFile = (file) => {
     const newFiles = [
       ...formik.values.files,
@@ -38,6 +37,7 @@ export default function Media({ setSubmit, onNext }) {
         name: file.name,
         size: `${(file.size / 1024 / 1024).toFixed(2)} mb`,
         type: file.type.startsWith("video") ? "video" : "image",
+        file,             
         thumbnail: URL.createObjectURL(file),
       },
     ];

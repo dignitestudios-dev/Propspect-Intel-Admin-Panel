@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { FiArrowLeft, FiChevronRight } from "react-icons/fi";
-
-// Importing the individual form components
 import BasicInfo from "../../components/athlete/BasicInfo";
 import Family from "../../components/athlete/Family";
 import Athlete from "../../components/athlete/Athlete";
@@ -12,6 +10,8 @@ import Achievements from "../../components/athlete/Achievements";
 import Media from "../../components/athlete/Media";
 import SuccessModal from "../../components/global/SuccessModal";
 import { useAppSelector } from "../../lib/store/hook";
+import axiosinstance from "../../axios";
+import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 
 const TABS = [
   "Basic Info",
@@ -25,12 +25,13 @@ const TABS = [
 ];
 
 export default function AthleteFormManager() {
-  const [activeTab, setActiveTab] = useState("Athlete");
+  const [activeTab, setActiveTab] = useState("Basic Info");
   const [athleteCreated, setAthleteCreated] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [submitCurrentForm, setSubmitCurrentForm] = useState(() => () => { });
-  const fromData = useAppSelector((s) => s.athleteForm.formData);
+  const formData = useAppSelector((s) => s.athleteForm.formData);
 
-  console.log(fromData, "fromData==>")
+  console.log(formData, "formData==>");
   const handleNext = () => {
     const currentIndex = TABS.indexOf(activeTab);
     if (currentIndex < TABS.length - 1) {
@@ -46,7 +47,45 @@ export default function AthleteFormManager() {
       setActiveTab(TABS[currentIndex - 1]);
     }
   };
+  const handleCreate = () => {
+    const fd = new FormData();
 
+
+    if (formData.basicInfo.image instanceof File) {
+      fd.append("image", formData.basicInfo.image);
+    }
+    const basicInfoCopy = { ...formData.basicInfo };
+    delete basicInfoCopy.image;
+
+    formData.media.forEach((item) => {
+      if (item.file instanceof File) {
+        fd.append("media", item.file);
+      }
+    });
+
+
+    fd.append("basicInfo", JSON.stringify(basicInfoCopy));
+    fd.append("family", JSON.stringify(formData.family));
+    fd.append("athlete", JSON.stringify(formData.athlete));
+    fd.append("overview", JSON.stringify(formData.overview));
+    fd.append("stats", JSON.stringify(formData.stats));
+    fd.append("education", JSON.stringify(formData.education));
+    fd.append("achievements", JSON.stringify(formData.achievements));
+
+    try {
+      setLoading(true)
+      const response = axiosinstance.post("/api/athlete", fd);
+      if (response.status === 200) {
+        SuccessToast(response?.data?.message || "Athlete created successfully")
+        setAthleteCreated(true);
+      }
+    } catch (err) {
+      ErrorToast(err?.response?.data?.message || "Failed to create athlete");
+    } finally {
+      setLoading(false)
+    }
+
+  };
   const renderCurrentForm = () => {
     switch (activeTab) {
       case "Basic Info":
@@ -64,7 +103,7 @@ export default function AthleteFormManager() {
       case "Achievements":
         return <Achievements onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
       case "Media":
-        return <Media onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
+        return <Media onNext={handleCreate} setSubmit={setSubmitCurrentForm} />;
       default:
         return <BasicInfo />;
     }
@@ -129,11 +168,12 @@ export default function AthleteFormManager() {
         </button>
 
         <button
+          disabled={loading}
           type="submit"
           className="px-14 py-3 rounded-xl font-semibold text-white bg-[#2D2D2D] hover:bg-black transition-colors"
           onClick={() => submitCurrentForm()}
         >
-          {activeTab === "Media" ? "Create Athlete" : "Next"}
+          {loading ? "Creating..." : activeTab === "Media" ? "Create Athlete" : "Next"}
         </button>
       </div>
       {athleteCreated && (

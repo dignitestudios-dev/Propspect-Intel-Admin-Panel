@@ -13,9 +13,13 @@ import { useNavigate } from "react-router";
 import AddAthleteModal from "../../components/athlete/AddAthleteModal";
 import AthleteAiModal from "../../components/athlete/AthleteAiModal";
 import DeleteModal from "../../components/global/DeleteModal";
+import { useAppDispatch } from "../../lib/store/hook";
+import { setAthleteId, setFormData, setMode } from "../../lib/store/feature/athleteFormSlice";
+import athleteData from "../../static/mockData";
 
 export default function Atheletes() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [isAddAthlete, setIsAddAthlete] = useState(false);
   const [aiModal, setAiModal] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
@@ -95,11 +99,10 @@ export default function Atheletes() {
             {["All", "Active", "Archived"].map((tab, i) => (
               <button
                 key={i}
-                className={`px-12  py-1.5 rounded-md text-sm font-medium ${
-                  tab === "All"
-                    ? "bg-white text-black"
-                    : "text-gray-500 hover:bg-gray-50"
-                }`}
+                className={`px-12  py-1.5 rounded-md text-sm font-medium ${tab === "All"
+                  ? "bg-white text-black"
+                  : "text-gray-500 hover:bg-gray-50"
+                  }`}
               >
                 {tab}
               </button>
@@ -138,7 +141,7 @@ export default function Atheletes() {
                   <input
                     type="checkbox"
                     className="form-checkbox h-5 w-5 text-blue-600"
-                    // Add a handler to toggle select all if needed
+                  // Add a handler to toggle select all if needed
                   />
                 </th>
                 <th className="px-5 py-3">Athlete</th>
@@ -172,7 +175,7 @@ export default function Atheletes() {
                     <input
                       type="checkbox"
                       className="form-checkbox h-5 w-5 text-blue-600"
-                      // Add individual selection logic if necessary
+                    // Add individual selection logic if necessary
                     />
                   </td>
                   <td className="px-5 py-4 flex items-center gap-3">
@@ -188,11 +191,10 @@ export default function Atheletes() {
 
                   <td>
                     <span
-                      className={`px-3 py-3 text-xs rounded-md font-medium ${
-                        athlete.status === "Active"
-                          ? "bg-white text-green-600"
-                          : "bg-white text-orange-600"
-                      }`}
+                      className={`px-3 py-3 text-xs rounded-md font-medium ${athlete.status === "Active"
+                        ? "bg-white text-green-600"
+                        : "bg-white text-orange-600"
+                        }`}
                     >
                       ● {athlete.status}
                     </span>
@@ -201,12 +203,24 @@ export default function Atheletes() {
                   <td>
                     <div className="flex gap-4 text-lg text-text-black">
                       <FiEye
-                        onClick={() => navigate("/app/athlete-details")}
+                        onClick={() => {
+                          dispatch(setFormData(athleteData))
+                          dispatch(setMode("edit"))
+                          dispatch(setAthleteId(athlete.id))
+
+                          navigate("/app/athlete-details")
+                        }}
                         className="cursor-pointer hover:text-gray-700"
                       />
 
                       <FiDownload className="cursor-pointer hover:text-gray-700" />
-                      <FiEdit2 className="cursor-pointer hover:text-gray-700" />
+                      <FiEdit2 onClick={() => {
+                        dispatch(setFormData(athleteData))
+                        dispatch(setMode("edit"))
+                        dispatch(setAthleteId(athlete.id))
+
+                        navigate("/app/add-athlete")
+                      }} className="cursor-pointer hover:text-gray-700" />
 
                       <FiTrash2
                         onClick={() => setIsDelete(true)}

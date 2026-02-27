@@ -7,7 +7,7 @@ import { InputField } from "./InputField";
 
 export default function Athlete({ setSubmit, onNext }) {
 
-  const athleteInfo = useAppSelector((s) => s.athleteForm.formData.athleteInfo);
+  const athleteInfo = useAppSelector((s) => s.athleteForm.formData.athlete);
   const dispatch = useAppDispatch();
 
 
@@ -26,7 +26,7 @@ export default function Athlete({ setSubmit, onNext }) {
     },
     validationSchema: athleteInfoSchema,
     onSubmit: (values) => {
-      dispatch(updateSection({ section: "athleteInfo", data: values }));
+      dispatch(updateSection({ section: "athlete", data: values }));
       onNext()
     },
   });
@@ -34,6 +34,8 @@ export default function Athlete({ setSubmit, onNext }) {
   useEffect(() => {
     setSubmit(() => formik.submitForm);
   }, [formik.submitForm]);
+
+
   return (
     <div className="min-h-screen font-sans">
       <div className=" max-w-6xl mx-auto min-h-[600px] flex flex-col justify-between">

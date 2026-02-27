@@ -1,9 +1,12 @@
 /* eslint-disable react/prop-types */
 
 import { useNavigate } from "react-router";
+import { useAppDispatch } from "../../lib/store/hook";
+import { resetForm, setMode } from "../../lib/store/feature/athleteFormSlice";
 
 const AddAthleteModal = ({ onClick, handleAiModal }) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch()
   return (
     <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-0 z-50 flex items-center justify-center">
       <div className="bg-white rounded-[12px] shadow-md p-8 w-[515px]  ">
@@ -32,7 +35,11 @@ const AddAthleteModal = ({ onClick, handleAiModal }) => {
         </div>
         <div className="mt-4 flex gap-4 w-full h-[200px]">
           <button
-            onClick={() => navigate("/app/add-athlete")}
+            onClick={() => {
+              dispatch(resetForm())
+              dispatch(setMode('create')) 
+              navigate("/app/add-athlete")
+            }}
             className="flex flex-col items-center justify-center bg-[#EAEEF8] text-black py-2 px-4 rounded-lg font-semibold w-full transition-all duration-300 ease-in-out hover:bg-[#0085CA] hover:text-white"
           >
             <span className="mr-2">🏃‍♂️</span> Add Manually
