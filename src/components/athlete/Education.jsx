@@ -8,7 +8,6 @@ import { educationSchema } from "../../schema/athleteFormSchema/athleteSchema";
 export default function Education({ setSubmit, onNext }) {
   const dispatch = useAppDispatch();
 
-  // Get data from redux
   const educationData = useAppSelector(
     (s) => s.athleteForm.formData.education || []
   );
@@ -30,7 +29,7 @@ export default function Education({ setSubmit, onNext }) {
 
   useEffect(() => setSubmit(() => formik.submitForm), [formik.submitForm]);
 
-  // Add new institution
+
   const addInstitution = () => {
     const newInst = { id: Date.now(), name: "", startYear: "", endYear: "", field: "", gpa: "" };
     const newArray = [...formik.values.institutions, newInst];
@@ -38,7 +37,7 @@ export default function Education({ setSubmit, onNext }) {
     dispatch(updateSection({ section: "education", data: newArray }));
   };
 
-  // Remove institution
+
   const removeInstitution = (index) => {
     if (formik.values.institutions.length <= 1) return;
     const newArray = formik.values.institutions.filter((_, i) => i !== index);
@@ -46,7 +45,7 @@ export default function Education({ setSubmit, onNext }) {
     dispatch(updateSection({ section: "education", data: newArray }));
   };
 
-  // Update field manually
+
   const updateField = (index, field, value) => {
     const newArray = [...formik.values.institutions];
     newArray[index][field] = value;

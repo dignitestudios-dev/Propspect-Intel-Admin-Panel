@@ -3,7 +3,8 @@
 import { useNavigate } from "react-router";
 import { useAppDispatch } from "../../lib/store/hook";
 import { setFormData, setMode } from "../../lib/store/feature/athleteFormSlice";
-import athleteData from "../../static/mockData";
+import { athleteData } from "../../static/mockData";
+
 
 const AthleteAiModal = ({ onClick }) => {
   const dispatch = useAppDispatch()

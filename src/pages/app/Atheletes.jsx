@@ -15,7 +15,8 @@ import AthleteAiModal from "../../components/athlete/AthleteAiModal";
 import DeleteModal from "../../components/global/DeleteModal";
 import { useAppDispatch } from "../../lib/store/hook";
 import { setAthleteId, setFormData, setMode } from "../../lib/store/feature/athleteFormSlice";
-import athleteData from "../../static/mockData";
+import { athleteData, mockAtheleTableData } from "../../static/mockData";
+
 
 export default function Atheletes() {
   const navigate = useNavigate();
@@ -37,10 +38,6 @@ export default function Atheletes() {
                 Athlete Management
               </span>
             </div>
-
-            {/* <h1 className="text-xl font-semibold text-gray-900 mt-1">
-            Athlete Management
-          </h1> */}
 
             <p className="text-sm px-9 text-gray-500">
               Manage your application users
@@ -154,22 +151,7 @@ export default function Atheletes() {
             </thead>
 
             <tbody>
-              {[
-                {
-                  name: "Marcus Johnson",
-                  position: "Point Guard",
-                  age: 23,
-                  interests: 3,
-                  status: "Active",
-                },
-                {
-                  name: "Liam Smith",
-                  position: "Small Forward",
-                  age: 25,
-                  interests: 5,
-                  status: "Archived",
-                },
-              ].map((athlete, i) => (
+              {mockAtheleTableData?.map((athlete, i) => (
                 <tr key={i} className="border-b last:border-none">
                   <td className="px-5 py-4">
                     <input
@@ -179,15 +161,18 @@ export default function Atheletes() {
                     />
                   </td>
                   <td className="px-5 py-4 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-gray-200" />
+
+                    <div>
+                      <img src={athlete.image} alt={athlete.name} className="w-9 h-9 rounded-full object-cover" />
+                    </div>
                     <span className="font-medium text-gray-800">
                       {athlete.name}
                     </span>
                   </td>
 
                   <td>{athlete.position}</td>
-                  <td>{athlete.age}</td>
-                  <td>{athlete.interests}</td>
+                  <td>{athlete.age || "--------"}</td>
+                  <td>{athlete.interests || "--------"}</td>
 
                   <td>
                     <span
@@ -196,7 +181,7 @@ export default function Atheletes() {
                         : "bg-white text-orange-600"
                         }`}
                     >
-                      ● {athlete.status}
+                      ● {athlete.status || "--------"}
                     </span>
                   </td>
 
@@ -204,11 +189,7 @@ export default function Atheletes() {
                     <div className="flex gap-4 text-lg text-text-black">
                       <FiEye
                         onClick={() => {
-                          dispatch(setFormData(athleteData))
-                          dispatch(setMode("edit"))
-                          dispatch(setAthleteId(athlete.id))
-
-                          navigate("/app/athlete-details")
+                          navigate(`/app/athlete-details/${athlete.id}`)
                         }}
                         className="cursor-pointer hover:text-gray-700"
                       />

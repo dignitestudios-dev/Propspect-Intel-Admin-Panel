@@ -25,4 +25,20 @@ export const addUserSchema = Yup.object({
   status: Yup.string()
     .oneOf(["Active", "Inactive"], "Invalid status")
     .required("Status is required"),
+
+  profileImage: Yup.mixed()
+    .required("Profile image is required")
+    .test(
+      "fileSize",
+      "Image must be less than 2MB",
+      (value) => !value || (value && value.size <= 2097152)
+    )
+    .test(
+      "fileType",
+      "Unsupported file format",
+      (value) =>
+        !value ||
+        (value &&
+          ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
+    ),
 });

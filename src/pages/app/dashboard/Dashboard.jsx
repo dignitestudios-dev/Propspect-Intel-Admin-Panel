@@ -20,8 +20,6 @@ import CreatePushNotificationModal from "../../../components/app/Notification/Cr
 import AddAthleteModal from "../../../components/athlete/AddAthleteModal";
 import AthleteAiModal from "../../../components/athlete/AthleteAiModal";
 import { useAppDispatch } from "../../../lib/store/hook";
-import { setFormData, setMode } from "../../../lib/store/feature/athleteFormSlice";
-import athleteData from "../../../static/mockData";
 
 
 

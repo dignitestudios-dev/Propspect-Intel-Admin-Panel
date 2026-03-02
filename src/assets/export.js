@@ -17,6 +17,11 @@ import eye from "./eyeIcon.png";
 import sms from "./smsIcon.png";
 
 import athlete from "./athlete.png";
+import athlete1 from "./athletePro1.png";
+import athlete2 from "./athletePro2.png";
+import athlete3 from "./athletePro3.png";
+import athlete4 from "./athletePro4.png";
+import athlete5 from "./athletePro5.png";
 import prospectLogo from "./ProspectLogo.png";
 // export {
 //     FILENAME(PASCALCASE)
@@ -36,4 +41,9 @@ export {
   sms,
   athlete,
   prospectLogo,
+  athlete1,
+  athlete2,
+  athlete3,
+  athlete4,
+  athlete5
 };
