@@ -3,6 +3,7 @@ import { useState } from "react";
 import { sidebarData } from "../../static/Sidebar"; // Import the sidebar data
 import { LogOut } from "lucide-react"; // Import logout icon
 import { prospectLogo } from "../../assets/export"; // Import your logo
+import Cookies from "js-cookie"; // Import js-cookie for cookie management
 
 const DummySidebar = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const DummySidebar = () => {
 
     localStorage.clear();
     sessionStorage.clear();
+    Cookies.remove("adminToken");
     navigate("/auth/login");
   };
 

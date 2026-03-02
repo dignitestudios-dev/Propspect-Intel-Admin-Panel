@@ -6,8 +6,8 @@ import { NavLink, useNavigate } from "react-router";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Logo } from "../../assets/export";
 import axiosinstance from "../../axios";
-import Loader from "../../components/global/Loader";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -20,20 +20,23 @@ const Login = () => {
       validationSchema: signInSchema,
       onSubmit: async (values) => {
         setLoading(true);
-        try {
-          const response = await axiosinstance.post("/auth/login", {
-            email: values.email,
-            password: values.password,
-          });
-          if (response.status === 200) {
-            SuccessToast(response.data?.message || "Login Successful");
-            navigate("/app/dashboard");
-          }
-        } catch (error) {
-          ErrorToast(error?.response?.data?.message || "Login failed. Try again.");
-        } finally {
-          setLoading(false);
-        }
+        Cookies.set("adminToken", "dummyToken123", { expires: 7 });
+        SuccessToast("Login Successful");
+        navigate("/app/dashboard");
+        // try {
+        //   const response = await axiosinstance.post("/auth/login", {
+        //     email: values.email,
+        //     password: values.password,
+        //   });
+        //   if (response.status === 200) {
+        //     SuccessToast(response.data?.message || "Login Successful");
+        //     navigate("/app/dashboard");
+        //   }
+        // } catch (error) {
+        //   ErrorToast(error?.response?.data?.message || "Login failed. Try again.");
+        // } finally {
+        //   setLoading(false);
+        // }
       },
     });
 
@@ -42,16 +45,13 @@ const Login = () => {
 
     <div className="relative w-full max-w-lg mx-4 rounded-2xl overflow-hidden shadow-2xl bg-black/70 backdrop-blur-md border border-white/20 p-8 md:p-10 lg:p-4">
 
-      {/* Logo + Title */}
       <div className="flex flex-col items-center text-center mb-6">
         <img src={Logo} alt="logo" className="w-28 h-28 md:w-32 md:h-32 object-contain mb-4" />
         <h1 className="text-2xl md:text-3xl font-extrabold text-white drop-shadow-md">Admin Panel</h1>
         <p className="mt-2 text-white/80 text-sm md:text-base">Manage Prospect Intel website. Admin Portal</p>
       </div>
 
-      {/* Form */}
       <form className="w-full space-y-4" onSubmit={handleSubmit}>
-        {/* Email */}
         <div className="flex flex-col">
           <label className="text-white text-sm md:text-base font-light mb-1">Email</label>
           <input
@@ -70,8 +70,6 @@ const Login = () => {
           )}
         </div>
 
-        {/* Password */}
-        {/* Password */}
         <div className="flex flex-col">
           <label className="text-white text-sm md:text-base font-light mb-1">Password</label>
           <div className="relative w-full">
@@ -86,7 +84,6 @@ const Login = () => {
         ${errors.password && touched.password ? "border-red-500" : "border-white/20"} 
         focus:outline-none focus:ring-2 focus:ring-[#0b89c6] text-sm md:text-base`}
             />
-            {/* Eye button inside relative container */}
             <button
               type="button"
               onClick={() => setIsPasswordVisible((prev) => !prev)}
@@ -113,7 +110,7 @@ const Login = () => {
           disabled={loading}
           className="w-full flex items-center justify-center py-3 md:py-4 bg-[#0b89c6] rounded-md text-white font-semibold shadow-inner hover:bg-[#0972a0] transition-colors duration-200 disabled:opacity-70 text-sm md:text-base"
         >
-          {loading ? <Loader /> : "Log in"}
+          {loading ? "Loading..." : "Log in"}
         </button>
       </form>
     </div>

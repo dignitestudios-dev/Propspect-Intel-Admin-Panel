@@ -1,132 +1,60 @@
-// /* eslint-disable react/prop-types */
-// import { FiEdit2, FiX } from "react-icons/fi";
-
-// const AddUserModal = ({
-//   setIsAddUserModalOpen,
-//   userStatus,
-//   setUserStatus,
-//   onNext,
-// }) => {
-//   return (
-//     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm p-4">
-//       <div className="bg-white rounded-[24px] shadow-2xl w-full max-w-md relative border border-gray-100 overflow-y-auto max-h-[95vh]">
-//         {/* Close Button */}
-//         <button
-//           onClick={() => setIsAddUserModalOpen(false)}
-//           className="absolute right-4 top-4 p-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg text-gray-600 transition-colors border"
-//         >
-//           <FiX size={18} />
-//         </button>
-
-//         <div className="p-6">
-//           <h2 className="text-xl font-bold text-center text-gray-800 mb-4">
-//             Add User
-//           </h2>
-
-//           <div className="space-y-3">
-//             {/* Profile Image - Reduced Size */}
-//             <div className="flex justify-center mb-2">
-//               <div className="relative">
-//                 <div className="w-16 h-16 rounded-full bg-[#FDFBF7] flex items-center justify-center text-gray-400 text-xl font-medium border border-gray-100">
-//                   U
-//                 </div>
-//                 <button className="absolute bottom-0 right-0 p-1 bg-white border border-gray-200 rounded-full shadow-sm text-gray-600">
-//                   <FiEdit2 size={12} />
-//                 </button>
-//               </div>
-//             </div>
-
-//             {/* Input Fields - Compact Padding */}
-//             {[
-//               { label: "Username", value: "David schumate" },
-//               { label: "Email", value: "Davidschumate@gmail.com" },
-//               { label: "Password", value: "154chwcwb#$656" },
-//               { label: "Subscription Date", value: "12/09/2025" },
-//             ].map((field, idx) => (
-//               <div
-//                 key={idx}
-//                 className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50"
-//               >
-//                 <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
-//                   {field.label}
-//                 </label>
-//                 <input
-//                   type="text"
-//                   defaultValue={field.value}
-//                   className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
-//                 />
-//               </div>
-//             ))}
-
-//             {/* Status Toggle - Compact */}
-//             <div className="pt-1">
-//               <p className="text-xs font-bold text-gray-800 mb-2">Set Status</p>
-//               <div className="flex bg-[#FDFBF7] p-1 rounded-xl border border-gray-50">
-//                 <button
-//                   onClick={() => setUserStatus("Active")}
-//                   className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
-//                     userStatus === "Active"
-//                       ? "bg-white shadow-sm text-gray-800"
-//                       : "text-gray-400"
-//                   }`}
-//                 >
-//                   Active
-//                 </button>
-//                 <button
-//                   onClick={() => setUserStatus("Inactive")}
-//                   className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
-//                     userStatus === "Inactive"
-//                       ? "bg-white shadow-sm text-gray-800"
-//                       : "text-gray-400"
-//                   }`}
-//                 >
-//                   Inactive
-//                 </button>
-//               </div>
-//             </div>
-
-//             {/* Action Buttons - Reduced Height */}
-//             <div className="flex gap-3 pt-2">
-//               <button
-//                 onClick={onNext}
-//                 className="flex-1 bg-[#0085CA] text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors"
-//               >
-//                 Update
-//               </button>
-//               <button
-//                 onClick={() => setIsAddUserModalOpen(false)}
-//                 className="flex-1 bg-white border border-gray-200 text-gray-800 py-3 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors"
-//               >
-//                 Cancel
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AddUserModal;
-
-
-
-/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { FiEdit2, FiX } from "react-icons/fi";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useFormik } from "formik";
 import { addUserSchema } from "../../../schema/userSchema/userSchema";
 import { addUserInitialValues } from "../../../init/addUserInitialValues";
-import { axios } from "../../../axios";
-import { SuccessToast, ErrorToast } from "../../../components/global/Toaster"; // your toast utils
+import axiosinstance from "../../../axios";
+import { SuccessToast, ErrorToast } from "../../../components/global/Toaster";
 
-const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus,onNext }) => {
+const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext }) => {
   const [loading, setLoading] = useState(false);
+  const [profilePreview, setProfilePreview] = useState(null);
+
+  const formik = useFormik({
+    initialValues: addUserInitialValues,
+    validationSchema: addUserSchema,
+    onSubmit: async (values) => {
+      setLoading(true);
+      try {
+        // If profile image is selected, append it to FormData
+        const formData = new FormData();
+        Object.keys(values).forEach((key) => {
+          formData.append(key, values[key]);
+        });
+        if (values.profileImage) {
+          formData.append("profileImage", values.profileImage);
+        }
+
+        const response = await axiosinstance.post("/users", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        if (response.status === 200 || response.status === 201) {
+          SuccessToast(response.data?.message || "User added successfully");
+          setIsAddUserModalOpen(false);
+        }
+      } catch (error) {
+        ErrorToast(
+          error?.response?.data?.message || "Failed to add user. Try again."
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      formik.setFieldValue("profileImage", file);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm p-4">
       <div className="bg-white rounded-[24px] shadow-2xl w-full max-w-md relative border border-gray-100 overflow-y-auto max-h-[95vh]">
-        
+
         {/* Close Button */}
         <button
           onClick={() => setIsAddUserModalOpen(false)}
@@ -140,118 +68,153 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus,onNext 
             Add User
           </h2>
 
-          {/* Formik Form */}
-          <Formik
-            initialValues={addUserInitialValues} // ✅ imported initial values
-            validationSchema={addUserSchema}
-            onSubmit={async (values) => {
-              setLoading(true);
-              try {
-                const response = await axios.post("/users", values);
-                if (response.status === 200 || response.status === 201) {
-                  SuccessToast(response.data?.message || "User added successfully");
-                  setIsAddUserModalOpen(false);
-                }
-              } catch (error) {
-                ErrorToast(
-                  error?.response?.data?.message || "Failed to add user. Try again."
-                );
-              } finally {
-                setLoading(false);
-              }
-            }}
-          >
-            {({ values, setFieldValue, handleSubmit }) => (
-              <Form className="space-y-3">
+          <form onSubmit={formik.handleSubmit} className="space-y-3">
 
-                {/* Profile Image */}
-                <div className="flex justify-center mb-2">
-                  <div className="relative">
-                    <div className="w-16 h-16 rounded-full bg-[#FDFBF7] flex items-center justify-center text-gray-400 text-xl font-medium border border-gray-100">
-                      U
-                    </div>
-                    <button className="absolute bottom-0 right-0 p-1 bg-white border border-gray-200 rounded-full shadow-sm text-gray-600">
-                      <FiEdit2 size={12} />
-                    </button>
-                  </div>
+            {/* Profile Image */}
+            {/* Profile Image */}
+            <div className="flex justify-center mb-2">
+              <div className="relative">
+                <div className="w-16 h-16 rounded-full bg-[#FDFBF7] flex items-center justify-center text-gray-400 text-xl font-medium border border-gray-100 overflow-hidden">
+                  {profilePreview ? (
+                    <img src={profilePreview} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    "U"
+                  )}
                 </div>
-
-                {/* Input Fields */}
-                {[
-                  { name: "username", label: "Username" },
-                  { name: "email", label: "Email" },
-                  { name: "password", label: "Password" },
-                  { name: "subscriptionDate", label: "Subscription Date" },
-                ].map((field, idx) => (
-                  <div key={idx} className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
-                    <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
-                      {field.label}
-                    </label>
-                    <Field
-                      type={field.name === "password" ? "password" : "text"}
-                      name={field.name}
-                      className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
-                    />
-                    <ErrorMessage
-                      name={field.name}
-                      component="div"
-                      className="text-red-500 text-[10px] mt-1"
-                    />
-                  </div>
-                ))}
-
-                {/* Status Toggle */}
-                <div className="pt-1">
-                  <p className="text-xs font-bold text-gray-800 mb-2">Set Status</p>
-                  <div className="flex bg-[#FDFBF7] p-1 rounded-xl border border-gray-50">
-                    {["Active", "Inactive"].map((status) => (
-                      <button
-                        key={status}
-                        type="button"
-                        onClick={() => {
-                          setUserStatus(status);
-                          setFieldValue("status", status);
-                        }}
-                        className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
-                          values.status === status
-                            ? "bg-white shadow-sm text-gray-800"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        {status}
-                      </button>
-                    ))}
-                  </div>
-                  <ErrorMessage
-                    name="status"
-                    component="div"
-                    className="text-red-500 text-[10px] mt-1"
+                <label className="absolute bottom-0 right-0 p-1 bg-white border border-gray-200 rounded-full shadow-sm text-gray-600 cursor-pointer">
+                  <FiEdit2 size={12} />
+                  <input
+                    type="file"
+                    accept="image/png, image/jpeg, image/jpg"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    onChange={handleFileChange}
                   />
-                </div>
+                </label>
+              </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-3 pt-2">
-                  <button
-                    type="submit"
-                    disabled={loading}
-                                    onClick={onNext}
-
-                    className="flex-1 bg-[#0085CA] text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors"
-                  >
-                    {loading ? "Adding..." : "Update"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsAddUserModalOpen(false)}
-                    className="flex-1 bg-white border border-gray-200 text-gray-800 py-3 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-
-              </Form>
+            </div>
+            {formik.errors.profileImage && (
+              <div className="text-red-500 text-[10px] mt-1 text-center">{formik.errors.profileImage}</div>
             )}
-          </Formik>
+
+            {/* Username */}
+            <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
+              <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
+                Username
+              </label>
+              <input
+                type="text"
+                name="username"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.username}
+                className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
+              />
+              {formik.touched.username && formik.errors.username && (
+                <div className="text-red-500 text-[10px] mt-1">{formik.errors.username}</div>
+              )}
+            </div>
+
+            {/* Email */}
+            <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
+              <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.email}
+                className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
+              />
+              {formik.touched.email && formik.errors.email && (
+                <div className="text-red-500 text-[10px] mt-1">{formik.errors.email}</div>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
+              <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.password}
+                className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
+              />
+              {formik.touched.password && formik.errors.password && (
+                <div className="text-red-500 text-[10px] mt-1">{formik.errors.password}</div>
+              )}
+            </div>
+
+            {/* Subscription Date */}
+            <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
+              <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
+                Subscription Date
+              </label>
+              <input
+                type="date"
+                name="subscriptionDate"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.subscriptionDate}
+                className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
+              />
+              {formik.touched.subscriptionDate && formik.errors.subscriptionDate && (
+                <div className="text-red-500 text-[10px] mt-1">{formik.errors.subscriptionDate}</div>
+              )}
+            </div>
+
+            {/* Status Toggle */}
+            <div className="pt-1">
+              <p className="text-xs font-bold text-gray-800 mb-2">Set Status</p>
+              <div className="flex bg-[#FDFBF7] p-1 rounded-xl border border-gray-50">
+                {["Active", "Inactive"].map((status) => (
+                  <button
+                    key={status}
+                    type="button"
+                    onClick={() => {
+                      setUserStatus(status);
+                      formik.setFieldValue("status", status);
+                    }}
+                    className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${formik.values.status === status
+                      ? "bg-white shadow-sm text-gray-800"
+                      : "text-gray-400"
+                      }`}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+              {formik.touched.status && formik.errors.status && (
+                <div className="text-red-500 text-[10px] mt-1">{formik.errors.status}</div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                onClick={onNext}
+                className="flex-1 bg-[#0085CA] text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors"
+              >
+                {loading ? "Adding..." : "Update"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsAddUserModalOpen(false)}
+                className="flex-1 bg-white border border-gray-200 text-gray-800 py-3 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+
+          </form>
         </div>
       </div>
     </div>
