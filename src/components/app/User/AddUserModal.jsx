@@ -117,7 +117,7 @@ import { FiEdit2, FiX } from "react-icons/fi";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { addUserSchema } from "../../../schema/userSchema/userSchema";
 import { addUserInitialValues } from "../../../init/addUserInitialValues";
-import { axios } from "../../../axios";
+import  axios  from "../../../axios";
 import { SuccessToast, ErrorToast } from "../../../components/global/Toaster"; // your toast utils
 
 const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus,onNext }) => {
