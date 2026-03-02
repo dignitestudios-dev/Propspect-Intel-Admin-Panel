@@ -51,8 +51,17 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
     }
   };
 
+  const initialValues = {
+    username: "",
+    email: "",
+    password: "",
+    subscriptionDate: "",
+    status: "",
+    profileImage: null,
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm p-4">
+    <div className="fixed -inset-4 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm p-4">
       <div className="bg-white rounded-[24px] shadow-2xl w-full max-w-md relative border border-gray-100 overflow-y-auto max-h-[95vh]">
 
         {/* Close Button */}
