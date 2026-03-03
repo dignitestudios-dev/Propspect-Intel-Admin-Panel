@@ -6,13 +6,16 @@ import AppRouter from "./config/router/AppRouter.jsx";
 import "./index.css";
 import './App.css'
 import Loader from "./components/global/Loader.js";
+import ReactQueryProvider from "./lib/query/ReactQueryProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Suspense fallback={<Loader />}>
       <ReduxProvider>
-        <ToasterContainer />
-        <AppRouter />
+        <ReactQueryProvider>
+          <ToasterContainer />
+          <AppRouter />
+        </ReactQueryProvider>
       </ReduxProvider>
     </Suspense>
   </StrictMode>

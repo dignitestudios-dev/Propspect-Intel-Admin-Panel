@@ -20,6 +20,8 @@ import CreatePushNotificationModal from "../../../components/app/Notification/Cr
 import AddAthleteModal from "../../../components/athlete/AddAthleteModal";
 import AthleteAiModal from "../../../components/athlete/AthleteAiModal";
 import { useAppDispatch } from "../../../lib/store/hook";
+import { useQuery } from "@tanstack/react-query";
+import { getUsers } from "../../../lib/query/queryFn";
 
 
 
@@ -57,7 +59,11 @@ export default function Dashboard() {
   const popularfilters = ["7d", "1m", "3m", "6m", "1y"]; // all buttons
   const [requestSendModal, setRequestSendModal] = useState(false);
   const [isAddAthleteModalOpen, setIsAddAthleteModalOpen] = useState(false);
-
+  // const { data, isLoading, isError, error } = useQuery({
+  //   queryKey: ["users"],
+  //   queryFn: getUsers,
+  // });
+  // console.log(data, "data")
 
   return (
     <div className="w-full space-y-3 ">

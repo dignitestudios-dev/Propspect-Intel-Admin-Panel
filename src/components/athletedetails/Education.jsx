@@ -5,14 +5,14 @@ const Education = () => {
   return (
     <div className="border-2 border-white p-4 rounded-xl bg-white bg-opacity-30">
   <h1 className="p-2 pb-4 pt-0 font-bold flex items-center gap-2">
-      <GiGraduateCap size={24} className="text-black" /> {/* University hat icon */}
-      University of California
+      {/* <GiGraduateCap size={24} className="text-black" /> 
+      University of California */}
     </h1>                <div className="grid grid-cols-3 gap-6 ">
 
                     {[
-                        { label: "Field of study", value: "Computer Science" },
-                        { label: "Duration", value: "2018 - 2022" },
-                        { label: "Gpa", value: "3.7" },
+                        // { label: "Field of study", value: "Computer Science" },
+                        // { label: "Duration", value: "2018 - 2022" },
+                        // { label: "Gpa", value: "3.7" },
                        
                     ].map((item, i) => (
                         <div
