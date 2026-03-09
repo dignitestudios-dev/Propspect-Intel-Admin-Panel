@@ -8,8 +8,11 @@ import { Logo } from "../../assets/export";
 import axiosinstance from "../../axios";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 import Cookies from "js-cookie";
+import { useAppDispatch } from "../../lib/store/hook";
+import { login } from "../../lib/store/feature/authSlice";
 
 const Login = () => {
+  const dispatch = useAppDispatch();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -20,23 +23,30 @@ const Login = () => {
       validationSchema: signInSchema,
       onSubmit: async (values) => {
         setLoading(true);
-        Cookies.set("adminToken", "dummyToken123", { expires: 7 });
-        SuccessToast("Login Successful");
-        navigate("/app/dashboard");
-        // try {
-        //   const response = await axiosinstance.post("/auth/login", {
-        //     email: values.email,
-        //     password: values.password,
-        //   });
-        //   if (response.status === 200) {
-        //     SuccessToast(response.data?.message || "Login Successful");
-        //     navigate("/app/dashboard");
-        //   }
-        // } catch (error) {
-        //   ErrorToast(error?.response?.data?.message || "Login failed. Try again.");
-        // } finally {
-        //   setLoading(false);
-        // }
+        try {
+          const response = await axiosinstance.post("/user/login", {
+            email: values.email,
+            password: values.password,
+            role: 'Admin',
+          });
+          if (response.status === 200) {
+            const data = response?.data?.data;
+
+            dispatch(
+              login({
+                token: data?.token,
+                user: data?.user,
+              })
+            );
+            SuccessToast(response.data?.message || "Login Successful");
+
+            navigate("/app/dashboard");
+          }
+        } catch (error) {
+          ErrorToast(error?.response?.data?.message || "Login failed. Try again.");
+        } finally {
+          setLoading(false);
+        }
       },
     });
 

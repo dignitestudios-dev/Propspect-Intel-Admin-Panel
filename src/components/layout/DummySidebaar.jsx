@@ -1,25 +1,21 @@
-import { NavLink, useNavigate } from "react-router"; // Correct import for react-router-dom v6
+import { NavLink, useNavigate } from "react-router";
 import { useState } from "react";
-import { sidebarData } from "../../static/Sidebar"; // Import the sidebar data
-import { LogOut } from "lucide-react"; // Import logout icon
-import { prospectLogo } from "../../assets/export"; // Import your logo
-import Cookies from "js-cookie"; // Import js-cookie for cookie management
+import { sidebarData } from "../../static/Sidebar";
+import { LogOut } from "lucide-react";
+import { prospectLogo } from "../../assets/export";
+import { useAppDispatch } from "../../lib/store/hook";
+import { logout } from "../../lib/store/feature/authSlice";
 
 const DummySidebar = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // Handle logout function
-  const handleLogout = () => {
-    document.cookie.split(";").forEach((c) => {
-      document.cookie = c
-        .replace(/^ +/, "")
-        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-    });
 
-    localStorage.clear();
-    sessionStorage.clear();
-    Cookies.remove("adminToken");
+  const handleLogout = () => {
+    dispatch(logout());
+    setShowLogoutModal(false);
     navigate("/auth/login");
   };
 
@@ -42,10 +38,9 @@ const DummySidebar = () => {
             to={sidebar.link}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-full text-sm font-medium transition-all
-              ${
-                isActive
-                  ? "bg-white text-[#1E88E5] shadow-sm"
-                  : "text-[#1F2937] hover:bg-white/60"
+              ${isActive
+                ? "bg-white text-[#1E88E5] shadow-sm"
+                : "text-[#1F2937] hover:bg-white/60"
               }`
             }
           >

@@ -18,13 +18,14 @@ const RestPassword = () => {
       onSubmit: async (values) => {
         setLoading(true);
         try {
-          const response = await axiosinstance.post("/auth/reset-password", {
+          const response = await axiosinstance.post("/user/otp/request", {
             email: values.email,
           });
 
           if (response.status === 200) {
             SuccessToast(response.data?.message || "Recovery link sent!");
             navigate("/auth/otp-verification");
+            localStorage.setItem('email', values.email)
           }
         } catch (error) {
           ErrorToast(error?.response?.data?.message || "Something went wrong!");

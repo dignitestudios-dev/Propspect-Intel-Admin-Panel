@@ -7,8 +7,8 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Logo } from "../../assets/export";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 import axiosinstance from "../../axios";
+import Cookies from 'js-cookie'
 
-// Validation schema
 const changePasswordSchema = Yup.object({
   password: Yup.string()
     .required("Password is required")
@@ -34,12 +34,16 @@ const ChangePassword = () => {
       onSubmit: async (values) => {
         setLoading(true);
         try {
-          // const response = await axiosinstance.post("/auth/change-password", {
-          //   password: values.password,
-          //   confirmPassword: values.confirmPassword,
-          // });
-          SuccessToast(response.data?.message || "Password changed successfully!");
-          navigate("/auth/login");
+          const response = await axiosinstance.put("/user/change/password", {
+            password: values.password,
+          });
+          if (response?.status === 200) {
+            SuccessToast(response.data?.message || "Password changed successfully!");
+            navigate("/auth/login");
+            Cookies.remove('adminToken')
+            localStorage.removeItem('email')
+
+          }
         } catch (error) {
           ErrorToast(error?.response?.data?.message || "Password change failed. Try again.");
         } finally {
@@ -52,7 +56,7 @@ const ChangePassword = () => {
 
     <div className="relative w-full max-w-lg mx-4 rounded-2xl overflow-hidden shadow-2xl bg-black/70 backdrop-blur-md border border-white/20 p-8 md:p-10 lg:p-4">
 
-      {/* Logo & Heading */}
+
       <div className="flex flex-col items-center text-center mb-6">
         <img src={Logo} alt="logo" className="w-28 h-28 md:w-32 md:h-32 object-contain mb-4" />
         <h1 className="text-2xl md:text-3xl font-extrabold text-white drop-shadow-md">
@@ -65,7 +69,7 @@ const ChangePassword = () => {
 
       <form className="w-full space-y-6" onSubmit={handleSubmit}>
 
-        {/* New Password */}
+
         <div className="relative">
           <label className="text-white text-sm md:text-base font-light mb-1">Password</label>
           <input
@@ -90,7 +94,7 @@ const ChangePassword = () => {
           )}
         </div>
 
-        {/* Confirm Password */}
+
         <div className="relative">
           <label className="text-white text-sm md:text-base font-light mb-1">Confirm Password</label>
           <input
@@ -115,7 +119,7 @@ const ChangePassword = () => {
           )}
         </div>
 
-        {/* Submit Button */}
+
         <button
           type="submit"
           disabled={loading}

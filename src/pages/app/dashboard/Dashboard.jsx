@@ -19,7 +19,7 @@ import AddUserModal from "../../../components/app/User/AddUserModal";
 import CreatePushNotificationModal from "../../../components/app/Notification/CreatePushNotificationModal";
 import AddAthleteModal from "../../../components/athlete/AddAthleteModal";
 import AthleteAiModal from "../../../components/athlete/AthleteAiModal";
-import { useAppDispatch } from "../../../lib/store/hook";
+import { useAppDispatch, useAuth } from "../../../lib/store/hook";
 import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "../../../lib/query/queryFn";
 
@@ -45,6 +45,7 @@ const users = [
 export default function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { user } = useAuth();
   const [active, setActive] = useState("All");
   const [popularactive, setpopularActive] = useState("All");
   const [showPassword, setShowPassword] = useState(
@@ -62,20 +63,22 @@ export default function Dashboard() {
   // const { data, isLoading, isError, error } = useQuery({
   //   queryKey: ["users"],
   //   queryFn: getUsers,
+  //   staleTime: 1000 * 60 * 5,
+
   // });
-  // console.log(data, "data")
+  // console.log(data, "data")  
 
   return (
     <div className="w-full space-y-3 ">
-      {/* Header */}
-      <Header />
 
-      {/* Stats */}
+      <Header user={user} />
+
+
       <State />
 
-      {/* Middle Section */}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
-        {/* Quick Actions */}
+
         <div className="">
           <div className="bg-[#FFFFFF4D] border-2 border-white rounded-xl p-5 shadow-sm h-[160px]">
             <div className="flex items-center">
@@ -156,7 +159,7 @@ export default function Dashboard() {
         </div>
 
         <div className="bg-[#FFFFFF4D] border-2 border-white rounded-xl p-5 shadow-sm w-full">
-          {/* Header */}
+
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
               <div className="border-8 border-l h-[28px] border-[#0085CA] mr-2 rounded-sm"></div>
@@ -182,7 +185,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* List */}
+
           {[
             { status: "Pending", color: "orange" },
             { status: "Contacted", color: "red" },
@@ -193,7 +196,7 @@ export default function Dashboard() {
               key={index}
               className="flex items-center justify-between py-4 border-b last:border-none"
             >
-              {/* Athlete */}
+
               <div className="flex items-center gap-3 w-[30%]">
                 <div className="w-9 h-9 rounded-full bg-gray-200" />
                 <div>
@@ -204,7 +207,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Actions */}
+
               <div className="flex items-center text-gray-400  justify-center">
                 <div className="w-auto h-auto ">
                   <img
@@ -215,7 +218,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Requested By */}
+
               <div className="flex items-center gap-2 w-[30%]">
                 <div className="w-7 h-7 rounded-full bg-gray-200" />
                 <p className="text-xs text-gray-500">
@@ -224,7 +227,7 @@ export default function Dashboard() {
                 </p>
               </div>
 
-              {/* Status */}
+
               <span
                 className={`text-xs w-[70px] px-3 py-3 rounded-lg font-medium
             ${item.color === "orange" && "bg-white text-orange-600"}
@@ -239,7 +242,7 @@ export default function Dashboard() {
         </div>
       </div>
       <div className="bg-[#FFFFFF4D] border-2 border-white rounded-xl p-5 shadow-sm w-full mt-6">
-        {/* Header */}
+
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
             <div className="border-8 border-l h-[28px] border-[#0085CA] mr-2 rounded-sm"></div>
@@ -258,7 +261,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Table */}
+
         <div className="overflow-x-auto border rounded-xl mt-4">
           <h1 className="p-4 pb-0 font-bold">All Users</h1>
           <table className="w-full text-sm">

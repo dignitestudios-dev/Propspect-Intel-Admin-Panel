@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-const DeleteModal = ({ onClick, onNext, title, message }) => {
+const DeleteModal = ({ onClick, onNext, title, message,loading }) => {
   return (
     <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-0 z-50 flex items-center justify-center">
       <div className="bg-white rounded-[12px] shadow-md px-4 py-4 w-[515px]">
@@ -21,7 +21,7 @@ const DeleteModal = ({ onClick, onNext, title, message }) => {
             onClick={onNext}
             className="w-full px-5 py-2.5 bg-red-600 text-white rounded-lg  hover:bg-red-700 transition-colors"
           >
-            Delete
+            {loading ? "Deleting..." : "Delete"}
           </button>
         </div>
       </div>

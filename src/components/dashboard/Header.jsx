@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 
-export default function Header() {
+export default function Header({ user }) {
+
   const [active, setActive] = useState("7d");
-  const filters = ["7d", "1m", "3m", "6m", "1y"]; // all buttons
+  const filters = ["7d", "1m", "3m", "6m", "1y"];
 
   return (
     <div className="w-full bg-[#FFFFFF4D] overflow-auto rounded-xl p-3 flex items-center justify-between shadow-sm border-2 border-[#FFFFFF] ">
       {/* Left Text */}
       <div className="flex items-center gap-2 text-lg font-semibold text-gray-800">
-        <span>Hello Maya!</span>
+        <span>Hello {user?.role}!</span>
         <span className="text-2xl">🌞</span>
       </div>
 

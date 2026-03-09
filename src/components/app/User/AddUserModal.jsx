@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiEdit2, FiX } from "react-icons/fi";
 import { useFormik } from "formik";
 import { addUserSchema } from "../../../schema/userSchema/userSchema";
@@ -6,65 +6,99 @@ import { addUserInitialValues } from "../../../init/addUserInitialValues";
 import axiosinstance from "../../../axios";
 import { SuccessToast, ErrorToast } from "../../../components/global/Toaster";
 
-const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext }) => {
+const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext, editUser,
+  setEditUser, refetch, setIsSuccess, setSuccessType }) => {
   const [loading, setLoading] = useState(false);
   const [profilePreview, setProfilePreview] = useState(null);
 
   const formik = useFormik({
-    initialValues: addUserInitialValues,
-    validationSchema: addUserSchema,
+    initialValues: editUser
+      ? {
+        username: editUser.name || "",
+        email: editUser.email || "",
+        password: "",
+        subscriptionDate: editUser.subscriptionEndDate?.slice(0, 10) || "",
+        status: editUser.isActive ? "Active" : "Inactive",
+        subscription: editUser.subscriptionPlan || "",
+        profileImage: null
+      }
+      : addUserInitialValues,
+    validationSchema: addUserSchema(!!editUser),
+    enableReinitialize: true,
     onSubmit: async (values) => {
       setLoading(true);
+
       try {
-        // If profile image is selected, append it to FormData
         const formData = new FormData();
-        Object.keys(values).forEach((key) => {
-          formData.append(key, values[key]);
-        });
+
+        formData.append("name", values.username);
+        formData.append("email", values.email);
+
+        if (values.password) {
+          formData.append("password", values.password);
+        }
+
+        formData.append("subscriptionEndDate", values.subscriptionDate);
+        formData.append("subscriptionPlan", values.subscription);
+        formData.append("isActive", values.status === "Active");
+
         if (values.profileImage) {
-          formData.append("profileImage", values.profileImage);
+          formData.append("profilePicture", values.profileImage);
         }
 
-        const response = await axiosinstance.post("/users", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        let response;
 
-        if (response.status === 200 || response.status === 201) {
-          SuccessToast(response.data?.message || "User added successfully");
+        if (editUser) {
+          response = await axiosinstance.put(`/user/${editUser._id}`, formData);
+        } else {
+          response = await axiosinstance.post("/user", formData);
+        }
+
+        if (response?.status === 201 || response?.status === 200) {
+
+          SuccessToast(
+            response.data?.message ||
+            (editUser ? "User updated successfully" : "User added successfully")
+          );
+          setSuccessType(editUser ? "updated" : "added")
+
           setIsAddUserModalOpen(false);
+          setEditUser(null);
+          refetch();
+          setIsSuccess(true)
         }
+
       } catch (error) {
         ErrorToast(
-          error?.response?.data?.message || "Failed to add user. Try again."
+          error?.response?.data?.message || "Something went wrong"
         );
       } finally {
         setLoading(false);
       }
-    },
+    }
   });
 
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+
     if (file) {
       formik.setFieldValue("profileImage", file);
+      const previewUrl = URL.createObjectURL(file);
+      setProfilePreview(previewUrl);
     }
   };
 
-  const initialValues = {
-    username: "",
-    email: "",
-    password: "",
-    subscriptionDate: "",
-    status: "",
-    profileImage: null,
-  };
-
+  useEffect(() => {
+    if (editUser?.profilePicture) {
+      setProfilePreview(editUser.profilePicture);
+    }
+  }, [editUser]);
   return (
     <div className="fixed -inset-4 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm p-4">
       <div className="bg-white rounded-[24px] shadow-2xl w-full max-w-md relative border border-gray-100 overflow-y-auto max-h-[95vh]">
 
-        {/* Close Button */}
+
         <button
           onClick={() => setIsAddUserModalOpen(false)}
           className="absolute right-4 top-4 p-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg text-gray-600 transition-colors border"
@@ -74,13 +108,13 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
 
         <div className="p-6">
           <h2 className="text-xl font-bold text-center text-gray-800 mb-4">
-            Add User
+            {editUser ? "Edit User" : "Add User"}
           </h2>
 
           <form onSubmit={formik.handleSubmit} className="space-y-3">
 
-            {/* Profile Image */}
-            {/* Profile Image */}
+
+
             <div className="flex justify-center mb-2">
               <div className="relative">
                 <div className="w-16 h-16 rounded-full bg-[#FDFBF7] flex items-center justify-center text-gray-400 text-xl font-medium border border-gray-100 overflow-hidden">
@@ -106,7 +140,7 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
               <div className="text-red-500 text-[10px] mt-1 text-center">{formik.errors.profileImage}</div>
             )}
 
-            {/* Username */}
+
             <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
               <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
                 Username
@@ -124,8 +158,8 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
               )}
             </div>
 
-            {/* Email */}
-            <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
+
+            <div className={` ${!!editUser ? 'cursor-not-allowed bg-gray-200' : 'bg-[#FDFBF7] '} px-4 py-2 rounded-xl border border-gray-50`}>
               <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
                 Email
               </label>
@@ -135,14 +169,15 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.email}
-                className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
+                disabled={!!editUser}
+                className={`w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm `}
               />
               {formik.touched.email && formik.errors.email && (
                 <div className="text-red-500 text-[10px] mt-1">{formik.errors.email}</div>
               )}
             </div>
 
-            {/* Password */}
+
             <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
               <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
                 Password
@@ -159,8 +194,32 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
                 <div className="text-red-500 text-[10px] mt-1">{formik.errors.password}</div>
               )}
             </div>
+            <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
+              <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
+                Subscription Plan
+              </label>
 
-            {/* Subscription Date */}
+              <select
+                name="subscription"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.subscription}
+                className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
+              >
+                <option value="">Select Plan</option>
+                <option value="Basic">Basic</option>
+                <option value="Premium">Premium</option>
+                <option value="Pro">Pro</option>
+              </select>
+
+              {formik.touched.subscription && formik.errors.subscription && (
+                <div className="text-red-500 text-[10px] mt-1">
+                  {formik.errors.subscription}
+                </div>
+              )}
+            </div>
+
+
             <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
               <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
                 Subscription Date
@@ -178,7 +237,7 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
               )}
             </div>
 
-            {/* Status Toggle */}
+
             <div className="pt-1">
               <p className="text-xs font-bold text-gray-800 mb-2">Set Status</p>
               <div className="flex bg-[#FDFBF7] p-1 rounded-xl border border-gray-50">
@@ -204,15 +263,18 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
               )}
             </div>
 
-            {/* Action Buttons */}
+
             <div className="flex gap-3 pt-2">
               <button
                 type="submit"
                 disabled={loading}
-                onClick={onNext}
                 className="flex-1 bg-[#0085CA] text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors"
               >
-                {loading ? "Adding..." : "Update"}
+                {loading
+                  ? "Saving..."
+                  : editUser
+                    ? "Update User"
+                    : "Add User"}
               </button>
               <button
                 type="button"
