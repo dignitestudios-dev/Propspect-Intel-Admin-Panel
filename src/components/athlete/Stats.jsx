@@ -46,8 +46,8 @@ export default function Stats({ onNext, setSubmit }) {
           <h3 className="font-bold text-gray-800 text-lg">Add Career Stats</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            <InputField label="Touches" placeholder="Enter touches" name={'touches'} formik={formik} />
-            <InputField label="Successful Passes" placeholder="Enter passes" name={'successfulPasses'} formik={formik} />
+            <InputField label="Touches" placeholder="Enter touches" name={'touches'} type="number" formik={formik} />
+            <InputField label="Successful Passes" placeholder="Enter passes" type="number" name={'successfulPasses'} formik={formik} />
 
             <InputField
               label="Pass Accuracy"
@@ -55,17 +55,19 @@ export default function Stats({ onNext, setSubmit }) {
               suffix="%"
               name={'passAccuracy'}
               formik={formik}
+              type="number"
             />
             <InputField
               label="Tackles Completed"
               placeholder="Enter tackles"
               suffix="%"
+              type="number"
               name={'tacklesCompleted'}
               formik={formik}
             />
 
-            <InputField label="Carries" placeholder="Enter carries" name={'carries'} formik={formik} />
-            <InputField label="Tries" placeholder="Enter tries" name={'tries'} formik={formik} />
+            <InputField label="Carries" type="number" placeholder="Enter carries" name={'carries'} formik={formik} />
+            <InputField label="Tries" type="number" placeholder="Enter tries" name={'tries'} formik={formik} />
           </div>
         </div>
 

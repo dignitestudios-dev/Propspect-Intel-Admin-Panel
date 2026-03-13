@@ -1,6 +1,7 @@
 
 const Pagination = ({ pagination, onPageChange }) => {
     const { currentPage, totalPages } = pagination;
+    
 
     if (totalPages <= 1) return null;
 
@@ -21,8 +22,8 @@ const Pagination = ({ pagination, onPageChange }) => {
                     key={page}
                     onClick={() => onPageChange(page)}
                     className={`px-3 py-1 rounded-md ${page === currentPage
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-200 text-gray-700"
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-200 text-gray-700"
                         }`}
                 >
                     {page}

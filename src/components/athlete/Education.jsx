@@ -17,7 +17,12 @@ export default function Education({ setSubmit, onNext }) {
     initialValues: {
       institutions:
         educationData.length > 0
-          ? educationData.map((item, i) => ({ ...item, id: item.id || i + 1 }))
+          ? educationData.map((item, i) => ({
+            ...item,
+            id: item.id || i + 1,
+            startYear: item.startYear ? new Date(item.startYear).getFullYear().toString() : "",
+            endYear: item.endYear ? new Date(item.endYear).getFullYear().toString() : "",
+          }))
           : [{ id: 1, name: "", startYear: "", endYear: "", field: "", gpa: "" }],
     },
     validationSchema: educationSchema,
@@ -40,18 +45,28 @@ export default function Education({ setSubmit, onNext }) {
 
   const removeInstitution = (index) => {
     if (formik.values.institutions.length <= 1) return;
-    const newArray = formik.values.institutions.filter((_, i) => i !== index);
+
+    const newArray = formik.values.institutions
+      .filter((_, i) => i !== index)
+      .map(inst => ({
+        ...inst,
+        startYear: inst.startYear || "",
+        endYear: inst.endYear || "",
+      }));
+
     formik.setFieldValue("institutions", newArray);
     dispatch(updateSection({ section: "education", data: newArray }));
   };
 
 
   const updateField = (index, field, value) => {
-    const newArray = [...formik.values.institutions];
-    newArray[index][field] = value;
+    const newArray = formik.values.institutions.map((inst, i) =>
+      i === index
+        ? { ...inst, [field]: value }
+        : inst
+    );
     formik.setFieldValue("institutions", newArray);
   };
-
   return (
     <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans max-w-6xl mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
@@ -107,7 +122,7 @@ export default function Education({ setSubmit, onNext }) {
                 >
                   <option value="">Select</option>
                   {Array.from({ length: 30 }, (_, i) => (
-                    <option key={i} value={1990 + i}>
+                    <option key={i} value={(1990 + i).toString()}>
                       {1990 + i}
                     </option>
                   ))}
@@ -126,7 +141,7 @@ export default function Education({ setSubmit, onNext }) {
                 >
                   <option value="">Select</option>
                   {Array.from({ length: 30 }, (_, i) => (
-                    <option key={i} value={1990 + i}>
+                    <option key={i} value={(1990 + i).toString()}>
                       {1990 + i}
                     </option>
                   ))}
@@ -153,8 +168,9 @@ export default function Education({ setSubmit, onNext }) {
               <div>
                 <label className="block text-gray-600 text-sm mb-1">GPA</label>
                 <input
-                  type="text"
+                  type="number"
                   value={inst.gpa}
+
                   onChange={(e) => updateField(index, "gpa", e.target.value)}
                   placeholder="Enter GPA"
                   className="w-full p-3 border rounded-xl text-sm outline-none"

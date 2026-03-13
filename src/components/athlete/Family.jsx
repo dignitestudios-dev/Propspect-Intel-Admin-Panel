@@ -9,20 +9,30 @@ import { InputField } from "./InputField";
 export default function Family({ onNext, setSubmit }) {
   const familyInfo = useAppSelector((s) => s.athleteForm.formData.family);
   const dispatch = useAppDispatch();
+  const initialSiblings = React.useMemo(() => {
+    if (!familyInfo?.siblings || familyInfo.siblings.length === 0) {
+      return [{ id: Date.now(), type: "Sister", name: "", dob: "" }];
+    }
+
+    return familyInfo.siblings.map((s) => ({
+      id: s.id ?? s.name,             // stable id
+      type: s.type || "Sister",
+      name: s.name || "",
+      dob: s.dob ? s.dob.split("T")[0] : "",  // convert ISO to YYYY-MM-DD
+    }));
+  }, [familyInfo?.siblings]);
 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       motherName: familyInfo?.motherName || "",
-      motherDob: familyInfo?.motherDob || "",
+      motherDob: familyInfo?.motherDob ? new Date(familyInfo?.motherDob).toISOString().split("T")[0] : "",
       motherOccupation: familyInfo?.motherOccupation || "",
       motherContact: familyInfo?.motherContact || "",
       fatherName: familyInfo?.fatherName || "",
       keyInfluences: familyInfo?.keyInfluences || "",
-      siblings: familyInfo?.siblings || [
-        { id: Date.now, type: "Sister", name: "", dob: "" },
+      siblings: initialSiblings,
 
-      ],
     },
     validationSchema: familyInfoSchema,
     onSubmit: (values) => {
@@ -33,7 +43,7 @@ export default function Family({ onNext, setSubmit }) {
 
   useEffect(() => {
     setSubmit(() => formik.submitForm);
-  }, [formik.submitForm]);
+  }, []);
 
 
   return (
@@ -44,7 +54,7 @@ export default function Family({ onNext, setSubmit }) {
         <div className="space-y-8 animate-in fade-in duration-300">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <InputField label="Mother" placeholder="Enter name" name={'motherName'} formik={formik} />
-            <InputField label="Date of Birth" placeholder="Age here" name={'motherDob'} formik={formik} />
+            <InputField label="Date of Birth" type="date" placeholder="Age here" name={'motherDob'} formik={formik} />
             <InputField label="Occupation" placeholder="Enter occupation" name={'motherOccupation'} formik={formik} />
             <InputField label="Contact" placeholder="Contact here" name={'motherContact'} formik={formik} />
           </div>
@@ -84,23 +94,11 @@ export default function Family({ onNext, setSubmit }) {
                       label="Name"
                       name={`siblings[${index}].name`}
                       placeholder="Enter name"
-                      formik={{
-                        ...formik,
-                        values: {
-                          ...formik.values,
-                          [`siblings[${index}].name`]: formik.values.siblings[index].name
-                        }
-                      }}
+                      formik={formik}
                     />
-                    {formik.touched.siblings &&
-                      formik.touched.siblings[index] &&
-                      formik.touched.siblings[index].name &&
-                      formik.errors.siblings &&
-                      formik.errors.siblings[index] &&
-                      formik.errors.siblings[index].name && (
-                        <span className="text-red-500 text-xs -mt-3">
-                          {formik.errors.siblings[index].name}
-                        </span>
+                    {formik.touched.siblings?.[index]?.name &&
+                      formik.errors.siblings?.[index]?.name && (
+                        <span className="text-red-500 text-xs">{formik.errors.siblings[index].name}</span>
                       )}
                   </div>
                   <div className="h-[20px]">
@@ -109,24 +107,12 @@ export default function Family({ onNext, setSubmit }) {
                       label="Date of Birth"
                       name={`siblings[${index}].dob`}
                       placeholder="Age here"
-                      formik={{
-                        ...formik,
-                        values: {
-                          ...formik.values,
-                          [`siblings[${index}].dob`]: formik.values.siblings[index].dob
-                        }
-                      }}
                       type="date"
+                      formik={formik}
                     />
-                    {formik.touched.siblings &&
-                      formik.touched.siblings[index] &&
-                      formik.touched.siblings[index].dob &&
-                      formik.errors.siblings &&
-                      formik.errors.siblings[index] &&
-                      formik.errors.siblings[index].dob && (
-                        <span className="text-red-500 text-xs -mt-3">
-                          {formik.errors.siblings[index].dob}
-                        </span>
+                    {formik.touched.siblings?.[index]?.dob &&
+                      formik.errors.siblings?.[index]?.dob && (
+                        <span className="text-red-500 text-xs">{formik.errors.siblings[index].dob}</span>
                       )}
                   </div>
                 </div>

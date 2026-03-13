@@ -1,18 +1,18 @@
 import React from "react";
 
-const Stats = () => {
+const Stats = ({ athlete }) => {
   return (
     <div className="border-2 border-white p-4 rounded-xl bg-white bg-opacity-30">
-      {/* <h1 className="p-2 pb-4 pt-0 font-bold">Career Stats Overview</h1> */}
+      <h1 className="p-2 pb-4 pt-0 font-bold">Career Stats Overview</h1>
       <div className="grid grid-cols-1 sm:grid-cols-6 gap-6 ">
         {[
-          // { label: "Touches", value: "1000" },
-          // { label: "Successful Passes", value: "900" },
-          // { label: "Pass Accuracy", value: "20" },
-          // { label: "Tackles Completed", value: "1000" },
-          // { label: "Carries", value: "900" },
-          // { label: "Tries", value: "20" },
-        ].map((item, i) => (
+          { label: "Touches", value: athlete?.touches },
+          { label: "Successful Passes", value: athlete?.successfulPasses },
+          { label: "Pass Accuracy", value: athlete?.passAccuracy },
+          { label: "Tackles Completed", value: athlete?.tacklesCompleted },
+          { label: "Carries", value: athlete?.carries },
+          { label: "Tries", value: athlete?.tries },
+        ]?.map((item, i) => (
           <div
             key={i}
             className="border-2 border-white p-4 rounded-xl shadow-sm  text-center bg-gray-100 bg-opacity-30"

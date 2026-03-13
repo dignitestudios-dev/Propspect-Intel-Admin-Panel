@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
 
-const MessageDetailModal = ({ onClick, onNext }) => {
+import { formatDate } from "../../../lib/helpers";
+
+const MessageDetailModal = ({ onClick, onNext, contactDetail }) => {
   return (
     <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-0 z-50 flex items-center justify-center">
       <div className="bg-white rounded-[12px] shadow-md px-4 py-8 w-[515px]">
@@ -34,25 +36,25 @@ const MessageDetailModal = ({ onClick, onNext }) => {
             <div>
               <p className="text-[14px] text-[#0D0C0C99] py-2 px-4">Name</p>
               <p className="text-[16px] text-[#302C2C] font-semibold py-2 px-4">
-                John Doe
+                {contactDetail?.name}
               </p>
             </div>
             <div>
               <p className="text-[14px] text-[#0D0C0C99] py-2 px-4">Email</p>
               <p className="text-[16px] text-[#302C2C] font-semibold py-2 px-4">
-                john@example.com
+                {contactDetail?.email}
               </p>
             </div>
             <div>
               <p className="text-[14px] text-[#0D0C0C99] py-2 px-4">Status</p>
               <button className="bg-[#f5e7db] border border-gray-100 px-6 py-2 ml-2 rounded-xl text-sm text-[#2D3748]  hover:shadow-md transition-shadow inline-flex items-center gap-2">
-                <p className={`${"text-[#E57E25]"} text-[14px]`}>Pending</p>
+                <p className={`${"text-[#E57E25]"} text-[14px]`}>{contactDetail?.emailStatus}</p>
               </button>
             </div>
             <div>
               <p className="text-[14px] text-[#0D0C0C99] py-2 px-4">Date</p>
               <p className="text-[16px] text-[#302C2C] font-semibold py-2 px-4">
-                20/12/2023
+                {formatDate(contactDetail?.createdAt)}
               </p>
             </div>
           </div>
@@ -62,8 +64,7 @@ const MessageDetailModal = ({ onClick, onNext }) => {
             </p>
             <div className="mt-2 bg-[#FAF8F2] p-4 rounded-lg w-full">
               <p className="text-sm text-[#302C2C] font-light">
-                I love the new update! However, I have a suggestion for
-                improving the user interface.
+                {contactDetail?.message}
               </p>
             </div>
           </div>

@@ -3,6 +3,7 @@ import { ErrorToast } from "./components/global/Toaster";
 import Cookies from "js-cookie";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
+
 export const baseUrl = "https://dev.api.prospectintelhq.com/api";
 
 async function getDeviceFingerprint() {

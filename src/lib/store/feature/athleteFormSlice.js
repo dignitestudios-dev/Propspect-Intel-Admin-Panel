@@ -12,6 +12,7 @@ const initialState = {
     education: [],
     achievements: [],
     media: [],
+    mediaToDeleted: [],
   },
 };
 

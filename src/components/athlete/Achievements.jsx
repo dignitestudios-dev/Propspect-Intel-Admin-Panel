@@ -7,15 +7,13 @@ import { achievementInfoSchema } from "../../schema/athleteFormSchema/athleteSch
 
 export default function Achievements({ onNext, setSubmit }) {
   const dispatch = useAppDispatch();
-  const achievementData = useAppSelector((s) => {
-    const data = s.athleteForm.formData.achievements;
-    return Array.isArray(data) ? data : Object.values(data || {});
-  });
+  const achievementData = useAppSelector((s) => s.athleteForm.formData.achievements);
 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      achievements: achievementData.length > 0 ? achievementData : [{ title: "", description: "" }],
+      achievements: achievementData.length > 0
+        ? achievementData.map((item, i) => ({ ...item, id: item.id || i + 1 })) : [{ title: "", description: "" }],
     },
     validationSchema: achievementInfoSchema,
     onSubmit: (values) => {

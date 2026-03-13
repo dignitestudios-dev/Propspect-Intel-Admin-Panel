@@ -19,14 +19,29 @@ import Achievements from "../../components/athletedetails/Achievements";
 import Media from "../../components/athletedetails/Media";
 import { Users } from "lucide-react";
 import { TbPdf } from "react-icons/tb";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { mockAtheleTableData } from "../../static/mockData";
+import { useQuery } from "@tanstack/react-query";
+import { getAtheleteById } from "../../lib/query/queryFn";
+import { calculateAge, formatDate } from "../../lib/helpers";
+import { useAppDispatch } from "../../lib/store/hook";
+import { setAthleteId, setFormData, setMode } from "../../lib/store/feature/athleteFormSlice";
 
 export default function AthleteDetails() {
   const { id } = useParams();
+  const dispatch = useAppDispatch()
+  const location = useLocation();
+  const atheleteCount = location.state?.atheleteCount;
   const [activeTab, setActiveTab] = useState("Overview");
   const navigate = useNavigate();
-  const athlete = mockAtheleTableData.find(a => a.id === id);
+  console.log(atheleteCount, "atheleteCount")
+  const { data: athlete, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["atheleteid", id],
+    queryFn: () => getAtheleteById(id),
+    enabled: !!id,
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+  });
 
   return (
     <div className="w-full min-h-screen p-6 font-sans space-y-6">
@@ -41,7 +56,7 @@ export default function AthleteDetails() {
 
           <div className="flex items-center gap-4">
             <img
-              src={athlete?.image || "https://i.pravatar.cc/100?img=12"}
+              src={athlete?.basicInfo?.image || "https://i.pravatar.cc/100?img=12"}
               alt="athlete"
               className="w-16 h-16 rounded-full object-cover"
             />
@@ -49,7 +64,7 @@ export default function AthleteDetails() {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-semibold text-gray-900">
-                  {athlete?.name || "N/A"}
+                  {athlete?.basicInfo?.name || "N/A"}
                 </h2>
                 <span className="px-2 py-0.5 text-xs bg-purple-100 text-purple-600 rounded-full">
                   Rookie
@@ -65,10 +80,15 @@ export default function AthleteDetails() {
           </div>
 
           <div className="flex flex-wrap gap-3 ">
-            <button onClick={() => navigate("/app/athlete-interests")} className="px-4 py-2 font-bold border-2 border-gray-200 rounded-lg text-sm hover:bg-gray-50 flex items-center gap-2">
-              <Users className="" />
-
-              Interests (3)
+            <button
+              onClick={() =>
+                navigate(`/app/athlete-interests/${athlete._id}`, {
+                  state: { athlete, atheleteCount },
+                })
+              }
+              className="px-4 py-2 font-bold border-2 border-gray-200 rounded-lg text-sm hover:bg-gray-50 flex items-center gap-2"
+            >
+              <Users /> Interests ({athlete?.basicInfo?.intrestCount})
             </button>
             <button className="px-4 py-2 border font-bold border-red-200 text-red-600 rounded-lg text-sm hover:bg-red-50 flex items-center gap-2">
               <FiTrash2 />
@@ -78,7 +98,13 @@ export default function AthleteDetails() {
               <FiArchive />
               Archive
             </button>
-            <button onClick={() => navigate("/app/add-athlete")} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm flex items-center gap-2 hover:bg-blue-700">
+            <button onClick={() => {
+              dispatch(setFormData(athlete))
+              dispatch(setMode("edit"))
+              dispatch(setAthleteId(athlete._id))
+
+              navigate("/app/add-athlete")
+            }} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm flex items-center gap-2 hover:bg-blue-700">
               <FiEdit />
               Edit
             </button>
@@ -87,11 +113,11 @@ export default function AthleteDetails() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#E2E8F0] bg-opacity-60  border border-gray-60  rounded-xl p-4">
           {[
-            { label: "Age", value: athlete?.age || "N/A" },
-            { label: "Height", value: athlete?.height || "N/A" },
-            { label: "Weight", value: athlete?.weight || "N/A" },
-            { label: "Position", value: athlete?.position || "N/A" },
-          ].map((item) => (
+            { label: "Age", value: calculateAge(athlete?.basicInfo?.dob) || "N/A" },
+            { label: "Height", value: athlete?.basicInfo?.height || "N/A" },
+            { label: "Weight", value: athlete?.basicInfo?.weight || "N/A" },
+            { label: "Position", value: athlete?.basicInfo?.position || "N/A" },
+          ]?.map((item) => (
             <div
               key={item.label}
               className="rounded-xl space-y-3 p-4 text-center shadow-md bg-[#FFFFFF4D] border-white border"
@@ -109,10 +135,10 @@ export default function AthleteDetails() {
         <h3 className="text-sm font-semibold text-gray-700">Basic Information</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-          <Info label="Email" value={athlete?.email || "N/A"} />
-          <Info label="Phone" value={athlete.phone || "N/A"} />
-          <Info label="Hometown" value={athlete.state || "N/A"} />
-          <Info label="Date of Birth" value={athlete.dob || "N/A"} />
+          <Info label="Email" value={athlete?.basicInfo?.email || "N/A"} />
+          <Info label="Phone" value={athlete?.basicInfo?.phone || "N/A"} />
+          <Info label="Hometown" value={athlete?.basicInfo?.hometown || "N/A"} />
+          <Info label="Date of Birth" value={formatDate(athlete?.basicInfo?.dob) || "N/A"} />
         </div>
       </div>
       <div className="flex gap-4 bg-[#E2E8F0]  border border-gray-60 bg-opacity-30 rounded-2xl p-2">
@@ -148,15 +174,15 @@ export default function AthleteDetails() {
 
             <FamilyCard title="Parents" icon={<FiHeart className="text-red-500" />}>
               <div className="space-y-3">
-                <DataRow label="Mother" value={athlete.family.mother.name || "N/A"} />
-                <DataRow label="Occupation" value={athlete.family.mother.occupation || "N/A"} />
-                <DataRow label="Contact" value={athlete.family.mother.phone} />
-                <DataRow label="DOB" value={athlete.family.mother.dob || "N/A"} />
+                <DataRow label="Mother" value={athlete?.family?.motherName || "N/A"} />
+                <DataRow label="Occupation" value={athlete.family.motherOccupation || "N/A"} />
+                <DataRow label="Contact" value={athlete?.family?.mother?.phone || "N/A"} />
+                <DataRow label="DOB" value={formatDate(athlete?.family?.motherDob) || "N/A"} />
                 <div className="pt-2 border-t border-gray-100 space-y-3">
-                  <DataRow label="Father" value={athlete.family.father.name || "Not In Picture"} />
-                  <DataRow label="Occupation" value={athlete.family.father.occupation || "N/A"} />
-                  <DataRow label="Contact" value={athlete.family.father.phone || "N/A"} />
-                  <DataRow label="DOB" value={athlete.family.father.dob || "N/A"} />
+                  <DataRow label="Father" value={athlete?.family?.fatherName || "Not In Picture"} />
+                  <DataRow label="Occupation" value={athlete?.family?.father?.occupation || "N/A"} />
+                  <DataRow label="Contact" value={athlete?.family?.father?.phone || "N/A"} />
+                  <DataRow label="DOB" value={athlete?.family?.father?.dob || "N/A"} />
                 </div>
               </div>
             </FamilyCard>
@@ -164,14 +190,14 @@ export default function AthleteDetails() {
 
             <FamilyCard title="Siblings" icon={<FiUser className="text-green-500" />}>
               <div className="space-y-3">
-                {athlete.family.siblings.length === 0 ? (
+                {athlete?.family?.siblings.length === 0 ? (
                   <p className="text-gray-500 text-sm">No siblings information available</p>
                 ) : (
-                  athlete.family.siblings.map((sibling) => (
+                  athlete?.family?.siblings?.map((sibling) => (
                     <div key={sibling.id} className="border-b border-gray-100 pb-2">
                       <DataRow label="Name" value={sibling.name || "N/A"} />
                       <DataRow label="Relation" value={sibling.type || "N/A"} />
-                      <DataRow label="DOB" value={sibling.dob || "N/A"} />
+                      <DataRow label="DOB" value={formatDate(sibling.dob) || "N/A"} />
                     </div>
                   ))
                 )}
@@ -181,19 +207,19 @@ export default function AthleteDetails() {
 
             <FamilyCard title="Key Influences" icon={<FiTrendingUp className="text-blue-500" />}>
               <p className="text-sm text-gray-700 leading-relaxed">
-                {athlete.family.keyInfluences}
+                {athlete?.family?.keyInfluences || "N/A"}
               </p>
             </FamilyCard>
           </div>
         )}
 
-        {activeTab === "Overview" && <Overview athlete={athlete} />}
+        {activeTab === "Overview" && <Overview athlete={athlete?.overview} />}
 
-        {activeTab === "Athlete" && <Athlete athlete={athlete} />}
-        {activeTab === "Stats" && <Stats />}
-        {activeTab === "Education" && <Education />}
-        {activeTab === "Achievements" && <Achievements />}
-        {activeTab === "Media" && <Media />}
+        {activeTab === "Athlete" && <Athlete athlete={athlete?.athlete} />}
+        {activeTab === "Stats" && <Stats athlete={athlete?.stats} />}
+        {activeTab === "Education" && <Education athlete={athlete?.education} />}
+        {activeTab === "Achievements" && <Achievements athlete={athlete?.achievements} />}
+        {activeTab === "Media" && <Media athlete={athlete?.media} />}
 
       </div>
 

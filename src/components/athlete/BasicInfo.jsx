@@ -12,33 +12,6 @@ export default function BasicInfo({ setSubmit, onNext }) {
   const dispatch = useAppDispatch();
 
 
-  const formik = useFormik({
-    enableReinitialize: true,
-    initialValues: {
-      name: basicInfo?.name || "",
-      dob: basicInfo?.dob || "",
-      position: basicInfo?.position || "",
-      height: basicInfo?.height || "",
-      weight: basicInfo?.weight || "",
-      hometown: basicInfo?.hometown || "",
-      email: basicInfo?.email || "",
-      phone: basicInfo?.phone || "",
-      team: basicInfo?.team || "",
-      status: basicInfo?.status || "",
-      committedTeam: basicInfo?.committedTeam || "",
-      image: basicInfo?.image || null,
-    },
-    validationSchema: BasicInfoSchema,
-    onSubmit: (values) => {
-      dispatch(updateSection({ section: "basicInfo", data: values }));
-      onNext()
-    },
-  });
-
-  useEffect(() => {
-    setSubmit(() => formik.submitForm);
-  }, [formik.submitForm]);
-
   const positions = [
     "Point Guard",
     "Shooting Guard",
@@ -54,6 +27,32 @@ export default function BasicInfo({ setSubmit, onNext }) {
     "Prospect",
     "Debutant",
   ];
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      name: basicInfo?.name || "",
+      dob: basicInfo?.dob ? new Date(basicInfo.dob).toISOString().split("T")[0] : "",
+      position: basicInfo?.position || "",
+      height: basicInfo?.height || "",
+      weight: basicInfo?.weight || "",
+      hometown: basicInfo?.hometown || "",
+      email: basicInfo?.email || "",
+      phone: basicInfo?.phone || "",
+      team: basicInfo?.team || "",
+      status: statuses.find(s => s.toLowerCase() === (basicInfo?.status || "").toLowerCase()) || "",
+      image: basicInfo?.image || null,
+    },
+    validationSchema: BasicInfoSchema,
+    onSubmit: (values) => {
+      dispatch(updateSection({ section: "basicInfo", data: values }));
+      onNext()
+    },
+  });
+
+  useEffect(() => {
+    setSubmit(() => formik.submitForm);
+  }, [formik.submitForm]);
+
   console.log(formik.values.image, "formik.values.image")
 
   return (
@@ -116,10 +115,10 @@ export default function BasicInfo({ setSubmit, onNext }) {
             formik={formik}
           />
 
-          <InputField label="Height (Ft)" name="height" formik={formik} />
-          <InputField label="Weight (Lbs)" name="weight" formik={formik} />
+          <InputField label="Height (Ft)" type="number" name="height" formik={formik} />
+          <InputField label="Weight (Lbs)" name="weight" type="number" formik={formik} />
           <InputField label="Hometown" name="hometown" formik={formik} />
-          <InputField label="Contact Email" name="email" formik={formik} />
+          <InputField label="Contact Email" name="email" type="email" formik={formik} />
 
           <div className="flex flex-col gap-1">
             <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
@@ -137,7 +136,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
             )}
           </div>
 
-          <InputField label="Committed Team" name="committedTeam" formik={formik} />
+          <InputField label="Committed Team" name="team" formik={formik} />
 
           <Selector
             label="Current Status"

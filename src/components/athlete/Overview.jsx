@@ -32,11 +32,16 @@ export default function Overview({ onNext, setSubmit }) {
   };
 
   const removeItem = (field, index) => {
+
+    if (formik.values[field].length <= 1) {
+
+      return;
+    }
+
     const newArray = [...formik.values[field]];
     newArray.splice(index, 1);
     formik.setFieldValue(field, newArray);
   };
-
   const updateItem = (field, index, value) => {
     const newArray = [...formik.values[field]];
     newArray[index] = value;
@@ -68,7 +73,10 @@ export default function Overview({ onNext, setSubmit }) {
               <button
                 type="button"
                 onClick={() => removeItem("strengths", index)}
-                className="p-3 rounded-xl border border-gray-100 bg-white text-orange-500 hover:bg-orange-50 transition-colors"
+                disabled={formik.values.strengths.length === 1}
+                className={`p-3 rounded-xl border border-gray-100 bg-white text-orange-500 
+    transition-colors 
+    ${formik.values.strengths.length === 1 ? "opacity-50 cursor-not-allowed hover:bg-white" : "hover:bg-orange-50 cursor-pointer"}`}
               >
                 <FiX size={18} />
               </button>
@@ -107,7 +115,10 @@ export default function Overview({ onNext, setSubmit }) {
               <button
                 type="button"
                 onClick={() => removeItem("weaknesses", index)}
-                className="p-3 rounded-xl border border-gray-100 bg-white text-orange-500 hover:bg-orange-50 transition-colors"
+                disabled={formik.values.weaknesses.length === 1}
+                className={`p-3 rounded-xl border border-gray-100 bg-white text-orange-500 
+    transition-colors 
+    ${formik.values.weaknesses.length === 1 ? "opacity-50 cursor-not-allowed hover:bg-white" : "hover:bg-orange-50 cursor-pointer"}`}
               >
                 <FiX size={18} />
               </button>

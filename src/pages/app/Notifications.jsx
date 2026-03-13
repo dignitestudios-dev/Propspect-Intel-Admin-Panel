@@ -1,85 +1,56 @@
 import { useState } from "react";
 import { FiSearch, FiPlus } from "react-icons/fi";
-import { HiOutlineSelector } from "react-icons/hi";
 import { BiSolidNotification } from "react-icons/bi";
 import { bin } from "../../assets/export";
 import CreatePushNotificationModal from "../../components/app/Notification/CreatePushNotificationModal";
 import DeleteModal from "../../components/global/DeleteModal";
 import SuccessModal from "../../components/global/SuccessModal";
+import useDebounce from "../../lib/store/hook";
+import { useQuery } from "@tanstack/react-query";
+import { getNotification } from "../../lib/query/queryFn";
+import TableSkeleton from "../../components/global/TableSkeleton";
+import Pagination from "../../components/global/Pagination";
+import axiosinstance from "../../axios";
+import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 
-const notifications = [
-  {
-    id: 1,
-    title: "Latest Updates",
-    description:
-      "Adipiscing sem nunc a nunc mi. Nibh mattis quis massa aenean nisl potenti.",
-    type: "All",
-    status: "Send",
-  },
-  {
-    id: 2,
-    title: "Upcoming Features",
-    description:
-      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem .",
-    type: "All",
-    status: "Send",
-  },
-  {
-    id: 3,
-    title: "Bug Fixes",
-    description:
-      "At vero eos et accusamus et iusto odio dignissimos ducimus qui tum.",
-    type: "All",
-    status: "Send",
-  },
-  {
-    id: 4,
-    title: "Performance Improvements",
-    description:
-      "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil.",
-    type: "All",
-    status: "Send",
-  },
-  {
-    id: 5,
-    title: "New Integrations",
-    description:
-      "Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis  laboriosam.",
-    type: "All",
-    status: "Send",
-  },
-  {
-    id: 6,
-    title: "User Experience Enhancements",
-    description:
-      "Duis aute irure dolor in reprehenderit in voluptate velit esse  nulla pariatur.",
-    type: "All",
-    status: "Send",
-  },
-  {
-    id: 7,
-    title: "Security Updates",
-    description:
-      "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui  anim id est laborum.",
-    type: "All",
-    status: "Send",
-  },
-  {
-    id: 8,
-    title: "API Changes",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor  magna aliqua.",
-    type: "All",
-    status: "Send",
-  },
-];
 
 export default function Notifications() {
   const [activeTab, setActiveTab] = useState("All");
   const [requestSendModal, setRequestSendModal] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [search, setSearch] = useState("")
+  const [selectedId, setSelectedId] = useState(null)
+  const [page, setPage] = useState(1)
+  const debouncedSearch = useDebounce(search, 500)
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["notification", page, debouncedSearch, activeTab],
+    queryFn: () => getNotification({ page, search: debouncedSearch, activeTab }),
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
 
+  });
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= data?.pagination?.pagination?.totalPages) {
+      setPage(newPage);
+    }
+  };
+  const handleDelete = async () => {
+    setIsDeleteLoading(true)
+    try {
+      const response = await axiosinstance.delete(`/notification/${selectedId}`)
+      if (response.status === 200 || response.status === 201) {
+        SuccessToast(response?.data?.message)
+        setIsDelete(false)
+        refetch()
+      }
+    } catch (err) {
+      ErrorToast(err?.response?.data?.message)
+    } finally {
+      setIsDeleteLoading(false)
+    }
+  }
   return (
     <div className="w-full min-h-screen  p-4 font-sans">
       {/* Header Section */}
@@ -120,11 +91,10 @@ export default function Notifications() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-8 py-2 text-sm font-medium rounded-lg transition-all min-w-[200px] ${
-                  activeTab === tab
-                    ? "bg-white text-[#1A202C] shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
+                className={`px-8 py-2 text-sm font-medium rounded-lg transition-all min-w-[200px] ${activeTab === tab
+                  ? "bg-white text-[#1A202C] shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+                  }`}
               >
                 {tab}
               </button>
@@ -136,6 +106,8 @@ export default function Notifications() {
             <input
               type="text"
               placeholder="Search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-12 pr-4 py-2.5 bg-white border border-transparent rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm placeholder-gray-400"
             />
           </div>
@@ -143,56 +115,70 @@ export default function Notifications() {
 
         {/* Table Container */}
         <div className="overflow-x-auto border border-gray-200 rounded-xl">
-          <div className="grid grid-cols-5 gap-4 px-6 py-4 bg-white bg-opacity-30 border-b border-gray-200">
+          <div className="grid grid-cols-4 gap-4 px-6 py-4 bg-white bg-opacity-30 border-b border-gray-200">
             <div className="font-semibold text-sm">Notification Title</div>
             <div className="font-semibold text-sm">Description</div>
 
             <div className="font-semibold text-sm text-center">
               {activeTab === "All" ? "User Type" : "User Name"}
             </div>
-            <div className="font-semibold text-sm text-center">
+            {/* <div className="font-semibold text-sm text-center">
               <div className="flex items-center justify-center gap-1 cursor-pointer">
                 Status <HiOutlineSelector />
               </div>
-            </div>
+            </div> */}
             <div className="font-semibold text-sm text-center">Action</div>
           </div>
 
           <div className="space-y-4">
-            {notifications.map((item) => (
-              <div
-                key={item.id}
-                className="grid grid-cols-5 gap-4 px-6 pt-2 hover:bg-blue-50/30 transition-colors border-t border-[#E3E3E3] group"
-              >
-                <div className="font-medium text-[#2D3748] text-sm py-2 mt-4">
-                  {item.title}
-                </div>
-                <div className="text-gray-500 text-sm leading-relaxed">
-                  {item.description}
-                </div>
-                <div className="text-center text-gray-600 text-sm py-2 mt-4">
-                  {item.type}
-                </div>
-                <div className="text-center mt-4">
-                  <button className="bg-gray-50 border border-gray-100 px-8 py-2 rounded-xl text-sm text-[#2D3748]  hover:shadow-md transition-shadow inline-flex items-center gap-2">
-                    <span className="w-2 h-2 pt-2 bg-green-500 rounded-full"></span>
-                    <p className="text-green-500 text-[14px]">{item.status}</p>
-                  </button>
-                </div>
-                <div className="flex justify-center gap-4 text-gray-400 py-2 mt-4">
-                  {/* <div className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors">
+            {isLoading ? (
+              <TableSkeleton />
+            ) : data?.data.length === 0 ? (
+              <div className="text-center p-10">No Notification Found</div>
+            ) : (
+              data?.data?.map((item, index) => (
+                <div
+                  key={index}
+                  className="grid grid-cols-4 gap-4 px-6 pt-2 hover:bg-blue-50/30 transition-colors border-t border-[#E3E3E3] group"
+                >
+                  <div className="font-medium text-[#2D3748] text-sm py-2 mt-4">
+                    {item.title}
+                  </div>
+                  <div className="text-gray-500 text-sm leading-relaxed">
+                    {item.description}
+                  </div>
+                  <div className="text-center text-gray-600 text-sm py-2 mt-4">
+                    {item.notificationType}
+                  </div>
+                  {/* <div className="text-center mt-4">
+                    <button className="bg-gray-50 border border-gray-100 px-8 py-2 rounded-xl text-sm text-[#2D3748]  hover:shadow-md transition-shadow inline-flex items-center gap-2">
+                      <span className="w-2 h-2 pt-2 bg-green-500 rounded-full"></span>
+                      <p className="text-green-500 text-[14px]">{item.status}</p>
+                    </button>
+                  </div> */}
+                  <div className="flex justify-center gap-4 text-gray-400 py-2 mt-4">
+                    {/* <div className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors">
                     <img src={pen} alt="edit" />
                   </div> */}
-                  <div
-                    onClick={() => setIsDelete(true)}
-                    className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors"
-                  >
-                    <img src={bin} alt="delete" />
+                    <div
+                      onClick={() => {
+
+                        setSelectedId(item?._id)
+
+                        setIsDelete(true)
+                      }}
+                      className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors"
+                    >
+                      <img src={bin} alt="delete" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )))}
           </div>
+          <Pagination
+            pagination={data?.pagination?.pagination || { currentPage: 1, totalPages: 1 }}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
       {requestSendModal && (
@@ -218,10 +204,10 @@ export default function Notifications() {
       )}
       {isDelete && (
         <DeleteModal
+          loading={isDeleteLoading}
           isOpen={isDelete}
-          onClick={() => {
-            setIsDelete(false);
-          }}
+          onClick={() => setIsDelete(false)}
+          onNext={handleDelete}
           message={"Notification will be deleted"}
           title={"Delete Notification"}
         />

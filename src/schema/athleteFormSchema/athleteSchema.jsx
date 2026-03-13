@@ -11,7 +11,7 @@ export const BasicInfoSchema = Yup.object({
     email: Yup.string().email("Invalid email").required("Email required"),
     phone: Yup.string().required("Phone required"),
     status: Yup.string().required("Status required"),
-    committedTeam: Yup.string().required("Committed team required"),
+    team: Yup.string().required("Committed team required"),
     image: Yup.mixed().required("Profile image is required"),
 });
 
@@ -85,13 +85,7 @@ export const achievementInfoSchema = Yup.object({
 export const mediaSchema = Yup.object({
     files: Yup.array()
         .of(
-            Yup.object().shape({
-                id: Yup.number().required(),
-                name: Yup.string().required("File name is required"),
-                size: Yup.string().required(),
-                type: Yup.string().oneOf(["image", "video"]).required(),
-                thumbnail: Yup.string().required(),
-            })
+            Yup.mixed()
         )
         .min(1, "At least one file is required"),
 });

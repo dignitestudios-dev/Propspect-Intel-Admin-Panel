@@ -85,14 +85,14 @@ export default function Users() {
     staleTime: 1000 * 60 * 5,
 
   });
-  const { data: userState, isLoading: userLoading, isError: isErrorState, error: userError, refetch: userRefecth } = useQuery({
+  const { data: userState, isLoading: userLoading, isError: isErrorState, } = useQuery({
     queryKey: ["userStates"],
     queryFn: getStatesUsers,
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
 
   });
-  console.log(userState, "userState")
+
   const handleDelete = async () => {
     setDeleteLoading(true)
     try {
@@ -109,7 +109,7 @@ export default function Users() {
     }
   }
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= data?.pagination?.pagination?.totalPages) {
+    if (newPage >= 1 && newPage <= data?.pagination?.totalPages) {
       setPage(newPage);
     }
   };
@@ -280,7 +280,7 @@ export default function Users() {
           </table>
         </div>
         <Pagination
-          pagination={data?.pagination?.pagination || { currentPage: 1, totalPages: 1 }}
+          pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
           onPageChange={handlePageChange}
         />
 

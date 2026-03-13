@@ -22,7 +22,7 @@ export const ProtectedRoutes = [
     { path: "athlete-details/:id", element: <AthleteDetails /> },
     { path: "location", element: <Location /> },
     { path: "add-athlete", element: <AddAthlete /> },
-    { path: "athlete-interests", element: <AthleteInterests /> },
+    { path: "athlete-interests/:id", element: <AthleteInterests /> },
     { path: "analytic", element: <FiltersAnalytics /> },
     { path: "school-management", element: <SchoolManagement /> },
     { path: "contact-form", element: <ContactForm /> },

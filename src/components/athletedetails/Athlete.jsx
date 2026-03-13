@@ -124,14 +124,14 @@ const Athlete = ({ athlete }) => {
                 <span className="mr-2">🏅 Other Sports</span>
 
                 <div className="flex space-x-2">
-                  {athlete?.athleticBackground?.otherSports?.map((sport) => (
-                    <span
-                      key={sport}
-                      className="px-3 py-1 border-2 border-blue-400 text-black rounded-md text-xs font-medium bg-transparent"
-                    >
-                      {sport}
-                    </span>
-                  ))}
+                  {/* {athlete?.athleticBackground?.otherSports?.map((sport) => ( */}
+                  <span
+                    // key={sport}
+                    className="px-3 py-1 border-2 border-blue-400 text-black rounded-md text-xs font-medium bg-transparent"
+                  >
+                    {athlete?.otherSports}
+                  </span>
+                  {/* // ))}/ */}
                 </div>
               </div>
 
@@ -143,14 +143,14 @@ const Athlete = ({ athlete }) => {
                 <span className="mr-2">📉</span> Activities
               </div>
               <p className="text-gray-800  mt-4 text-sm leading-relaxed">
-                {athlete?.athleticBackground?.activities?.map((activity, index) => (
-                  <span
-                    key={index}
-                    className="px-3  py-1 border-2 border-green-400 text-black rounded-md text-xs font-medium bg-transparent mr-2"
-                  >
-                    {activity}
-                  </span>
-                ))}
+                {/* {athlete?.athleticBackground?.activities?.map((activity, index) => ( */}
+                <span
+                  // key={index}
+                  className="px-3  py-1 border-2 border-green-400 text-black rounded-md text-xs font-medium bg-transparent mr-2"
+                >
+                  {athlete?.activities}
+                </span>
+                {/* ))} */}
               </p>
             </div>
 
@@ -163,7 +163,7 @@ const Athlete = ({ athlete }) => {
             </div>
 
             <p className="text-gray-600 text-sm leading-relaxed italic">
-              {athlete?.athleticBackground?.coachEvaluation}
+              {athlete?.coachEvaluation}
             </p>
           </div>
 
@@ -178,7 +178,7 @@ const Athlete = ({ athlete }) => {
         icon={<img src={football} alt="Football" className="text-blue-600" />}
         scoreColorClass="text-[#0085CA]"
       >
-        <p className="text-gray-700 text-sm leading-relaxed">{athlete?.footballCharacter?.summary}</p>
+        <p className="text-gray-700 text-sm leading-relaxed">{athlete?.footballDescription}</p>
       </InfoBox>
 
       <InfoBox
@@ -187,13 +187,13 @@ const Athlete = ({ athlete }) => {
         icon={<img src={personal} alt="personal" className="text-orange-600" />}
         scoreColorClass="text-[#FFC145]"
       >
-        <p className="text-gray-700 text-sm leading-relaxed">{athlete?.personalCharacter?.summary}</p>
+        <p className="text-gray-700 text-sm leading-relaxed">{athlete?.personalDescription}</p>
       </InfoBox>
 
       <InfoBox title="Other Relevant Information" icon={<img src={other} alt="Other" className="text-[#7A4D8B]" />}>
 
         <p className="text-gray-700 text-sm italic ">
-       {athlete?.otherRelevantInfo?.summary || "No other relevant information available"}                              </p>
+          {athlete?.otherInfo || "No other relevant information available"}                              </p>
       </InfoBox>
     </div>
   )

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-export default function Header({ user }) {
+export default function Header({ user, setStatsFilter, statsFilter }) {
 
-  const [active, setActive] = useState("7d");
+
   const filters = ["7d", "1m", "3m", "6m", "1y"];
 
   return (
@@ -18,9 +18,9 @@ export default function Header({ user }) {
         {filters.map((item) => (
           <button
             key={item}
-            onClick={() => setActive(item)}
+            onClick={() => setStatsFilter(item)}
             className={
-              active === item
+              statsFilter === item
                 ? "px-3 py-2 rounded-lg border border-blue-400 text-blue-500 bg-white"
                 : "px-3 py-1 rounded-lg text-black "
             }

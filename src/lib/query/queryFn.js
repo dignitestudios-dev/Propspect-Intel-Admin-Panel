@@ -1,12 +1,114 @@
 import axiosinstance from "../../axios";
 
-export const getUsers = async ({ page = 1, itemsPerPage = 10, search }) => {
-  const res = await axiosinstance.get(
-    `/user?page=${page}&limit=${itemsPerPage}&search=${search}`,
-  );
+export const getUsers = async ({
+  page = 1,
+  itemsPerPage = 10,
+  search = "",
+  startDate = "",
+  endDate = "",
+  statusFilter = "All",
+}) => {
+  const params = new URLSearchParams({
+    page,
+    limit: itemsPerPage,
+    search,
+    startDate: startDate || "",
+    endDate: endDate || "",
+    ...(statusFilter === "Active"
+      ? { status: true }
+      : statusFilter === "Inactive"
+        ? { status: false }
+        : {}),
+  });
+
+  const res = await axiosinstance.get(`/user?${params.toString()}`);
   return res.data;
 };
 export const getStatesUsers = async () => {
   const res = await axiosinstance.get(`/user/dashboard/counts`);
+  return res.data.data;
+};
+export const getAthelete = async ({
+  page = 1,
+  itemsPerPage = 10,
+  search,
+  active,
+  minAge,
+  maxAge,
+  position,
+}) => {
+  const res = await axiosinstance.get(
+    `/athlete?page=${page}&limit=${itemsPerPage}&search=${search}&active=${active}&minAge=${minAge}&maxAge=${maxAge}&position=${position}`,
+  );
+  return res.data;
+};
+export const getAtheleteCount = async () => {
+  const res = await axiosinstance.get(`/athlete/counts`);
+  return res.data.data;
+};
+export const getAtheleteById = async (id) => {
+  const res = await axiosinstance.get(`/athlete/${id}`);
+  return res.data.data;
+};
+export const getInterestById = async (id) => {
+  const res = await axiosinstance.get(`/athlete/${id}/intrests`);
+  return res.data.data;
+};
+
+export const getNotification = async ({
+  page = 1,
+  itemsPerPage = 10,
+  search,
+  activeTab,
+}) => {
+  const res = await axiosinstance.get(
+    `/notification?page=${page}&limit=${itemsPerPage}&search=${search}&type=${activeTab === "Specific Users" ? "Specific" : activeTab}`,
+  );
+  return res.data;
+};
+
+export const getAdminStats = async ({ statsFilter }) => {
+  const res = await axiosinstance.get(
+    `/dashboard/admin/stats?range=${statsFilter}`,
+  );
+  return res.data.data;
+};
+export const getAthleteRequest = async ({
+  page = 1,
+  itemsPerPage = 10,
+  active,
+}) => {
+  const statusQuery =
+    active && active.toLowerCase() !== "all"
+      ? `&status=${active.toLowerCase()}`
+      : "";
+
+  const res = await axiosinstance.get(
+    `/dashboard/admin/requests?page=${page}&limit=${itemsPerPage}${statusQuery}`,
+  );
+
+  return res.data;
+};
+export const getMostViewAthlete = async ({
+  page = 1,
+  itemsPerPage = 10,
+  popularactive,
+}) => {
+  const res = await axiosinstance.get(
+    `/dashboard/admin/athletes/most-viewed?range=${popularactive}&page=${page}&limit=${itemsPerPage}
+ `,
+  );
+
+  return res.data;
+};
+
+export const getContact = async () => {
+  const res = await axiosinstance.get(`/contact`);
+  return res.data;
+};
+
+
+export const getContactById = async (id) => {
+  const res = await axiosinstance.get(`/contact/${id}`);
   return res.data.data;
 };

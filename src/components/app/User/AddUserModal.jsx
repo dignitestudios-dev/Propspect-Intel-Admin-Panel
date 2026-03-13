@@ -63,9 +63,14 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
           setSuccessType(editUser ? "updated" : "added")
 
           setIsAddUserModalOpen(false);
-          setEditUser(null);
+          if (setEditUser) {
+            setEditUser(null);
+          }
           refetch();
-          setIsSuccess(true)
+          if (setIsSuccess) {
+            setIsSuccess(true);
+          }
+
         }
 
       } catch (error) {
