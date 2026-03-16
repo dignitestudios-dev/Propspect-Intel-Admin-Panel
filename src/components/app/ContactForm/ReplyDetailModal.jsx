@@ -1,9 +1,11 @@
 /* eslint-disable react/prop-types */
 
-const ReplyDetailModal = ({ onClick }) => {
+import { formatDate } from "../../../lib/helpers";
+
+const ReplyDetailModal = ({ onClick, contactDetail }) => {
   return (
     <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-0 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-[12px] shadow-md px-4 py-8 w-[515px]">
+      <div className="bg-white rounded-[12px] shadow-md px-4 py-8 w-[515px] max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between">
           <div></div>
           <p className="text-[#302C2C] text-[20px] font-bold">
@@ -34,25 +36,28 @@ const ReplyDetailModal = ({ onClick }) => {
             <div>
               <p className="text-[14px] text-[#0D0C0C99] py-2 px-4">Name</p>
               <p className="text-[16px] text-[#302C2C] font-semibold py-2 px-4">
-                John Doe
+                {contactDetail?.name}
               </p>
             </div>
             <div>
               <p className="text-[14px] text-[#0D0C0C99] py-2 px-4">Email</p>
               <p className="text-[16px] text-[#302C2C] font-semibold py-2 px-4">
-                john@example.com
+                {contactDetail?.email}
               </p>
             </div>
             <div>
               <p className="text-[14px] text-[#0D0C0C99] py-2 px-4">Status</p>
-              <button className="bg-[#f5e7db] border border-gray-100 px-6 py-2 ml-2 rounded-xl text-sm text-[#2D3748]  hover:shadow-md transition-shadow inline-flex items-center gap-2">
-                <p className={`${"text-[#E57E25]"} text-[14px]`}>Pending</p>
+              <button className="border border-gray-100 px-6 py-2 ml-2 rounded-xl text-sm text-[#2D3748]  hover:shadow-md transition-shadow inline-flex items-center gap-2">
+                <p className={`${contactDetail?.emailStatus === "Replied"
+                  ? "text-green-500"
+                  : "text-[#E57E25]"
+                  } text-[14px]`}>{contactDetail?.emailStatus}</p>
               </button>
             </div>
             <div>
               <p className="text-[14px] text-[#0D0C0C99] py-2 px-4">Date</p>
               <p className="text-[16px] text-[#302C2C] font-semibold py-2 px-4">
-                20/12/2023
+                {formatDate(contactDetail?.updatedAt)}
               </p>
             </div>
           </div>
@@ -62,8 +67,7 @@ const ReplyDetailModal = ({ onClick }) => {
             </p>
             <div className="mt-2 bg-[#EAEEF8] p-4 rounded-lg w-full">
               <p className="text-sm text-[#302C2C] font-light">
-                I love the new update! However, I have a suggestion for
-                improving the user interface.
+                {contactDetail?.message || "N/A"}
               </p>
             </div>
           </div>
@@ -72,7 +76,7 @@ const ReplyDetailModal = ({ onClick }) => {
             <div className="mt-2 bg-[#EAEEF8] p-4 rounded-lg w-full">
               <p className="text-[14px] font-bold text-[#302C2C] ">Subject</p>
               <p className="text-sm text-[#302C2C] font-light">
-                Re: Feature Request - Sarah Johnson
+                Re: {contactDetail?.subject || "N/A"}
               </p>
             </div>
 
@@ -81,7 +85,7 @@ const ReplyDetailModal = ({ onClick }) => {
                 Re: Feature Request - Sarah Johnson
               </p>
               <p className="text-sm text-[#302C2C] font-light">
-                Thank you for contacting us. We are glad to have your message.
+                {contactDetail?.reply}
               </p>
             </div>
           </div>

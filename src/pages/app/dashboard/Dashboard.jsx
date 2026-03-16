@@ -25,13 +25,13 @@ export default function Dashboard() {
 
   const { user } = useAuth();
   const [active, setActive] = useState("All");
-  const [popularactive, setpopularActive] = useState("All");
+  const [popularactive, setpopularActive] = useState("7d");
   const [isSuccess, setIsSuccess] = useState(false);
   const [requestSendModal, setRequestSendModal] = useState(false);
   const [isAddAthleteModalOpen, setIsAddAthleteModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [aiModal, setAiModal] = useState(false)
-  const [statsFilter, setStatsFilter] = useState('')
+  const [statsFilter, setStatsFilter] = useState('7d')
   const [userStatus, setUserStatus] = useState("Active");
   const [page, setPage] = useState(1)
   const [userPage, setUserPage] = useState(1)

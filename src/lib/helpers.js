@@ -30,3 +30,17 @@ export const calculateAge = (dob) => {
 
   return age;
 };
+
+export function base64ToBinaryFile(base64, filename = "logo.png") {
+  // Remove the data URL prefix if present
+  const [meta, data] = base64.split(",");
+  const mime = meta.match(/:(.*?);/)[1];
+
+  const binary = atob(data); // decode base64
+  const array = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    array[i] = binary.charCodeAt(i);
+  }
+
+  return new File([array], filename, { type: mime });
+}

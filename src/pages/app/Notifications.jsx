@@ -32,7 +32,7 @@ export default function Notifications() {
 
   });
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= data?.pagination?.pagination?.totalPages) {
+    if (newPage >= 1 && newPage <= data?.pagination?.totalPages) {
       setPage(newPage);
     }
   };
@@ -175,11 +175,11 @@ export default function Notifications() {
                 </div>
               )))}
           </div>
+        </div>
           <Pagination
-            pagination={data?.pagination?.pagination || { currentPage: 1, totalPages: 1 }}
+            pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
             onPageChange={handlePageChange}
           />
-        </div>
       </div>
       {requestSendModal && (
         <CreatePushNotificationModal

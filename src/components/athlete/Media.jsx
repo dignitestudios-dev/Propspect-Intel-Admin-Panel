@@ -15,22 +15,25 @@ export default function Media({ setSubmit, onNext }) {
     mediaData
       .map((item) => {
         if (typeof item === "string") {
-          // Existing URL
+
           return { name: item.split("/").pop(), file: null, thumbnail: item, url: item, size: "" };
         } else if (item instanceof File) {
-          // New File
+
           return { name: item.name, file: item, thumbnail: URL.createObjectURL(item), size: `${(item.size / 1024 / 1024).toFixed(2)} MB` };
         } else {
-          // Invalid or unexpected type, ignore it
+
           console.warn("Invalid media item skipped:", item);
           return null;
         }
       })
-      .filter(Boolean) // Remove null entries
+      .filter(Boolean)
   );
 
   const formik = useFormik({
     initialValues: { files: initialFiles },
+
+    validateOnChange: true,
+    validateOnBlur: true,
     validationSchema: mediaSchema,
     onSubmit: (values) => {
       const filesToSend = values.files.map((f) => f.file || f.url);
@@ -95,6 +98,9 @@ export default function Media({ setSubmit, onNext }) {
             </button>
           </div>
         ))}
+        {formik.errors.files && formik.touched.files && (
+          <p className="text-red-500 text-xs mt-2">{formik.errors.files}</p>
+        )}
       </div>
     </form>
   );

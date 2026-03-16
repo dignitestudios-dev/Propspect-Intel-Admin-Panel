@@ -3,16 +3,140 @@ import { Upload, Trash2 } from "lucide-react"; // Added Trash2
 import { useState } from "react";
 import { BsStars } from "react-icons/bs";
 import AiLogoModal from "./AiLogoModal";
+import axios from "axios";
+import { ErrorToast, SuccessToast } from "../../global/Toaster";
+import axiosinstance from "../../../axios";
+import { base64ToBinaryFile } from "../../../lib/helpers";
+import { useQueryClient } from "@tanstack/react-query";
 
-const CreateSchoolModal = ({ onClick, onNext }) => {
+const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, logo, setLogo }) => {
+  const query = useQueryClient()
+  // const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+  // const API_URL = 'https://api.openai.com/v1/images/generations';
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
-  // State to hold the uploaded/generated logo
-  const [logo, setLogo] = useState(null); 
+
+  const [aiPrompt, setAiPrompt] = useState('')
+  const [loading, setLoading] = useState(false)
+  const handleGenerate = () => {
+    if (subject.length === 0) {
+      ErrorToast('Please enter Subject')
+    } else {
+      setIsAiModalOpen(true)
+
+    }
+
+  }
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+
+    if (file.size > 50 * 1024 * 1024) {
+      ErrorToast("File is too large! Max 50MB.");
+      return;
+    }
+
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setLogo({
+        name: file.name,
+        size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
+        src: reader.result, // base64
+        file: file, // actual file
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+  const generateImage = async () => {
+
+    const payload = {
+      schoolName: subject,
+      prompt: aiPrompt
+    }
+    try {
+      const response = await axiosinstance.post(
+        '/school/ai/logo',
+        payload
+
+      );
+      if (response?.status === 200 || response?.status === 201) {
+        const data = response.data.data;
+
+        if (data) return `data:image/png;base64,${data}`;
+
+      }
+
+
+
+    } catch (error) {
+      console.error('Error generating image:', error);
+      return null;
+    }
+  };
 
   const handleRemoveLogo = () => {
     setLogo(null);
   };
+  async function resizeBase64Image(base64Str, maxWidth = 512, maxHeight = 512) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = base64Str;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let { width, height } = img;
 
+        if (width > maxWidth || height > maxHeight) {
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          width *= ratio;
+          height *= ratio;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        resolve(canvas.toDataURL("image/png"));
+      };
+    });
+  }
+  console.log(editMode, "editMode")
+  const handleAddOrEditSchool = async () => {
+    if (!subject) return ErrorToast("Please enter School Name");
+
+    setLoading(true);
+    try {
+      const fd = new FormData();
+      fd.append("name", subject);
+
+      if (logo?.src?.startsWith("data:image")) {
+        let smallBase64 = await resizeBase64Image(logo.src);
+        const file = logo.file || base64ToBinaryFile(smallBase64, "logo.png");
+        fd.append("logo", file);
+      }
+
+      let response;
+      if (editMode?._id) {
+
+        response = await axiosinstance.patch(`/school/${editMode._id}`, fd);
+      } else {
+
+        response = await axiosinstance.post("/school", fd);
+      }
+
+      if (response?.status === 200 || response?.status === 201) {
+        const message = response?.data?.message || (editMode?._id ? "School updated successfully" : "School added successfully");
+        SuccessToast(message);
+        query.invalidateQueries({ queryKey: ["school"] })
+        onNext();
+      }
+    } catch (err) {
+      ErrorToast(err?.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-50 z-50 flex items-center justify-center">
@@ -40,23 +164,24 @@ const CreateSchoolModal = ({ onClick, onNext }) => {
           </div>
 
           <div className="flex flex-col border-[1px] border-[#E3E3E3] rounded-3xl p-4">
-            {/* School Name Input */}
+
             <div className="bg-[#FAF8F2] p-4 rounded-2xl w-full">
               <p className="text-xs text-gray-400 font-light">School Name</p>
               <input
                 type="text"
-                defaultValue="Washington Academy"
+                value={subject}
                 placeholder="Enter name"
+                onChange={(e) => setSubject(e.target.value)}
                 className="w-full mt-1 text-sm text-[#302C2C] font-medium focus:outline-none bg-transparent"
               />
             </div>
 
-            {/* Conditionally Render AI Button and Upload/Preview Area */}
+
             {!logo ? (
               <>
                 <button
                   type="button"
-                  onClick={() => setIsAiModalOpen(true)}
+                  onClick={handleGenerate}
                   className="w-full py-3 border mt-4 border-gray-200 rounded-xl flex items-center justify-center gap-2 font-bold hover:bg-gray-50 transition-all text-[#302C2C]"
                 >
                   <BsStars className="text-[#5D5FEF] text-2xl" />
@@ -70,8 +195,15 @@ const CreateSchoolModal = ({ onClick, onNext }) => {
                     <p className="text-[14px] text-[#0D0C0C99] mb-6 text-center">
                       Or click to browse files · Max 50MB per file
                     </p>
-                    <button 
-                      onClick={() => setLogo({ name: "Logo.jpg", size: "2.4 mb" })}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      id="manualLogoUpload"
+                      className="hidden"
+                      onChange={handleFileUpload}
+                    />
+                    <button
+                      onClick={() => document.getElementById("manualLogoUpload").click()}
                       className="flex items-center gap-2 px-6 py-2 rounded-md bg-white shadow-sm text-[#0085CA] font-bold hover:bg-blue-50 transition-colors"
                     >
                       <Upload size={18} />
@@ -81,19 +213,19 @@ const CreateSchoolModal = ({ onClick, onNext }) => {
                 </div>
               </>
             ) : (
-              /* ✅ File Preview State (Matches your second image) */
+
               <div className="mt-4 bg-[#FAF8F2] p-4 rounded-2xl flex items-center justify-between border border-gray-100">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-white rounded-lg border border-gray-100 flex items-center justify-center">
-                    {/* Placeholder for actual image thumbnail */}
-                    <div className="w-6 h-6 bg-gray-100 rounded" />
+
+                    <img src={logo?.src} alt="" className="w-6 h-6 rounded" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-[#302C2C]">{logo.name}</p>
                     <p className="text-xs text-gray-400">{logo.size}</p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={handleRemoveLogo}
                   className="p-2 text-gray-500 hover:text-red-500 transition-colors"
                 >
@@ -104,10 +236,13 @@ const CreateSchoolModal = ({ onClick, onNext }) => {
 
             <div className="flex justify-between items-center w-full mt-6 gap-3">
               <button
-                onClick={() => onNext()}
+                onClick={handleAddOrEditSchool}
                 className="w-full py-3 bg-[#0085CA] text-white rounded-xl font-bold hover:bg-[#0074b3] transition-colors"
               >
-                Add School
+                {loading
+                  ? editMode?._id ? "Updating..." : "Adding..."
+                  : editMode?._id ? "Update School" : "Add School"
+                }
               </button>
               <button
                 onClick={onClick}
@@ -124,9 +259,12 @@ const CreateSchoolModal = ({ onClick, onNext }) => {
         isOpen={isAiModalOpen}
         onClose={() => setIsAiModalOpen(false)}
         onBack={() => setIsAiModalOpen(false)}
-        onUseLogo={() => {
-          // Set manual state to simulate the logo being "added"
-          setLogo({ name: "AI_Generated_Logo.png", size: "1.2 mb" });
+        aiPrompt={aiPrompt}
+        setAiPrompt={setAiPrompt}
+        generateImage={generateImage}
+        onUseLogo={(imgSrc) => {
+          // imgSrc = Base64 or URL from modal
+          setLogo({ name: "AI_Generated_Logo.png", size: "1.2 mb", src: imgSrc });
           setIsAiModalOpen(false);
         }}
       />

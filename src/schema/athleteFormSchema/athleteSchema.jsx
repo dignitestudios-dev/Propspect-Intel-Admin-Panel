@@ -73,7 +73,7 @@ export const educationSchema = Yup.object({
 
 
 export const achievementInfoSchema = Yup.object({
-    achievement: Yup.array().of(
+    achievements: Yup.array().of(
         Yup.object({
             title: Yup.string().required("Title required"),
             description: Yup.string().required("Description required"),

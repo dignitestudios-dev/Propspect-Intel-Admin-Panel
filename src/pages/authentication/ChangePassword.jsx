@@ -12,7 +12,11 @@ import Cookies from 'js-cookie'
 const changePasswordSchema = Yup.object({
   password: Yup.string()
     .required("Password is required")
-    .min(6, "Password must be at least 6 characters"),
+    .min(8, "Password must be at least 8 characters")
+    .matches(/[A-Z]/, "Must contain at least one uppercase letter")
+    .matches(/[a-z]/, "Must contain at least one lowercase letter")
+    .matches(/[0-9]/, "Must contain at least one number")
+    .matches(/[!@#$%^&*(),.?":{}|<>]/, "Must contain at least one special character"),
   confirmPassword: Yup.string()
     .required("Confirm Password is required")
     .oneOf([Yup.ref("password")], "Passwords must match"),
@@ -70,53 +74,62 @@ const ChangePassword = () => {
       <form className="w-full space-y-6" onSubmit={handleSubmit}>
 
 
-        <div className="relative">
-          <label className="text-white text-sm md:text-base font-light mb-1">Password</label>
-          <input
-            type={isPasswordVisible ? "text" : "password"}
-            name="password"
-            value={values.password}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            placeholder="Enter new password"
-            className={`w-full px-3 py-3 md:py-4 rounded-md text-white placeholder-white/60 bg-white/10 border ${errors.password && touched.password ? "border-red-500" : "border-white/20"
-              } focus:outline-none focus:ring-2 focus:ring-[#0b89c6] text-sm md:text-base`}
-          />
-          <button
-            type="button"
-            onClick={() => setIsPasswordVisible((prev) => !prev)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
-          >
-            {isPasswordVisible ? <FaRegEye size={18} /> : <FaRegEyeSlash size={18} />}
-          </button>
+        <div>
+          <label className="text-white text-sm md:text-base font-light mb-1 block">
+            Password
+          </label>
+
+          <div className="relative">
+            <input
+              type={isPasswordVisible ? "text" : "password"}
+              name="password"
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Enter new password"
+              className={`w-full px-3 py-3 md:py-4 pr-10 rounded-md text-white placeholder-white/60 bg-white/10 border ${errors.password && touched.password ? "border-red-500" : "border-white/20"
+                } focus:outline-none focus:ring-2 focus:ring-[#0b89c6] text-sm md:text-base`}
+            />
+
+            <button
+              type="button"
+              onClick={() => setIsPasswordVisible((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
+            >
+              {isPasswordVisible ? <FaRegEye size={18} /> : <FaRegEyeSlash size={18} />}
+            </button>
+          </div>
+
           {errors.password && touched.password && (
             <p className="text-red-500 text-xs md:text-sm mt-1">{errors.password}</p>
           )}
         </div>
 
+        <div>
 
-        <div className="relative">
-          <label className="text-white text-sm md:text-base font-light mb-1">Confirm Password</label>
-          <input
-            type={isConfirmPasswordVisible ? "text" : "password"}
-            name="confirmPassword"
-            value={values.confirmPassword}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            placeholder="Confirm new password"
-            className={`w-full px-3 py-3 md:py-4 rounded-md text-white placeholder-white/60 bg-white/10 border ${errors.confirmPassword && touched.confirmPassword ? "border-red-500" : "border-white/20"
-              } focus:outline-none focus:ring-2 focus:ring-[#0b89c6] text-sm md:text-base`}
-          />
-          <button
-            type="button"
-            onClick={() => setIsConfirmPasswordVisible((prev) => !prev)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
-          >
-            {isConfirmPasswordVisible ? <FaRegEye size={18} /> : <FaRegEyeSlash size={18} />}
-          </button>
-          {errors.confirmPassword && touched.confirmPassword && (
-            <p className="text-red-500 text-xs md:text-sm mt-1">{errors.confirmPassword}</p>
-          )}
+          <label className="text-white text-sm md:text-base font-light mb-1 block">Confirm Password</label>
+          <div className="relative">
+            <input
+              type={isConfirmPasswordVisible ? "text" : "password"}
+              name="confirmPassword"
+              value={values.confirmPassword}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Confirm new password"
+              className={`w-full px-3 py-3 md:py-4 pr-10 rounded-md text-white placeholder-white/60 bg-white/10 border ${errors.confirmPassword && touched.confirmPassword ? "border-red-500" : "border-white/20"
+                } focus:outline-none focus:ring-2 focus:ring-[#0b89c6] text-sm md:text-base`}
+            />
+            <button
+              type="button"
+              onClick={() => setIsConfirmPasswordVisible((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
+            >
+              {isConfirmPasswordVisible ? <FaRegEye size={18} /> : <FaRegEyeSlash size={18} />}
+            </button>
+            {errors.confirmPassword && touched.confirmPassword && (
+              <p className="text-red-500 text-xs md:text-sm mt-1">{errors.confirmPassword}</p>
+            )}
+          </div>
         </div>
 
 

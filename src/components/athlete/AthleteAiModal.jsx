@@ -4,11 +4,47 @@ import { useNavigate } from "react-router";
 import { useAppDispatch } from "../../lib/store/hook";
 import { setFormData, setMode } from "../../lib/store/feature/athleteFormSlice";
 import { athleteData } from "../../static/mockData";
+import { useState } from "react";
+import { ErrorToast, SuccessToast } from "../global/Toaster";
+import axiosinstance from "../../axios";
 
 
 const AthleteAiModal = ({ onClick }) => {
+  const [aiPrompt, setAiPrompt] = useState('')
   const dispatch = useAppDispatch()
+  const [error, setError] = useState('')
   const navigate = useNavigate(false);
+  const [loading, setLoading] = useState(false)
+  const handleAiAtheleteCreate = async () => {
+    if (!aiPrompt) {
+      setError("Please Enter Prompt")
+      return
+    }
+    const paylaod = {
+      prompt: aiPrompt
+    }
+    setLoading(true)
+    try {
+      const response = await axiosinstance.post('/athlete/ai/generate/json', paylaod)
+      if (response.status === 200 || response?.status === 201) {
+        SuccessToast(response?.data?.message)
+        dispatch(setFormData(response?.data?.data));
+        dispatch(setMode("ai"));
+        navigate("/app/add-athlete")
+
+      }
+    } catch (err) {
+      ErrorToast(err?.response?.data?.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+
+
+
+
+
   return (
     <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-0 z-50 flex items-center justify-center">
       <div className="bg-white rounded-[12px] shadow-md p-8 w-[715px]  ">
@@ -40,10 +76,17 @@ const AthleteAiModal = ({ onClick }) => {
           <div className=" rounded-lg w-full h-[120px]">
             <textarea
               placeholder="Type Prompt here"
+              value={aiPrompt}
+              onChange={(e) => {
+
+                setAiPrompt(e.target.value)
+                setError('')
+              }}
               className="w-full mt-2 px-3 py-2 text-sm text-[#302C2C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0085CA] bg-transparent h-[70px] resize-none"
             ></textarea>
           </div>
         </div>
+        {error && <span className="text-red-500 text-xs">{error}</span>}
         {/* Action Buttons */}
         <div className="flex justify-end items-center w-full mt-4 gap-2">
           <div className="w-full"></div>
@@ -52,15 +95,10 @@ const AthleteAiModal = ({ onClick }) => {
           </button>
 
           <button
-            onClick={() => {
-              dispatch(setFormData(athleteData));
-              dispatch(setMode("ai"));
-
-              navigate("/app/add-athlete")
-            }}
+            onClick={handleAiAtheleteCreate}
             className="w-full px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors"
           >
-            Fill Form
+            {loading ? "Fill Form...." : "Fill Form"}
           </button>
         </div>
       </div>

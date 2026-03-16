@@ -1,62 +1,69 @@
 import { FiPlus } from "react-icons/fi";
 import { BiSolidNotification } from "react-icons/bi";
 import { bin, pen } from "../../assets/export";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateSchoolModal from "../../components/app/SchoolManagement/CreateSchoolModal";
 import EditSchoolModal from "../../components/app/SchoolManagement/EditSchoolModal";
 import DeleteModal from "../../components/global/DeleteModal";
 import SuccessModal from "../../components/global/SuccessModal";
-
-const schools = [
-  {
-    id: 1,
-    title: "Washington Academy",
-    description:
-      "Adipiscing sem nunc a nunc mi. Nibh mattis quis massa aenean nisl potenti.",
-    type: "All",
-    status: "Send",
-  },
-  {
-    id: 2,
-    title: "California Institute",
-    description:
-      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem .",
-    type: "All",
-    status: "Send",
-  },
-  {
-    id: 3,
-    title: "Florida State University",
-    description:
-      "At vero eos et accusamus et iusto odio dignissimos ducimus qui tum.",
-    type: "All",
-    status: "Send",
-  },
-  {
-    id: 4,
-    title: "University of Illinois",
-    description:
-      "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil.",
-    type: "All",
-    status: "Send",
-  },
-  {
-    id: 5,
-    title: "University of Michigan",
-    description:
-      "Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis  laboriosam.",
-    type: "All",
-    status: "Send",
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import { getSchool } from "../../lib/query/queryFn";
+import axiosinstance from "../../axios";
+import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
+import TableSkeleton from "../../components/global/TableSkeleton";
+import Pagination from "../../components/global/Pagination";
 
 export default function SchoolManagement() {
+  const [editMode, setEditMode] = useState('')
   const [addSchoolModal, setAddSchoolModal] = useState(false);
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [isDelete, setIsDelete] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteId, setDeleteId] = useState('')
+  const [page, setPage] = useState(1)
+  const [subject, setSubject] = useState(editMode?.name || '');
 
-  
+  console.log(editMode, "editMode")
+  const [logo, setLogo] = useState(editMode?.logo ? { src: editMode.logo, name: "Logo.png", size: "2 mb" } : null);
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["school", page],
+    queryFn: () => getSchool({ page }),
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+
+  });
+
+
+
+  const handleDelete = async (deleteId) => {
+
+    setDeleteLoading(true)
+    try {
+      const response = await axiosinstance.delete(`/school/${deleteId}`)
+      if (response?.status === 200) {
+        SuccessToast(response?.data?.message)
+        setIsDelete(false)
+        refetch()
+
+      }
+    } catch (err) {
+      ErrorToast(err?.response?.data?.message)
+    } finally {
+      setDeleteLoading(false)
+    }
+  }
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= data?.pagination?.totalPages) {
+      setPage(newPage);
+    }
+  };
+  useEffect(() => {
+    if (editMode) {
+      setSubject(editMode.name || "");
+      setLogo(editMode.logo ? { src: editMode.logo, name: "Logo.png", size: "2 mb" } : null);
+    }
+  }, [editMode]);
   return (
     <div className="w-full min-h-screen  p-4 font-sans">
       {/* Header Section */}
@@ -80,7 +87,12 @@ export default function SchoolManagement() {
           </div>
         </div>
         <button
-          onClick={() => setAddSchoolModal(true)}
+          onClick={() => {
+            setEditMode(null);
+            setSubject("")
+            setLogo(null)
+            setAddSchoolModal(true)
+          }}
           className="mt-4 sm:mt-0 flex items-center gap-2 px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors shadow-sm"
         >
           <FiPlus strokeWidth={3} />
@@ -100,44 +112,65 @@ export default function SchoolManagement() {
           </div>
 
           <div className="space-y-4">
-            {schools.map((item) => (
-              <div
-                key={item.id}
-                className="grid grid-cols-4 gap-4 px-6 pt-2 hover:bg-blue-50/30 transition-colors border-t border-[#E3E3E3] group"
-              >
-                <div className="font-medium text-[#2D3748] text-sm py-2 mt-4">
-                  {item.title}
-                </div>
-                <div className="font-medium text-[#2D3748] text-sm py-2 mt-4"></div>
-                <div className="mt-4">
-                  <div className="bg-gray-300 border border-gray-100  rounded-full text-sm text-[#2D3748] items-center gap-2 w-8 h-8"></div>
-                </div>
-                <div className="flex gap-4 text-gray-400 py-2 mt-4">
+            {isLoading ? (<TableSkeleton />)
+              : data?.data?.length === 0 ? <div className="text-center p-10">No Data Found</div> :
+                data?.data?.map((item) => (
                   <div
-                    className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors"
-                    onClick={() => setSelectedSchool(item)} // 👈 set clicked school
+                    key={item._id}
+                    className="grid grid-cols-4 gap-4 px-6 pt-2 hover:bg-blue-50/30 transition-colors border-t border-[#E3E3E3] group"
                   >
-                    <img src={pen} alt="edit" />
+                    <div className="font-medium text-[#2D3748] text-sm py-2 mt-4">
+                      {item?.name}
+                    </div>
+                    <div className="font-medium text-[#2D3748] text-sm py-2 mt-4"></div>
+                    <div className="">
+                      <img
+                        src={item?.logo || "/placeholder.png"}
+                        className="rounded-full w-16 h-16 object-cover"
+
+                      />
+                    </div>
+                    <div className="flex gap-4 text-gray-400 py-2 mt-4">
+                      <div
+                        className="cursor-pointer p-1 w-6 h-6 hover:bg-blue-100 rounded-full transition-colors"
+                        onClick={() => {
+                          setEditMode(item)
+                          setAddSchoolModal(true)
+                        }}
+                      >
+                        <img src={pen} alt="edit" />
+                      </div>
+                      <div
+                        onClick={() => {
+                          setDeleteId(item?._id)
+                          setIsDelete(true)
+                        }}
+                        className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors"
+                      >
+                        <img src={bin} alt="delete" />
+                      </div>
+                    </div>
                   </div>
-                  <div
-                    onClick={() => setIsDelete(true)}
-                    className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors"
-                  >
-                    <img src={bin} alt="delete" />
-                  </div>
-                </div>
-              </div>
-            ))}
+                ))}
           </div>
         </div>
+          <Pagination
+            pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
+            onPageChange={handlePageChange}
+          />
       </div>
       {addSchoolModal && (
         <CreateSchoolModal
+          editMode={editMode}
           isOpen={addSchoolModal}
           onNext={() => {
             setAddSchoolModal(false);
             setIsSuccess(true);
           }}
+          setSubject={setSubject}
+          subject={subject}
+          logo={logo}
+          setLogo={setLogo}
           onClick={() => {
             setAddSchoolModal(false);
           }}
@@ -150,8 +183,8 @@ export default function SchoolManagement() {
           onClick={() => {
             setIsSuccess(false);
           }}
-          message={"School Added"}
-          title={"School has been Added."}
+          message={`School ${editMode?._id ? "Updated" : "Added"}`}
+          title={`School has been  ${editMode?._id ? "Updated" : "Added"}.`}
         />
       )}
       {selectedSchool && (
@@ -167,6 +200,8 @@ export default function SchoolManagement() {
           onClick={() => {
             setIsDelete(false);
           }}
+          loading={deleteLoading}
+          onNext={() => handleDelete(deleteId)}
           message={"School will be deleted"}
           title={"Delete School"}
         />

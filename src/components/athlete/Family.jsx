@@ -96,10 +96,10 @@ export default function Family({ onNext, setSubmit }) {
                       placeholder="Enter name"
                       formik={formik}
                     />
-                    {formik.touched.siblings?.[index]?.name &&
+                    {/* {formik.touched.siblings?.[index]?.name &&
                       formik.errors.siblings?.[index]?.name && (
                         <span className="text-red-500 text-xs">{formik.errors.siblings[index].name}</span>
-                      )}
+                      )} */}
                   </div>
                   <div className="h-[20px]">
 
@@ -110,10 +110,10 @@ export default function Family({ onNext, setSubmit }) {
                       type="date"
                       formik={formik}
                     />
-                    {formik.touched.siblings?.[index]?.dob &&
+                    {/* {formik.touched.siblings?.[index]?.dob &&
                       formik.errors.siblings?.[index]?.dob && (
                         <span className="text-red-500 text-xs">{formik.errors.siblings[index].dob}</span>
-                      )}
+                      )} */}
                   </div>
                 </div>
 

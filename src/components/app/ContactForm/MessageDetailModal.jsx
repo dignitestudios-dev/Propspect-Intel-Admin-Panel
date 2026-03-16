@@ -47,8 +47,11 @@ const MessageDetailModal = ({ onClick, onNext, contactDetail }) => {
             </div>
             <div>
               <p className="text-[14px] text-[#0D0C0C99] py-2 px-4">Status</p>
-              <button className="bg-[#f5e7db] border border-gray-100 px-6 py-2 ml-2 rounded-xl text-sm text-[#2D3748]  hover:shadow-md transition-shadow inline-flex items-center gap-2">
-                <p className={`${"text-[#E57E25]"} text-[14px]`}>{contactDetail?.emailStatus}</p>
+              <button className=" border border-gray-100 px-6 py-2 ml-2 rounded-xl text-sm text-[#2D3748]  hover:shadow-md transition-shadow inline-flex items-center gap-2">
+                <p className={`${contactDetail?.emailStatus === "Replied"
+                  ? "text-green-500"
+                  : "text-[#E57E25]"
+                  } text-[14px]`}>{contactDetail?.emailStatus}</p>
               </button>
             </div>
             <div>
@@ -69,12 +72,15 @@ const MessageDetailModal = ({ onClick, onNext, contactDetail }) => {
             </div>
           </div>
           <div className="flex justify-between items-center w-full mt-4 gap-2">
-            <button
-              onClick={onNext}
-              className="w-full px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors"
-            >
-              Reply
-            </button>
+            {contactDetail?.emailStatus === "Pending" && (
+              <button
+                onClick={onNext}
+                className="w-full px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors"
+              >
+                Reply
+              </button>
+
+            )}
             <button
               onClick={onClick}
               className="w-full px-5 py-2.5 rounded-md text-[#302C2C] font-semibold border-[1px] border-[#E3E3E3]"

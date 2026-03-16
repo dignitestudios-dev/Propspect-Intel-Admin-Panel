@@ -23,6 +23,7 @@ import TableSkeleton from "../../components/global/TableSkeleton";
 import Pagination from "../../components/global/Pagination";
 import axiosinstance from "../../axios";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
+import StatsSkeleton from "../../components/global/StatsSkeleton";
 const ageRanges = [
   "10-20",
   "20-30",
@@ -85,10 +86,11 @@ export default function Atheletes() {
   });
 
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= data?.pagination?.pagination?.totalPages) {
+    if (newPage >= 1 && newPage <= data?.pagination?.totalPages) {
       setPage(newPage);
     }
   };
+  
   const handleApplyFilter = () => {
 
     if (selectedAgeRange) {
@@ -228,21 +230,27 @@ export default function Atheletes() {
       <div className="border-2 border-white p-4 rounded-xl bg-white bg-opacity-30">
         <h1 className="p-2 pb-4 pt-0 font-bold">Overview</h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 ">
-          {[
-            { label: "Total Athletes", value: atheleteCount?.totalAthlete },
-            { label: "Active Athletes", value: atheleteCount?.activeAthlete },
-            { label: "Pending Requests", value: atheleteCount?.intrestPending },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="border border-white p-4 rounded-xl shadow-sm  text-center bg-gray-100 bg-opacity-30"
-            >
-              <h2 className="text-[24px] font-bold text-gray-900">
-                {item.value}
-              </h2>
-              <p className="text-sm mt-4 text-gray-500 ">{item.label}</p>
-            </div>
-          ))}
+
+          {atheleteCountLoading ? (
+            <StatsSkeleton count={3} />
+          ) : (
+            [
+              { label: "Total Athletes", value: atheleteCount?.totalAthlete },
+              { label: "Active Athletes", value: atheleteCount?.activeAthlete },
+              { label: "Pending Requests", value: atheleteCount?.intrestPending },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="border border-white p-4 rounded-xl shadow-sm  text-center bg-gray-100 bg-opacity-30"
+              >
+                <h2 className="text-[24px] font-bold text-gray-900">
+                  {item.value}
+                </h2>
+                <p className="text-sm mt-4 text-gray-500 ">{item.label}</p>
+              </div>
+            ))
+
+          )}
         </div>
       </div>
 
@@ -496,7 +504,7 @@ export default function Atheletes() {
         </div>
       </div>
       <Pagination
-        pagination={data?.pagination?.pagination || { currentPage: 1, totalPages: 1 }}
+        pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
         onPageChange={handlePageChange}
       />
       {isAddAthlete && (

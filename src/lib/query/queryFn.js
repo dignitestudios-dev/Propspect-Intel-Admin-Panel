@@ -102,13 +102,32 @@ export const getMostViewAthlete = async ({
   return res.data;
 };
 
-export const getContact = async () => {
-  const res = await axiosinstance.get(`/contact`);
+export const getContact = async ({
+  search,
+  activeTab,
+  page = 1,
+  itemsPerPage = 10,
+}) => {
+  let url = `/contact?q=${search}&page=${page}&limit=${itemsPerPage}`;
+
+  if (activeTab !== "All") {
+    url += `&emailStatus=${activeTab}`;
+  }
+
+  const res = await axiosinstance.get(url);
   return res.data;
 };
-
-
 export const getContactById = async (id) => {
   const res = await axiosinstance.get(`/contact/${id}`);
   return res.data.data;
+};
+export const getContactStats = async () => {
+  const res = await axiosinstance.get(`/contact/stats`);
+  return res.data.data;
+};
+export const getSchool = async ({ page = 1, itemsPerPage = 10 }) => {
+  const res = await axiosinstance.get(
+    `/school?page=${page}&limit=${itemsPerPage}`,
+  );
+  return res.data;
 };
