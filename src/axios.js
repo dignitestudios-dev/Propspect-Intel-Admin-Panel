@@ -3,21 +3,18 @@ import { ErrorToast } from "./components/global/Toaster";
 import Cookies from "js-cookie";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
-
 export const baseUrl = "https://dev.api.prospectintelhq.com/api";
-
-async function getDeviceFingerprint() {
+let deviceFingerprint = "";
+async function loadFingerprint() {
   const fp = await FingerprintJS.load();
   const result = await fp.get();
-  return result.visitorId;
+  deviceFingerprint = result.visitorId;
 }
+
+loadFingerprint();
 
 const axiosinstance = axios.create({
   baseURL: baseUrl,
-  headers: {
-    devicemodel: await getDeviceFingerprint(),
-    deviceIdentity: await getDeviceFingerprint(),
-  },
   timeout: 10000,
 });
 
@@ -33,6 +30,8 @@ axiosinstance.interceptors.request.use((request) => {
   request.headers = {
     ...request.headers,
     Accept: "application/json, text/plain, */*",
+    devicemodel: deviceFingerprint,
+    deviceIdentity: deviceFingerprint,
     ...(token && { Authorization: `Bearer ${token}` }),
   };
 
