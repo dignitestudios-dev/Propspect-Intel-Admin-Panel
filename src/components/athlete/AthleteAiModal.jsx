@@ -30,7 +30,7 @@ const AthleteAiModal = ({ onClick }) => {
         SuccessToast(response?.data?.message)
         dispatch(setFormData(response?.data?.data));
         dispatch(setMode("ai"));
-        navigate("/app/add-athlete")
+        navigate("/app/athleteform")
 
       }
     } catch (err) {

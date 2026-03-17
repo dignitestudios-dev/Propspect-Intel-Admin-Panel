@@ -15,10 +15,9 @@ import AthleteAiModal from "../../components/athlete/AthleteAiModal";
 import DeleteModal from "../../components/global/DeleteModal";
 import useDebounce, { useAppDispatch } from "../../lib/store/hook";
 import { setAthleteId, setFormData, setMode } from "../../lib/store/feature/athleteFormSlice";
-import { athleteData, mockAtheleTableData } from "../../static/mockData";
 import { getAthelete, getAtheleteCount } from "../../lib/query/queryFn";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { calculateAge, formatDate } from "../../lib/helpers";
+import { calculateAge, formatAthleteForCSV } from "../../lib/helpers";
 import TableSkeleton from "../../components/global/TableSkeleton";
 import Pagination from "../../components/global/Pagination";
 import axiosinstance from "../../axios";
@@ -53,13 +52,10 @@ export default function Atheletes() {
   const debouncedSearch = useDebounce(search, 500)
   const [filterOpen, setFilterOpen] = useState(false)
   const [selectedIds, setSelectedIds] = useState([])
-
   const [archiveLoading, setArchiveLoading] = useState(false)
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [selectedAgeRange, setSelectedAgeRange] = useState("")
   const [selectedPosition, setSelectedPosition] = useState("")
-
-  // ye API me jayenge
   const [minAge, setMinAge] = useState("")
   const [maxAge, setMaxAge] = useState("")
   const [position, setPosition] = useState("")
@@ -90,7 +86,7 @@ export default function Atheletes() {
       setPage(newPage);
     }
   };
-  
+
   const handleApplyFilter = () => {
 
     if (selectedAgeRange) {
@@ -187,6 +183,28 @@ export default function Atheletes() {
       setIsDeleteLoading(false)
     }
   }
+
+  const handleSingleDownload = (athlete) => {
+    const formattedData = formatAthleteForCSV(athlete);
+
+    const headers = Object.keys(formattedData);
+    const values = Object.values(formattedData);
+
+    const csv = [
+      headers.join(","),
+      values.map(v => `"${v ?? ""}"`).join(",")
+    ].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${formattedData.Name || "athlete"}.csv`;
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  };
   return (
     <div className="w-full space-y-6">
 
@@ -477,13 +495,13 @@ export default function Atheletes() {
                           className="cursor-pointer hover:text-gray-700"
                         />
 
-                        <FiDownload className="cursor-pointer hover:text-gray-700" />
+                        <FiDownload onClick={() => handleSingleDownload(athlete)} className="cursor-pointer hover:text-gray-700" />
                         <FiEdit2 onClick={() => {
                           dispatch(setFormData(athlete))
                           dispatch(setMode("edit"))
                           dispatch(setAthleteId(athlete._id))
 
-                          navigate("/app/add-athlete")
+                          navigate("/app/athleteform")
                         }} className="cursor-pointer hover:text-gray-700" />
 
                         <FiTrash2

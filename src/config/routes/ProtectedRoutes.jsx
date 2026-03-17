@@ -21,7 +21,7 @@ export const ProtectedRoutes = [
     { path: "notifications", element: <Notifications /> },
     { path: "athlete-details/:id", element: <AthleteDetails /> },
     { path: "location", element: <Location /> },
-    { path: "add-athlete", element: <AddAthlete /> },
+    { path: "athleteform", element: <AddAthlete /> },
     { path: "athlete-interests/:id", element: <AthleteInterests /> },
     { path: "analytic", element: <FiltersAnalytics /> },
     { path: "school-management", element: <SchoolManagement /> },

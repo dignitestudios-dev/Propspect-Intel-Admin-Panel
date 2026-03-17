@@ -38,7 +38,7 @@ const AddAthleteModal = ({ onClick, handleAiModal }) => {
             onClick={() => {
               dispatch(resetForm())
               dispatch(setMode('create')) 
-              navigate("/app/add-athlete")
+              navigate("/app/athleteform")
             }}
             className="flex flex-col items-center justify-center bg-[#EAEEF8] text-black py-2 px-4 rounded-lg font-semibold w-full transition-all duration-300 ease-in-out hover:bg-[#0085CA] hover:text-white"
           >

@@ -53,7 +53,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
     setSubmit(() => formik.submitForm);
   }, [formik.submitForm]);
 
-  console.log(formik.values.image, "formik.values.image")
+  
 
   return (
     <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans">
