@@ -5,7 +5,7 @@ import FingerprintJS from "@fingerprintjs/fingerprintjs";
 // for local
 // export const baseUrl = "https://dev.api.prospectintelhq.com/api";
 // for Vercel
-export const baseUrl = "https://staging.api.prospectintelhq.com/api";
+export const baseUrl = "https://staging.api.prospectintelhq.com";
 let deviceFingerprint = "";
 async function loadFingerprint() {
   const fp = await FingerprintJS.load();

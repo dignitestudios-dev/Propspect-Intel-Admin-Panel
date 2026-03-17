@@ -228,9 +228,17 @@ export default function AthleteFormManager() {
           disabled={loading}
           type="submit"
           className="px-14 py-3 rounded-xl font-semibold text-white bg-[#2D2D2D] hover:bg-black transition-colors"
-          onClick={() => submitCurrentForm()}
+          onClick={submitCurrentForm}
         >
-          {loading ? "Creating..." : activeTab === "Media" ? "Create Athlete" : "Next"}
+          {loading
+            ? mode === "edit"
+              ? "Updating..."
+              : "Creating..."
+            : activeTab === "Media"
+              ? mode === "edit"
+                ? "Update Athlete"
+                : "Create Athlete"
+              : "Next"}
         </button>
       </div>
       {athleteCreated && (
