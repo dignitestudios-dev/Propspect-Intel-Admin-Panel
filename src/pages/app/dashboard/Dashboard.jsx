@@ -388,7 +388,11 @@ export default function Dashboard() {
             <tbody>
               {userLoading ? (
                 <TableSkeleton />) : userData?.data?.length === 0 ? (
-                  <div>No User Found</div>
+                  <tr>
+                    <td colSpan="6" className=" py-4 text-center text-gray-500">
+                      No users found
+                    </td>
+                  </tr>
                 ) :
                 userData?.data?.map((user, index) => (
                   <tr key={index} className="border-b last:border-none">
