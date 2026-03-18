@@ -1,32 +1,63 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../lib/store/hook";
 import { useFormik } from "formik";
 import { FiTrash2 } from "react-icons/fi";
 import { updateSection } from "../../lib/store/feature/athleteFormSlice";
 import { educationSchema } from "../../schema/athleteFormSchema/athleteSchema";
+import { useQuery } from "@tanstack/react-query";
+import { getSchool } from "../../lib/query/queryFn";
+import { IoIosArrowDropdownCircle } from "react-icons/io";
+import Pagination from "../global/Pagination";
 
 export default function Education({ setSubmit, onNext }) {
   const dispatch = useAppDispatch();
+  const [page, setPage] = useState(1)
+  const [openIndex, setOpenIndex] = useState(null);
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["school", page],
+    queryFn: () => getSchool({ page }),
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+
+  });
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= data?.pagination?.totalPages) {
+      setPage(newPage);
+    }
+  };
 
   const educationData = useAppSelector(
     (s) => s.athleteForm.formData.education || []
   );
-
+  
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       institutions:
         educationData.length > 0
-          ? educationData.map((item, i) => ({
-            ...item,
-            id: item.id || i + 1,
-            startYear: item.startYear ? new Date(item.startYear).getFullYear().toString() : "",
-            endYear: item.endYear ? new Date(item.endYear).getFullYear().toString() : "",
-          }))
-          : [{ id: 1, name: "", startYear: "", endYear: "", field: "", gpa: "" }],
+          ? educationData.map((item) => {
+            console.log(item, "Itemssss"); 
+            return {
+              id: item.id,       
+              name: item.name || "",
+              startYear: item.startYear
+                ? new Date(item.startYear).getFullYear().toString()
+                : "",
+              endYear: item.endYear
+                ? new Date(item.endYear).getFullYear().toString()
+                : "",
+              field: item.field || "",
+              gpa: item.gpa || "",
+            };
+          })
+          : [
+            { id: "", name: "", startYear: "", endYear: "", field: "", gpa: "" },
+          ],
     },
     validationSchema: educationSchema,
     onSubmit: (values) => {
+      
       dispatch(updateSection({ section: "education", data: values.institutions }));
       onNext();
     },
@@ -60,11 +91,17 @@ export default function Education({ setSubmit, onNext }) {
 
 
   const updateField = (index, field, value) => {
-    const newArray = formik.values.institutions.map((inst, i) =>
-      i === index
-        ? { ...inst, [field]: value }
-        : inst
-    );
+    const newArray = formik.values.institutions.map((inst, i) => {
+      if (i === index) {
+        if (field === null && typeof value === "object") {
+
+          return { ...inst, ...value };
+        } else {
+          return { ...inst, [field]: value };
+        }
+      }
+      return inst;
+    });
     formik.setFieldValue("institutions", newArray);
   };
   return (
@@ -99,7 +136,7 @@ export default function Education({ setSubmit, onNext }) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
+              {/* <div>
                 <label className="block text-gray-600 text-sm mb-1">Institution Name</label>
                 <input
                   type="text"
@@ -111,8 +148,82 @@ export default function Education({ setSubmit, onNext }) {
                 {formik.errors.institutions?.[index]?.name && formik.touched.institutions?.[index]?.name && (
                   <span className="text-red-500 text-xs">{formik.errors.institutions[index].name}</span>
                 )}
-              </div>
+              </div> */}
 
+              <div className="relative ">
+                <label className="block text-gray-600 text-sm mb-1">
+                  Institution Name
+                </label>
+
+                {/* Selected Box */}
+                <div
+                  onClick={() =>
+                    setOpenIndex(openIndex === index ? null : index)
+                  }
+                  className="w-full bg-white p-3 border rounded-xl text-sm cursor-pointer flex items-center justify-between"
+                >
+                  <span className="text-gray-700">
+                    {inst.name || "Select Institution"}
+                  </span>
+
+                  <span className="text-gray-400"><IoIosArrowDropdownCircle /></span>
+                </div>
+
+
+                {openIndex === index && (
+                  <div className="absolute z-10 w-full mt-2 border rounded-xl bg-white shadow-lg max-h-60 overflow-y-auto">
+                    {isLoading && (
+                      <div className="p-3 space-y-2">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <div key={i} className="flex items-center gap-3 animate-pulse">
+                            <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {data?.data?.map((school) => (
+                      <div
+                        key={school?._id}
+                        onClick={() => {
+                          updateField(index, null, { id: school._id, name: school.name });
+                          setOpenIndex(null);
+                          setPage(1);
+                        }}
+                        className={`flex items-center  gap-3 p-3 cursor-pointer hover:bg-gray-50 ${inst.id === school._id
+                          ? "bg-blue-50"
+                          : ""
+                          }`}
+                      >
+                        
+                        <img
+                          src={school.logo}
+                          alt={school.name}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+
+                        <span className="text-sm text-gray-700">
+                          {school.name}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="mb-2">
+                      <Pagination
+                        pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
+                        onPageChange={handlePageChange}
+                      />
+
+                    </div>
+                  </div>
+                )}
+                {formik.errors.institutions?.[index]?.name && (
+                  <span className="text-red-500 text-xs">
+                    {formik.errors.institutions[index].name}
+                  </span>
+                )}
+
+              </div>
               <div>
                 <label className="block text-gray-600 text-sm mb-1">Year Started</label>
                 <select

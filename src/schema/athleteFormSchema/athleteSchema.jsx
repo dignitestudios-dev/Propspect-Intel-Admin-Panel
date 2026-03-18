@@ -3,7 +3,30 @@ import * as Yup from "yup";
 
 export const BasicInfoSchema = Yup.object({
     name: Yup.string().required("Athlete name required"),
-    dob: Yup.string().required("Date of birth required"),
+    dob: Yup.string()
+        .required("Date of birth required")
+        .test("valid-age", "You must be at least 13 years old", (value) => {
+            if (!value) return false;
+
+            const selectedDate = new Date(value);
+            const today = new Date();
+
+            const minAgeDate = new Date(
+                today.getFullYear() - 13,
+                today.getMonth(),
+                today.getDate()
+            );
+
+            return selectedDate <= minAgeDate;
+        })
+        .test("not-today", "Date of birth cannot be today", (value) => {
+            if (!value) return false;
+
+            const selected = new Date(value).toDateString();
+            const today = new Date().toDateString();
+
+            return selected !== today;
+        }),
     position: Yup.string().required("Position required"),
     height: Yup.string().required("Height required"),
     weight: Yup.string().required("Weight required"),
@@ -17,7 +40,30 @@ export const BasicInfoSchema = Yup.object({
 
 export const familyInfoSchema = Yup.object({
     motherName: Yup.string().required("Mother name required"),
-    motherDob: Yup.string().required("Mother date of birth required"),
+    motherDob: Yup.string()
+        .required("Mother date of birth required")
+        .test("valid-age", "You must be at least 13 years old", (value) => {
+            if (!value) return false;
+
+            const selectedDate = new Date(value);
+            const today = new Date();
+
+            const minAgeDate = new Date(
+                today.getFullYear() - 13,
+                today.getMonth(),
+                today.getDate()
+            );
+
+            return selectedDate <= minAgeDate;
+        })
+        .test("not-today", "Date of birth cannot be today", (value) => {
+            if (!value) return false;
+
+            const selected = new Date(value).toDateString();
+            const today = new Date().toDateString();
+
+            return selected !== today;
+        }),
     motherOccupation: Yup.string().required("Mother occupation required"),
     motherContact: Yup.string().required("Mother contact required"),
     fatherName: Yup.string().required("Father name required"),
@@ -25,7 +71,30 @@ export const familyInfoSchema = Yup.object({
     siblings: Yup.array().of(
         Yup.object({
             name: Yup.string().required("Sibling name required"),
-            dob: Yup.string().required("Sibling DOB required"),
+            dob: Yup.string()
+                .required("Sibling DOB required")
+                .test("valid-age", "You must be at least 13 years old", (value) => {
+                    if (!value) return false;
+
+                    const selectedDate = new Date(value);
+                    const today = new Date();
+
+                    const minAgeDate = new Date(
+                        today.getFullYear() - 13,
+                        today.getMonth(),
+                        today.getDate()
+                    );
+
+                    return selectedDate <= minAgeDate;
+                })
+                .test("not-today", "Date of birth cannot be today", (value) => {
+                    if (!value) return false;
+
+                    const selected = new Date(value).toDateString();
+                    const today = new Date().toDateString();
+
+                    return selected !== today;
+                }),
             type: Yup.string().required(),
         })
     ),

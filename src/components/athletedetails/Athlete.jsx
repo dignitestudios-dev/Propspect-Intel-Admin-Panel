@@ -174,7 +174,7 @@ const Athlete = ({ athlete }) => {
 
       <InfoBox
         title="Football Character"
-        score={athlete?.footballCharacter?.grade}
+        score={athlete?.footballPiScore}
         icon={<img src={football} alt="Football" className="text-blue-600" />}
         scoreColorClass="text-[#0085CA]"
       >
@@ -183,7 +183,7 @@ const Athlete = ({ athlete }) => {
 
       <InfoBox
         title="Personal Character"
-        score={athlete?.personalCharacter?.grade}
+        score={athlete?.personalPiScore}
         icon={<img src={personal} alt="personal" className="text-orange-600" />}
         scoreColorClass="text-[#FFC145]"
       >

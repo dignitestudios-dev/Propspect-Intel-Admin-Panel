@@ -23,8 +23,6 @@ export default function SchoolManagement() {
   const [deleteId, setDeleteId] = useState('')
   const [page, setPage] = useState(1)
   const [subject, setSubject] = useState(editMode?.name || '');
-
-  console.log(editMode, "editMode")
   const [logo, setLogo] = useState(editMode?.logo ? { src: editMode.logo, name: "Logo.png", size: "2 mb" } : null);
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["school", page],

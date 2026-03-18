@@ -17,7 +17,7 @@ export default function AiLogoModal({ isOpen, onClose, onBack, onUseLogo, setAiP
     try {
       setLoading(true);
       const img = await generateImage(aiPrompt);
-      
+
       setGeneratedLogo(img);
     } catch (err) {
       console.error(err);
@@ -32,7 +32,7 @@ export default function AiLogoModal({ isOpen, onClose, onBack, onUseLogo, setAiP
       onClose();
     }
   };
-  console.log(generatedLogo,"generatedLogo")
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -54,7 +54,12 @@ export default function AiLogoModal({ isOpen, onClose, onBack, onUseLogo, setAiP
             <BsStars className="text-[#5D5FEF] text-2xl mt-1 shrink-0" />
             <textarea
               value={aiPrompt}
-              onChange={(e) => setAiPrompt(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length <= 1000) {
+                  setAiPrompt(e.target.value);
+                }
+              }}
+              maxLength={1000}
               className="bg-transparent w-full outline-none text-sm text-gray-700 resize-none h-16"
               placeholder="Enter your prompt here..."
             />
@@ -67,20 +72,24 @@ export default function AiLogoModal({ isOpen, onClose, onBack, onUseLogo, setAiP
           </button>
         </div>
 
-        <div className="text-right text-xs text-gray-400 mb-2">0/1000</div>
+       <div className={`text-right text-xs mb-2 ${
+  aiPrompt.length > 900 ? "text-red-500" : "text-gray-400"
+}`}>
+  {aiPrompt.length}/1000
+</div>
 
         {/* Generated Logo Display */}
         <div className="bg-[#F0F5FF] w-full flex items-center justify-center h-[300px] rounded-2xl border-2 border-dashed border-blue-100 mb-6">
           {generatedLogo ? (
             <img src={generatedLogo} alt="Generated Logo" className="w-40 h-40 object-contain" />
           ) : (
-            <div className="w-32 h-32 bg-white rounded-full shadow-lg flex items-center justify-center overflow-hidden text-center font-bold text-xs">
-              <div className="flex gap-1 justify-center mb-1">
-                <div className="w-2 h-8 bg-yellow-400"></div>
-                <div className="w-2 h-8 bg-red-500"></div>
-                <div className="w-2 h-8 bg-blue-600"></div>
+            <div className="w-32 h-32 bg-white rounded-full shadow-lg flex flex-col items-center justify-center overflow-hidden text-center font-semibold text-gray-500 text-xs">
+              <div className="flex gap-1 justify-center mb-2">
+                <div className="w-2 h-8 bg-yellow-400 rounded-sm"></div>
+                <div className="w-2 h-8 bg-red-500 rounded-sm"></div>
+                <div className="w-2 h-8 bg-blue-600 rounded-sm"></div>
               </div>
-              Logoipsum
+              <span>Preview</span>
             </div>
           )}
         </div>

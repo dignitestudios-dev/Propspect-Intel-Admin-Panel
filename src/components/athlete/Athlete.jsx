@@ -52,27 +52,109 @@ export default function Athlete({ setSubmit, onNext }) {
           </section>
 
           <section className="space-y-4">
-            <h3 className="font-bold text-gray-800">Football Character</h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-x-8 items-end">
+            <h3 className="font-semibold text-gray-800 text-sm">
+              Football Character
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+
+
               <div className="md:col-span-1">
-                <InputField label="Pi Score" placeholder="Score here" name="footballPiScore" formik={formik} />
+                <div className="bg-white px-3 py-2 rounded-xl border border-gray-300 focus-within:border-blue-500 transition">
+
+                  <label className="block text-[10px] text-gray-400 font-semibold mb-1 uppercase">
+                    Pi Score
+                  </label>
+
+                  <select
+                    name="footballPiScore"
+                    value={formik.values.footballPiScore}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className="w-full bg-transparent text-gray-800 text-sm focus:outline-none"
+                  >
+                    <option value="" disabled>
+                      Select Pi Score
+                    </option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="F">F</option>
+                  </select>
+                </div>
+
+                {formik.touched.footballPiScore && formik.errors.footballPiScore && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {formik.errors.footballPiScore}
+                  </p>
+                )}
               </div>
+
+
               <div className="md:col-span-3">
-                <InputField label="Description" placeholder="Description here" name="footballDescription" formik={formik} />
+                <InputField
+                  label="Description"
+                  placeholder="Enter description..."
+                  name="footballDescription"
+                  formik={formik}
+                />
               </div>
+
             </div>
           </section>
 
 
           <section className="space-y-4">
-            <h3 className="font-bold text-gray-800">Personal Character</h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-x-8 items-end">
+            <h3 className="font-semibold text-gray-800 text-sm">
+              Personal Character
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+
+              {/* Pi Score */}
               <div className="md:col-span-1">
-                <InputField label="Pi Score" placeholder="Score here" name="personalPiScore" formik={formik} />
+                <div className="bg-white px-3 py-2 rounded-xl border border-gray-300 focus-within:border-blue-500 transition">
+
+                  <label className="block text-[10px] text-gray-400 font-semibold mb-1 uppercase">
+                    Pi Score
+                  </label>
+
+                  <select
+                    name="personalPiScore"
+                    value={formik.values.personalPiScore}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className="w-full bg-transparent text-gray-800 text-sm focus:outline-none"
+                  >
+                    <option value="" disabled>
+                      Select Pi Score
+                    </option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="F">F</option>
+                  </select>
+                </div>
+
+                {formik.touched.personalPiScore && formik.errors.personalPiScore && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {formik.errors.personalPiScore}
+                  </p>
+                )}
               </div>
+
+              {/* Description */}
               <div className="md:col-span-3">
-                <InputField label="Description" placeholder="Description here" name="personalDescription" formik={formik} />
+                <InputField
+                  label="Description"
+                  placeholder="Enter description..."
+                  name="personalDescription"
+                  formik={formik}
+                />
               </div>
+
             </div>
           </section>
 

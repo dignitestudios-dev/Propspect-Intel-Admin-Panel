@@ -219,7 +219,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-[#FFFFFF4D] h-[900px] flex flex-col border-2 border-white rounded-xl p-5 shadow-sm w-full">
+        <div className="bg-[#FFFFFF4D] h-[972px] flex flex-col border-2 border-white rounded-xl p-5 shadow-sm w-full">
 
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">

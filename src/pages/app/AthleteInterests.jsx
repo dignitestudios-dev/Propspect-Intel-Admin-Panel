@@ -7,11 +7,15 @@ import { getInterestById } from "../../lib/query/queryFn";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { formatDate } from "../../lib/helpers";
+import axiosinstance from "../../axios";
+import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 
 export default function AthleteInterests() {
   const { id } = useParams();
   const navigate = useNavigate()
   const location = useLocation();
+  const [loadingId, setLoadingId] = useState(null);
+  const [actionType, setActionType] = useState("");
   const athlete = location.state?.athlete;
   const atheleteCount = location.state?.atheleteCount;
 
@@ -22,6 +26,27 @@ export default function AthleteInterests() {
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
   });
+  const handleStatusUpdate = async (id, status) => {
+    setLoadingId(id);
+    setActionType(status);
+
+    try {
+      const response = await axiosinstance.put(
+        `athlete/${id}/intrests`,
+        { status }
+      );
+
+      if (response?.status === 200) {
+        SuccessToast(response?.data?.message);
+        refetch()
+      }
+    } catch (err) {
+      ErrorToast(err?.response?.data?.message);
+    } finally {
+      setLoadingId(null);
+      setActionType("");
+    }
+  };
 
   return (
     <div className="w-full min-h-screen p-6 font-sans space-y-6 ">
@@ -111,20 +136,29 @@ export default function AthleteInterests() {
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-3">
-                  {req?.status?.toLowerCase() === "pending" ? (
+                  {req?.status?.toLowerCase() === "pending" &&
                     <>
-                      <button className="px-6 py-2 bg-[#0085CA] text-white rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors">
-                        Update
+                      <button
+                        disabled={loadingId === req?._id}
+                        onClick={() => handleStatusUpdate(req?._id, "updated")}
+                        className="px-6 py-2 bg-[#0085CA] text-white rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors disabled:opacity-50"
+                      >
+                        {loadingId === req?._id && actionType === "updated"
+                          ? "Updating..."
+                          : "Update"}
                       </button>
-                      <button className="px-6 py-2 border border-gray-200 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors">
-                        Decline
+
+                      <button
+                        disabled={loadingId === req?._id}
+                        onClick={() => handleStatusUpdate(req?._id, "declined")}
+                        className="px-6 py-2 border border-gray-200 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors disabled:opacity-50"
+                      >
+                        {loadingId === req?._id && actionType === "declined"
+                          ? "Declining..."
+                          : "Decline"}
                       </button>
                     </>
-                  ) : (
-                    <button className="p-2 text-gray-400 hover:bg-gray-50 rounded-lg">
-                      <FiMoreHorizontal size={20} />
-                    </button>
-                  )}
+                  }
                 </div>
               </div>
 

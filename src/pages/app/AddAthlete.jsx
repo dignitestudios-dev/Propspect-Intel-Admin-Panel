@@ -143,6 +143,7 @@ export default function AthleteFormManager() {
       setLoading(false);
     }
   };
+  console.log(formData)
   const renderCurrentForm = () => {
     switch (activeTab) {
       case "Basic Info":

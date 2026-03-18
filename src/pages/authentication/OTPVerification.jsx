@@ -107,7 +107,7 @@ const OTPVerification = () => {
       <div className="flex flex-col items-center text-center mb-4">
         <img src={Logo} alt="logo" className="w-28 h-28 md:w-32 md:h-32 object-contain mb-4" />
         <p className="mt-2 text-white/80 text-sm md:text-base">
-          Enter the 4 digit code sent to {email || "N/A"}
+          Enter the 6 digit code sent to {email || "N/A"}
         </p>
       </div>
 

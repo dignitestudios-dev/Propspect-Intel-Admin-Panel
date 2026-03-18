@@ -5,11 +5,13 @@ import { addUserSchema } from "../../../schema/userSchema/userSchema";
 import { addUserInitialValues } from "../../../init/addUserInitialValues";
 import axiosinstance from "../../../axios";
 import { SuccessToast, ErrorToast } from "../../../components/global/Toaster";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext, editUser,
   setEditUser, refetch, setIsSuccess, setSuccessType }) => {
   const [loading, setLoading] = useState(false);
   const [profilePreview, setProfilePreview] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const formik = useFormik({
     initialValues: editUser
@@ -142,104 +144,128 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
 
             </div>
             {formik.errors.profileImage && (
-              <div className="text-red-500 text-[10px] mt-1 text-center">{formik.errors.profileImage}</div>
+              <div className="text-red-500 text-xs mt-1 text-center">{formik.errors.profileImage}</div>
             )}
 
+            <div className="mb-2">
+              <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-300">
+                <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  name="username"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.username}
+                  className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
+                />
+              </div>
 
-            <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
-              <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
-                Username
-              </label>
-              <input
-                type="text"
-                name="username"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.username}
-                className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
-              />
               {formik.touched.username && formik.errors.username && (
-                <div className="text-red-500 text-[10px] mt-1">{formik.errors.username}</div>
+                <p className="text-red-500 text-xs mt-1">
+                  {formik.errors.username}
+                </p>
               )}
             </div>
 
+            <div className="mb-2">
 
-            <div className={` ${!!editUser ? 'cursor-not-allowed bg-gray-200' : 'bg-[#FDFBF7] '} px-4 py-2 rounded-xl border border-gray-50`}>
-              <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.email}
-                disabled={!!editUser}
-                className={`w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm `}
-              />
+              <div className={` ${!!editUser ? 'cursor-not-allowed bg-gray-200' : 'bg-[#FDFBF7] '} px-4 py-2 rounded-xl border border-gray-50`}>
+                <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.email}
+                  disabled={!!editUser}
+                  className={`w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm `}
+                />
+              </div>
               {formik.touched.email && formik.errors.email && (
-                <div className="text-red-500 text-[10px] mt-1">{formik.errors.email}</div>
+                <div className="text-red-500 text-xs mt-1">{formik.errors.email}</div>
               )}
             </div>
 
+            <div className="mb-2">
+              <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50 relative">
+                <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
+                  Password
+                </label>
 
-            <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
-              <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.password}
-                className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
-              />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.password}
+                  className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm pr-8"
+                />
+
+               
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                >
+                  {showPassword ? <FaRegEye size={16} /> : <FaRegEyeSlash size={16} />}
+                </button>
+              </div>
+
               {formik.touched.password && formik.errors.password && (
-                <div className="text-red-500 text-[10px] mt-1">{formik.errors.password}</div>
+                <div className="text-red-500 text-xs mt-1">
+                  {formik.errors.password}
+                </div>
               )}
             </div>
-            <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
-              <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
-                Subscription Plan
-              </label>
+            <div className="mb-2">
+              <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
+                <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
+                  Subscription Plan
+                </label>
 
-              <select
-                name="subscription"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.subscription}
-                className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
-              >
-                <option value="">Select Plan</option>
-                <option value="Basic">Basic</option>
-                <option value="Premium">Premium</option>
-                <option value="Pro">Pro</option>
-              </select>
+                <select
+                  name="subscription"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.subscription}
+                  className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
+                >
+                  <option value="">Select Plan</option>
+                  <option value="Basic">Basic</option>
+                  <option value="Premium">Premium</option>
+                  <option value="Pro">Pro</option>
+                </select>
 
+              </div>
               {formik.touched.subscription && formik.errors.subscription && (
-                <div className="text-red-500 text-[10px] mt-1">
+                <div className="text-red-500 text-xs mt-1">
                   {formik.errors.subscription}
                 </div>
               )}
             </div>
 
-
-            <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
-              <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
-                Subscription Date
-              </label>
-              <input
-                type="date"
-                name="subscriptionDate"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.subscriptionDate}
-                className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
-              />
+            <div className="mb-2">
+              <div className="bg-[#FDFBF7] px-4 py-2 rounded-xl border border-gray-50">
+                <label className="block text-[10px] text-gray-400 font-bold mb-0.5 uppercase tracking-wider">
+                  Subscription Date
+                </label>
+                <input
+                  type="date"
+                  name="subscriptionDate"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.subscriptionDate}
+                  className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
+                />
+              </div>
               {formik.touched.subscriptionDate && formik.errors.subscriptionDate && (
-                <div className="text-red-500 text-[10px] mt-1">{formik.errors.subscriptionDate}</div>
+                <div className="text-red-500 text-xs mt-1">{formik.errors.subscriptionDate}</div>
               )}
+
             </div>
 
 
@@ -264,7 +290,7 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
                 ))}
               </div>
               {formik.touched.status && formik.errors.status && (
-                <div className="text-red-500 text-[10px] mt-1">{formik.errors.status}</div>
+                <div className="text-red-500 text-xs mt-1">{formik.errors.status}</div>
               )}
             </div>
 
