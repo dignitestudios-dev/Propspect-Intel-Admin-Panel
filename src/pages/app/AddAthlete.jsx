@@ -172,7 +172,7 @@ export default function AthleteFormManager() {
 
       <div className="mb-6  mx-auto">
         <button className="flex items-center gap-2 text-gray-800 hover:text-black mb-2 font-bold text-lg">
-          <FiArrowLeft size={18} />
+          <FiArrowLeft size={18} onClick={() => navigate(-1)} />
           Add athlete
         </button>
         <p className="text-gray-500 text-sm ml-6">
@@ -208,7 +208,11 @@ export default function AthleteFormManager() {
 
       </div>
       <div className="flex justify-center md:justify-end items-center gap-4 mt-12">
-        <button className="px-10 py-3 rounded-xl font-semibold text-gray-700 bg-[#F1F5F9] hover:bg-gray-200 transition-colors">
+
+        <button
+          onClick={() => navigate(-1)}
+          className="px-10 py-3 rounded-xl font-semibold text-gray-700 bg-[#F1F5F9] hover:bg-gray-200 transition-colors"
+        >
           Cancel
         </button>
 

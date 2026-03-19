@@ -534,7 +534,7 @@ export default function Atheletes() {
           }}
         />
       )}
-      {aiModal && <AthleteAiModal onClick={() => setAiModal(true)} />}
+      {aiModal && <AthleteAiModal onClick={() => setAiModal(false)} />}
       {isDelete && (
         <DeleteModal
           loading={isDeleteLoading}
