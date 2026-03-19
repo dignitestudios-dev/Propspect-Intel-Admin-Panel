@@ -120,7 +120,7 @@ export default function Notifications() {
             <div className="font-semibold text-sm">Description</div>
 
             <div className="font-semibold text-sm text-center">
-              {activeTab === "All" ? "User Type" : "User Name"}
+              {activeTab === "All" ? "User Type" : "Specific"}
             </div>
             {/* <div className="font-semibold text-sm text-center">
               <div className="flex items-center justify-center gap-1 cursor-pointer">
@@ -176,10 +176,10 @@ export default function Notifications() {
               )))}
           </div>
         </div>
-          <Pagination
-            pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
-            onPageChange={handlePageChange}
-          />
+        <Pagination
+          pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
+          onPageChange={handlePageChange}
+        />
       </div>
       {requestSendModal && (
         <CreatePushNotificationModal

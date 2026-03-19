@@ -23,6 +23,7 @@ import athlete3 from "./athletePro3.png";
 import athlete4 from "./athletePro4.png";
 import athlete5 from "./athletePro5.png";
 import prospectLogo from "./ProspectLogo.png";
+import NoImageUpload from "./no-image-png.jpg";
 // export {
 //     FILENAME(PASCALCASE)
 // }
@@ -30,6 +31,7 @@ import prospectLogo from "./ProspectLogo.png";
 export {
   Logo,
   NoInternetImage,
+  NoImageUpload,
   athletic,
   football,
   features,
@@ -45,5 +47,5 @@ export {
   athlete2,
   athlete3,
   athlete4,
-  athlete5
+  athlete5,
 };

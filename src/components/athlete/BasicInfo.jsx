@@ -53,7 +53,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
     setSubmit(() => formik.submitForm);
   }, [formik.submitForm]);
 
-  
+
 
   return (
     <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans">

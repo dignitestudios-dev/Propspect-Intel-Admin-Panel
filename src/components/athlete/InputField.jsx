@@ -10,6 +10,7 @@ export const InputField = ({ label, name, formik, type = "text" }) => {
                 <label className="text-xs text-gray-400">{label}</label>
                 <input
                     type={type}
+                    min={type === "number" ? 0 : undefined}
                     name={name}
                     value={value}
                     onChange={formik.handleChange}

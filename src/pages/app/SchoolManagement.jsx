@@ -1,6 +1,6 @@
 import { FiPlus } from "react-icons/fi";
 import { BiSolidNotification } from "react-icons/bi";
-import { bin, pen } from "../../assets/export";
+import { bin, NoImageUpload, pen } from "../../assets/export";
 import { useEffect, useState } from "react";
 import CreateSchoolModal from "../../components/app/SchoolManagement/CreateSchoolModal";
 import EditSchoolModal from "../../components/app/SchoolManagement/EditSchoolModal";
@@ -80,7 +80,7 @@ export default function SchoolManagement() {
                    </h1> */}
 
             <p className="text-sm px-9 text-gray-500">
-              Manage your push notifications to users
+              Manage Schools & Logos.
             </p>
           </div>
         </div>
@@ -123,7 +123,7 @@ export default function SchoolManagement() {
                     <div className="font-medium text-[#2D3748] text-sm py-2 mt-4"></div>
                     <div className="">
                       <img
-                        src={item?.logo || "/placeholder.png"}
+                        src={item?.logo || NoImageUpload}
                         className="rounded-full w-16 h-16 object-cover"
 
                       />
@@ -152,10 +152,10 @@ export default function SchoolManagement() {
                 ))}
           </div>
         </div>
-          <Pagination
-            pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
-            onPageChange={handlePageChange}
-          />
+        <Pagination
+          pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
+          onPageChange={handlePageChange}
+        />
       </div>
       {addSchoolModal && (
         <CreateSchoolModal

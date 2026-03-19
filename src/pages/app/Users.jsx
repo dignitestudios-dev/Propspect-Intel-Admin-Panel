@@ -246,7 +246,7 @@ export default function Users() {
                         className={`px-3 py-1 text-xs rounded-md font-medium ${user.isActive ? "bg-white text-green-600" : "bg-white text-orange-600"
                           }`}
                       >
-                        ● {user.isActive ? "Active" : "Archived"}
+                        ● {user.isActive ? "Active" : "Inactive"}
                       </span>
                     </td>
 

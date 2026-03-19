@@ -131,9 +131,7 @@ export default function AthleteFormManager() {
           SuccessToast(response?.data?.message || "Athlete created successfully");
           setAthleteCreated(true);
           setSuccessType('Created')
-
         }
-
       }
 
     } catch (err) {

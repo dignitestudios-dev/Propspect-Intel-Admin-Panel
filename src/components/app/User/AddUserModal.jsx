@@ -101,6 +101,13 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
       setProfilePreview(editUser.profilePicture);
     }
   }, [editUser]);
+  const getTodayLocal = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
   return (
     <div className="fixed -inset-4 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm p-4">
       <div className="bg-white rounded-[24px] shadow-2xl w-full max-w-md relative border border-gray-100 overflow-y-auto max-h-[95vh]">
@@ -205,7 +212,7 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
                   className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm pr-8"
                 />
 
-               
+
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -259,6 +266,7 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.subscriptionDate}
+                  min={getTodayLocal()}
                   className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
                 />
               </div>

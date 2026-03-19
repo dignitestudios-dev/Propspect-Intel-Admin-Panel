@@ -39,6 +39,10 @@ const CreatePushNotificationModal = ({ onClick, onNext }) => {
     },
     validationSchema: notificationSchema,
     onSubmit: async (values) => {
+      if (activeTab === "user" && !selectedUser?._id) {
+        ErrorToast("Please select user first");
+        return;
+      }
       const payload = {
         title: values.title,
         description: values.description,
