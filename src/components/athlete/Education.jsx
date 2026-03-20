@@ -30,16 +30,16 @@ export default function Education({ setSubmit, onNext }) {
   const educationData = useAppSelector(
     (s) => s.athleteForm.formData.education || []
   );
-  
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       institutions:
         educationData.length > 0
           ? educationData.map((item) => {
-            console.log(item, "Itemssss"); 
+
             return {
-              id: item.id,       
+              id: item.id,
               name: item.name || "",
               startYear: item.startYear
                 ? new Date(item.startYear).getFullYear().toString()
@@ -57,7 +57,7 @@ export default function Education({ setSubmit, onNext }) {
     },
     validationSchema: educationSchema,
     onSubmit: (values) => {
-      
+
       dispatch(updateSection({ section: "education", data: values.institutions }));
       onNext();
     },
@@ -103,6 +103,7 @@ export default function Education({ setSubmit, onNext }) {
       return inst;
     });
     formik.setFieldValue("institutions", newArray);
+    dispatch(updateSection({ section: "education", data: newArray }));
   };
   return (
     <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans max-w-6xl mx-auto py-10">
@@ -196,7 +197,7 @@ export default function Education({ setSubmit, onNext }) {
                           : ""
                           }`}
                       >
-                        
+
                         <img
                           src={school.logo}
                           alt={school.name}

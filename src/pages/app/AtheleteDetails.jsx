@@ -234,8 +234,8 @@ export default function AthleteDetails() {
               "Athlete",
               "Stats",
               "Education",
-              "Achievements",
-              "Media",
+              // "Achievements",
+              // "Media",
             ].map((tab) => (
               <button
                 key={tab}

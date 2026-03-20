@@ -5,8 +5,8 @@ import { ReduxProvider } from "./lib/store/provider.jsx";
 import AppRouter from "./config/router/AppRouter.jsx";
 import "./index.css";
 import './App.css'
-import Loader from "./components/global/Loader.js";
 import ReactQueryProvider from "./lib/query/ReactQueryProvider.jsx";
+import Loader from "./components/global/Loader.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

@@ -115,8 +115,8 @@ export default function BasicInfo({ setSubmit, onNext }) {
             formik={formik}
           />
 
-          <InputField label="Height (Ft)" type="number" name="height" formik={formik} />
-          <InputField label="Weight (Lbs)" name="weight" type="number" formik={formik} />
+          <InputField label="Height (Ft)" name="height" formik={formik} />
+          <InputField label="Weight (Lbs)" name="weight" formik={formik} />
           <InputField label="Hometown" name="hometown" formik={formik} />
           <InputField label="Contact Email" name="email" type="email" formik={formik} />
 

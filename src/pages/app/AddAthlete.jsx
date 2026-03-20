@@ -22,8 +22,8 @@ const TABS = [
   "Overview",
   "Stats",
   "Education",
-  "Achievements",
-  "Media",
+  // "Achievements",
+  // "Media",
 ];
 
 export default function AthleteFormManager() {
@@ -102,20 +102,20 @@ export default function AthleteFormManager() {
         });
       });
 
-      formData.achievements?.forEach((ach, i) => {
-        Object.entries(ach).forEach(([k, v]) => {
-          fd.append(`achievements[${i}][${k}]`, v ?? "");
-        });
-      });
-      (formData.media || []).forEach((file) => {
-        if (file.file instanceof File) {
-          fd.append("media", file.file);
-        }
-      });
+      // formData.achievements?.forEach((ach, i) => {
+      //   Object.entries(ach).forEach(([k, v]) => {
+      //     fd.append(`achievements[${i}][${k}]`, v ?? "");
+      //   });
+      // });
+      // (formData.media || []).forEach((file) => {
+      //   if (file.file instanceof File) {
+      //     fd.append("media", file.file);
+      //   }
+      // });
 
-      formData.mediaToDeleted.forEach((url) => {
-        fd.append("mediaToDelete[]", url);
-      });
+      // formData.mediaToDeleted.forEach((url) => {
+      //   fd.append("mediaToDelete[]", url);
+      // });
 
       if (mode === "edit") {
         const response = await axiosinstance.put(`/athlete/${atheletId}`, fd);
@@ -155,11 +155,11 @@ export default function AthleteFormManager() {
       case "Stats":
         return <Stats onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
       case "Education":
-        return <Education onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
-      case "Achievements":
-        return <Achievements onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
-      case "Media":
-        return <Media onNext={handleCreate} setSubmit={setSubmitCurrentForm} />;
+        return <Education onNext={handleCreate} setSubmit={setSubmitCurrentForm} />;
+      // case "Achievements":
+      //   return <Achievements onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
+      // case "Media":
+      //   return <Media onNext={handleCreate} setSubmit={setSubmitCurrentForm} />;
       default:
         return <BasicInfo />;
     }
@@ -237,7 +237,7 @@ export default function AthleteFormManager() {
             ? mode === "edit"
               ? "Updating..."
               : "Creating..."
-            : activeTab === "Media"
+            : activeTab === "Education"
               ? mode === "edit"
                 ? "Update Athlete"
                 : "Create Athlete"
