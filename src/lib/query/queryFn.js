@@ -131,3 +131,17 @@ export const getSchool = async ({ page = 1, itemsPerPage = 10 }) => {
   );
   return res.data;
 };
+export const getTopLocation = async () => {
+  const res = await axiosinstance.get(`/dashboard/admin/location-stats`);
+  return res.data;
+};
+export const getLoggedUser = async ({
+  page = 1,
+  itemsPerPage = 10,
+  search,
+}) => {
+  const res = await axiosinstance.get(
+    `/dashboard/admin/logged-users?page=${page}&limit=${itemsPerPage}&search=${search}`,
+  );
+  return res.data;
+};
