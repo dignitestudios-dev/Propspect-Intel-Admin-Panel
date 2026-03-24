@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { BasicInfoSchema } from "../../schema/athleteFormSchema/athleteSchema";
 import { InputField } from "./InputField";
 import { Selector } from "./Selector";
+import citiesData from "../../static/us";
 
 export default function BasicInfo({ setSubmit, onNext }) {
   const basicInfo = useAppSelector((s) => s.athleteForm.formData.basicInfo);
@@ -36,6 +37,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
       height: basicInfo?.height || "",
       weight: basicInfo?.weight || "",
       hometown: basicInfo?.hometown || "",
+      state: basicInfo?.state || "",
       email: basicInfo?.email || "",
       phone: basicInfo?.phone || "",
       team: basicInfo?.team || "",
@@ -53,7 +55,13 @@ export default function BasicInfo({ setSubmit, onNext }) {
     setSubmit(() => formik.submitForm);
   }, [formik.submitForm]);
 
+  const cityStateMap = [];
 
+  Object.entries(citiesData).forEach(([state, cities]) => {
+    cities.forEach((city) => {
+      cityStateMap.push({ city, state });
+    });
+  });
 
   return (
     <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans">
@@ -117,7 +125,45 @@ export default function BasicInfo({ setSubmit, onNext }) {
 
           <InputField label="Height (Ft)" name="height" formik={formik} />
           <InputField label="Weight (Lbs)" name="weight" formik={formik} />
-          <InputField label="Hometown" name="hometown" formik={formik} />
+          <div className="flex flex-col gap-1">
+            <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
+
+              <label className="text-xs text-gray-400">Hometown</label>
+
+              <select
+                name="hometown"
+                value={formik.values.hometown}
+                onChange={(e) => {
+                  const selectedCity = e.target.value;
+
+                  formik.setFieldValue("hometown", selectedCity);
+
+                  const found = cityStateMap.find(c => c.city === selectedCity);
+
+                  if (found) {
+                    formik.setFieldValue("state", found.state);
+                  }
+                }}
+                onBlur={formik.handleBlur}
+                className="w-full outline-none text-sm bg-transparent"
+              >
+                <option value="">Select City</option>
+                {cityStateMap.map((item, i) => (
+                  <option key={i} value={item.city}>
+                    {item.city}
+                  </option>
+                ))}
+              </select>
+
+            </div>
+
+            {formik.touched.hometown && formik.errors.hometown && (
+              <span className="text-red-500 text-xs">
+                {formik.errors.hometown}
+              </span>
+            )}
+          </div>
+          {/* <InputField label="Hometown" name="hometown" formik={formik} /> */}
           <InputField label="Contact Email" name="email" type="email" formik={formik} />
 
           <div className="flex flex-col gap-1">

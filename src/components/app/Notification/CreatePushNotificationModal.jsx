@@ -26,7 +26,7 @@ const CreatePushNotificationModal = ({ onClick, onNext }) => {
 
   });
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= data?.pagination?.pagination?.totalPages) {
+    if (newPage >= 1 && newPage <= data?.pagination?.totalPages) {
       setPage(newPage);
     }
   };
@@ -161,7 +161,7 @@ const CreatePushNotificationModal = ({ onClick, onNext }) => {
                     <div className="mb-2">
 
                       <Pagination
-                        pagination={data?.pagination?.pagination || { currentPage: 1, totalPages: 1 }}
+                        pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
                         onPageChange={handlePageChange}
                       />
                     </div>
