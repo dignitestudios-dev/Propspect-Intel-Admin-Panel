@@ -20,8 +20,8 @@ const TABS = [
   "Family",
   "Athlete",
   "Overview",
-  "Stats",
-  "Education",
+  // "Stats",
+  // "Education",
   // "Achievements",
   // "Media",
 ];
@@ -92,15 +92,15 @@ export default function AthleteFormManager() {
         fd.append(`overview[weaknesses][${i}]`, item);
       });
 
-      Object.entries(formData.stats).forEach(([key, value]) => {
-        fd.append(`stats[${key}]`, value ?? "");
-      });
+      // Object.entries(formData.stats).forEach(([key, value]) => {
+      //   fd.append(`stats[${key}]`, value ?? "");
+      // });
 
-      formData.education?.forEach((edu, i) => {
-        Object.entries(edu).forEach(([k, v]) => {
-          fd.append(`education[${i}][${k}]`, v ?? "");
-        });
-      });
+      // formData.education?.forEach((edu, i) => {
+      //   Object.entries(edu).forEach(([k, v]) => {
+      //     fd.append(`education[${i}][${k}]`, v ?? "");
+      //   });
+      // });
 
       // formData.achievements?.forEach((ach, i) => {
       //   Object.entries(ach).forEach(([k, v]) => {
@@ -151,11 +151,11 @@ export default function AthleteFormManager() {
       case "Athlete":
         return <Athlete onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
       case "Overview":
-        return <Overview onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
-      case "Stats":
-        return <Stats onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
-      case "Education":
-        return <Education onNext={handleCreate} setSubmit={setSubmitCurrentForm} />;
+        return <Overview onNext={handleCreate} setSubmit={setSubmitCurrentForm} />;
+      // case "Stats":
+      //   return <Stats onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
+      // case "Education":
+      //   return <Education onNext={handleCreate} setSubmit={setSubmitCurrentForm} />;
       // case "Achievements":
       //   return <Achievements onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
       // case "Media":
@@ -237,7 +237,7 @@ export default function AthleteFormManager() {
             ? mode === "edit"
               ? "Updating..."
               : "Creating..."
-            : activeTab === "Education"
+            : activeTab === "Overview"
               ? mode === "edit"
                 ? "Update Athlete"
                 : "Create Athlete"

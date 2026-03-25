@@ -77,10 +77,21 @@ export default function Athlete({ setSubmit, onNext }) {
                       Select Pi Score
                     </option>
                     <option value="A">A</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
                     <option value="B">B</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
                     <option value="C">C</option>
+                    <option value="C+">C+</option>
+                    <option value="C-">C-</option>
                     <option value="D">D</option>
+                    <option value="D-">D-</option>
+                    <option value="D+">D+</option>
                     <option value="F">F</option>
+                    <option value="F-">F-</option>
+                    <option value="F+">F+</option>
+                    <option value="N/A">N/A</option>
                   </select>
                 </div>
 
@@ -131,10 +142,21 @@ export default function Athlete({ setSubmit, onNext }) {
                       Select Pi Score
                     </option>
                     <option value="A">A</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
                     <option value="B">B</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
                     <option value="C">C</option>
+                    <option value="C+">C+</option>
+                    <option value="C-">C-</option>
                     <option value="D">D</option>
+                    <option value="D-">D-</option>
+                    <option value="D+">D+</option>
                     <option value="F">F</option>
+                    <option value="F-">F-</option>
+                    <option value="F+">F+</option>
+                    <option value="N/A">N/A</option>
                   </select>
                 </div>
 

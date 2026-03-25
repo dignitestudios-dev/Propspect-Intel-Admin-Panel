@@ -145,3 +145,17 @@ export const getLoggedUser = async ({
   );
   return res.data;
 };
+export const getAnalytics = async ({ range }) => {
+  const res = await axiosinstance.get(
+    `/athlete/analytics/overview?range=${range}`,
+  );
+  return res.data;
+};
+export const getFilterDetail = async () => {
+  const res = await axiosinstance.get(`/athlete/analytics/details`);
+  return res.data;
+};
+export const getGraphDetail = async () => {
+  const res = await axiosinstance.get(`/athlete/analytics/stats`);
+  return res.data;
+};

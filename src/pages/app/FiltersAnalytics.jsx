@@ -12,6 +12,9 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useQuery } from "@tanstack/react-query";
+import { getAnalytics, getFilterDetail, getGraphDetail } from "../../lib/query/queryFn";
+import StatsSkeleton from "../../components/global/StatsSkeleton";
 
 ChartJS.register(
   BarElement,
@@ -48,7 +51,7 @@ const barOptions = {
     y: {
       grid: { display: false }, // remove y-axis grid
       beginAtZero: true,
-      max: 20000,
+
       ticks: { color: "#302C2C" },
     },
   },
@@ -69,19 +72,37 @@ const donutOptions = {
   responsive: true,
   plugins: {
     legend: {
-      display: false, // hides the default labels/legend
+      display: false,
     },
   },
 };
 
-const CharacterCard = ({ title, score }) => {
-  const grades = [
-    { label: "A", value: 26, color: "bg-black text-white" },
-    { label: "B", value: 23, color: "bg-green-500 text-white" },
-    { label: "C", value: 22, color: "bg-gray-400 text-white" },
-    { label: "D", value: 21, color: "bg-yellow-400 text-black" },
-    { label: "F", value: 21, color: "bg-red-500 text-white" },
-  ];
+const CharacterCard = ({ title, score, data }) => {
+  const cleanData = (arr) => {
+    return arr
+      ?.filter((item) => item._id && item._id.trim() !== "")
+      ?.map((item) => ({
+        label: item._id.trim(),
+        value: item.count,
+      }));
+  };
+  const getColor = (label) => {
+    switch (label) {
+      case "A":
+        return "bg-black text-white";
+      case "B":
+        return "bg-green-500 text-white";
+      case "C":
+        return "bg-gray-400 text-white";
+      case "D":
+        return "bg-yellow-400 text-black";
+      case "F":
+        return "bg-red-500 text-white";
+      default:
+        return "bg-gray-200 text-black";
+    }
+  };
+  const grades = cleanData(data);
 
   return (
     <div className="border border-white rounded-2xl p-6 bg-white bg-opacity-40 shadow-sm">
@@ -89,30 +110,37 @@ const CharacterCard = ({ title, score }) => {
         {title}
       </h3>
 
-      <h2 className="text-[36px] font-bold text-black mt-2">
-        {score}
-      </h2>
-
-      <p className="text-sm text-gray-500 mb-6">
-        Average Range: B - C
-      </p>
 
       <div className="space-y-3">
-        {grades.map((grade) => (
-          <div
-            key={grade.label}
-            className="flex items-center justify-between"
-          >
-            <div className="flex items-center gap-3">
-              <span
-                className={`w-8 h-8 flex items-center justify-center rounded-md text-sm font-bold ${grade.color}`}
-              >
-                {grade.label}
-              </span>
-            </div>
+        {grades?.length === 0 ? (
+          <p className="text-sm text-gray-400 text-center pt-10">No Data Found</p>
+        ) : grades?.map((grade, i) => (
+          <div>
+            <h2 className="text-[36px] font-bold text-black mt-2">
+              {score}
+            </h2>
 
-            <div className="border border-gray-200 rounded-lg px-3 py-1 text-sm text-gray-700">
-              {grade.value}
+            <p className="text-sm text-gray-500 mb-6">
+              Average Range
+            </p>
+
+            <div
+              key={i}
+              className="flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <span
+                  className={`w-8 h-8 flex items-center justify-center rounded-md text-sm font-bold ${getColor(
+                    grade.label
+                  )}`}
+                >
+                  {grade.label}
+                </span>
+              </div>
+
+              <div className="border border-gray-200 rounded-lg px-3 py-1 text-sm text-gray-700">
+                {grade.value}
+              </div>
             </div>
           </div>
         ))}
@@ -123,7 +151,69 @@ const CharacterCard = ({ title, score }) => {
 
 
 export default function FiltersAnalytics() {
+  const ranges = ["7d", "1m", "3m", "6m", "1y"];
   const [activeTab, setActiveTab] = useState("Overview");
+  const [range, setRange] = useState("")
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["analytics", range],
+    queryFn: () => getAnalytics({ range }),
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+
+  });
+  const { data: filterDetailsData, isLoading: filterDetailsLoading } = useQuery({
+    queryKey: ["filterdetails"],
+    queryFn: getFilterDetail,
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+
+  });
+  const { data: overViewDetail, isLoading: overViewDetailLoading } = useQuery({
+    queryKey: ["overViewDetail"],
+    queryFn: getGraphDetail,
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+
+  });
+  const graphData = overViewDetail?.data || [];
+
+  const labels = graphData.map((item) =>
+    item.filter
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, (str) => str.toUpperCase())
+  );
+  const counts = graphData.map((item) => item.count);
+  const percentages = graphData.map((item) => item.percentage);
+  const dynamicBarData = {
+    labels,
+    datasets: [
+      {
+        label: "Usage Count",
+        data: counts,
+        backgroundColor: "#d5dceb",
+        hoverBackgroundColor: "#0085CA",
+        borderRadius: 6,
+      },
+    ],
+  };
+  const dynamicDonutData = {
+    labels,
+    datasets: [
+      {
+        data: percentages,
+        backgroundColor: [
+          "#21A366",
+          "#0085CA",
+          "#FFBB28",
+          "#FF8042",
+          "#8884D8",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+
 
   return (
     <div className="w-full space-y-6">
@@ -151,25 +241,37 @@ export default function FiltersAnalytics() {
           {/* Right Side */}
           <div className="flex items-center gap-3 font-bold">
             <div className="flex justify-between items-center bg-[#eaeaf8] rounded-md">
-              <div className="flex gap-2 text-sm ">
-                <span className="px-3 py-3 rounded-lg bg-white border border-[#0085CA] text-[#0085CA]">
-                  7d
-                </span>
-                <span className="px-3 py-3 rounded-lg text-gray-500">1m</span>
-                <span className="px-3 py-3 rounded-lg text-gray-500">3m</span>
-                <span className="px-3 py-3 rounded-lg text-gray-500">6m</span>
-                <span className="px-3 py-3 rounded-lg text-gray-500">1y</span>
+              <div className="flex gap-2 text-sm">
+                {ranges.map((r) => (
+                  <span
+                    key={r}
+                    onClick={() => setRange(r)}
+                    className={`px-3 py-3 rounded-lg cursor-pointer 
+            ${range === r
+                        ? "bg-white border border-[#0085CA] text-[#0085CA]"
+                        : "text-gray-500"
+                      }`}
+                  >
+                    {r}
+                  </span>
+                ))}
               </div>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 text-sm rounded-md text-[#0085CA] border-[1px] border-[#E3E3E3] ">
-              <LuRefreshCcw className="font-bold " />
-              <span className="text-[#0085CA]"> Refresh</span>
-            </button>
 
-            {/* Profile */}
+            <button
+              onClick={() => {
+                refetch()
+                setRange('')
+              }}
+              className="flex items-center gap-2 px-4 py-2 text-sm rounded-md text-[#0085CA] border-[1px] border-[#E3E3E3]"
+            >
+              <LuRefreshCcw />
+              <span>Refresh</span>
+            </button>
           </div>
         </div>
       </div>
+
       <div className=" border border-white rounded-2xl p-6 bg-[rgba(255,255,255,0.3)]">
         {/* Stats */}
 
@@ -178,43 +280,49 @@ export default function FiltersAnalytics() {
             Top Locations
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 ">
-            {[
-              {
-                label: "Total Searches",
-                value: "22",
-                days: "from last 7 days",
-              },
-              {
-                label: "Users using filters",
-                value: "28",
-                days: "from last 7 days",
-              },
-              {
-                label: "Avg Filters Per Search",
-                value: "20",
-                days: "Filter complexity",
-              },
-              {
-                label: "Most Popular Filter",
-                value: "50",
-                days: "77.6% usage",
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="border border-white py-2 rounded-xl shadow-sm  text-center bg-gray-100 bg-opacity-30"
-              >
-                <div className="flex flex-col gap-4">
-                  <p className="text-[16px] text-[#302C2C] ">{item.label}</p>
-                  <h2 className="text-[24px] font-bold text-gray-900">
-                    {item.value}
-                  </h2>
-                  <p className="text-[14px] font-light text-[#302C2C]">
-                    {item.days}
-                  </p>
+            {isLoading ? (
+              <StatsSkeleton />
+            ) : (
+              [
+                {
+                  label: "Total Searches",
+                  value: data?.data?.totalSearches || "N/A",
+                  days: "from last 7 days",
+                },
+                {
+                  label: "Users using filters",
+                  value: data?.data?.usersUsingFilters || "N/A"
+                  ,
+                  days: "from last 7 days",
+                },
+                {
+                  label: "Avg Filters Per Search",
+                  value: data?.data?.avgFiltersPerSearch.toFixed(2) || "N/A",
+                  days: "Filter complexity",
+                },
+                {
+                  label: "Most Popular Filter",
+                  value: data?.data?.mostPopularFilter?.charAt(0).toUpperCase() + data?.data?.mostPopularFilter?.slice(1) || "N/A",
+                  days: `${data?.data?.mostPopularPercentage}% usage` || "N/A",
+                },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="border border-white py-2 rounded-xl shadow-sm  text-center bg-gray-100 bg-opacity-30"
+                >
+                  <div className="flex flex-col gap-4">
+                    <p className="text-[16px] text-[#302C2C] ">{item.label}</p>
+                    <h2 className="text-[24px] font-bold text-gray-900">
+                      {item.value}
+                    </h2>
+                    <p className="text-[14px] font-light text-[#302C2C]">
+                      {item.days}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+
+            )}
           </div>
         </div>
 
@@ -224,11 +332,10 @@ export default function FiltersAnalytics() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-8 py-2 text-sm font-medium rounded-lg transition-all w-[590px] ${
-                  activeTab === tab
-                    ? "bg-white text-[#1A202C] shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
+                className={`px-8 py-2 text-sm font-medium rounded-lg transition-all w-[590px] ${activeTab === tab
+                  ? "bg-white text-[#1A202C] shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+                  }`}
               >
                 {tab}
               </button>
@@ -236,185 +343,232 @@ export default function FiltersAnalytics() {
           </div>
         </div>
         {activeTab === "Overview" ? (
-          <div className="grid grid-cols-2 gap-2">
-            <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
-              <div className="flex flex-col gap-4">
-                <p className="text-[20px] text-[#302C2C] font-semibold">
-                  Filter Usage Distribution
-                </p>
-                <p className="text-[16px] text-[#0D0C0C99] mb-6">
-                  Popularity of each filter type
-                </p>
+          <>
+            {
+              overViewDetailLoading ? (
+                <div className="grid grid-cols-2 gap-2" >
+                  {/* Bar Chart Skeleton */}
+                  < div className="border border-white p-4 rounded-xl bg-gray-100 bg-opacity-30 animate-pulse" >
+                    <div className="space-y-4">
+                      <div className="h-5 w-48 bg-gray-300 rounded"></div>
+                      <div className="h-4 w-64 bg-gray-300 rounded"></div>
 
-                <Bar data={barData} options={barOptions} />
-              </div>
-            </div>
-            <div className="border border-white py-2 rounded-xl shadow-sm  text-center bg-gray-100 bg-opacity-30">
-              <div className="flex flex-col gap-4 items-center">
-                <div className="flex items-start w-full py-2 px-4">
-                  <p className="text-[20px] text-[#302C2C] font-semibold">
-                    Filter Type Breakdown
-                  </p>
-                </div>
-                <div className="flex items-center gap-6">
-                  {/* Donut Chart */}
-                  <div className="w-[350px] h-[350px]">
-                    <Doughnut data={donutData} options={donutOptions} />
+                      {/* Fake bars */}
+                      <div className="mt-6 space-y-3">
+                        {[...Array(5)].map((_, i) => (
+                          <div key={i} className="h-6 bg-gray-300 rounded w-full"></div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Stats List */}
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full bg-[#21A366]"></span>
-                      <p className="text-sm text-gray-700">Location - 20%</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full bg-[#d5dceb]"></span>
-                      <p className="text-sm text-gray-700">Position - 20%</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full bg-[#d5dceb]"></span>
-                      <p className="text-sm text-gray-700">Rating - 20%</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full bg-[#d5dceb]"></span>
-                      <p className="text-sm text-gray-700">School - 20%</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full bg-[#d5dceb]"></span>
-                      <p className="text-sm text-gray-700">Grad Year - 20%</p>
+                  {/* Doughnut Skeleton */}
+                  <div className="border border-white p-4 rounded-xl bg-gray-100 bg-opacity-30 animate-pulse">
+                    <div className="space-y-4 flex flex-col items-center">
+                      <div className="h-5 w-48 bg-gray-300 rounded self-start"></div>
+
+                      <div className="flex items-center gap-6 mt-4">
+                        {/* Circle */}
+                        <div className="w-[200px] h-[200px] rounded-full bg-gray-300"></div>
+
+                        {/* Legend */}
+                        <div className="space-y-3">
+                          {[...Array(5)].map((_, i) => (
+                            <div key={i} className="flex items-center gap-2">
+                              <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
+                              <div className="h-4 w-24 bg-gray-300 rounded"></div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
+                    <div className="flex flex-col gap-4">
+                      <p className="text-[20px] text-[#302C2C] font-semibold">
+                        Filter Usage Distribution
+                      </p>
+                      <p className="text-[16px] text-[#0D0C0C99] mb-6">
+                        Popularity of each filter type
+                      </p>
+
+                      <Bar data={dynamicBarData} options={barOptions} />
+                    </div>
+                  </div>
+                  <div className="border border-white py-2 rounded-xl shadow-sm  text-center bg-gray-100 bg-opacity-30">
+                    <div className="flex flex-col gap-4 items-center">
+                      <div className="flex items-start w-full py-2 px-4">
+                        <p className="text-[20px] text-[#302C2C] font-semibold">
+                          Filter Type Breakdown
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-6">
+                        {/* Donut Chart */}
+                        <div className="w-[350px] h-[350px]">
+                          <Doughnut data={dynamicDonutData} options={donutOptions} />
+                        </div>
+
+
+                        <div className="flex flex-col gap-3">
+                          {graphData.map((item, i) => (
+                            <div key={i} className="flex items-center gap-2">
+                              <span className="w-3 h-3 rounded-full bg-[#0085CA]"></span>
+                              <p className="text-sm text-gray-700">
+                                {item.filter.charAt(0).toUpperCase() + item.filter.slice(1) }  - {item.percentage}%
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            }
+          </>
+
         ) : (
           <>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
-                <div className="flex flex-col gap-4">
-                  <p className="text-[16px] text-[#302C2C] ">Location Filter</p>
-                  <h2 className="text-[24px] font-bold text-gray-900">157</h2>
-                  <p className="text-[14px] font-light text-[#302C2C]">
-                    Popular Locations:
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">Florida</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">Florida</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">Florida</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                </div>
-              </div>
-  <div className="">
-    <CharacterCard title="Personal Character" score={146} />   
-  </div>
-  <div>
-    <CharacterCard title="Football Character" score={148} />
-  </div>
+            {filterDetailsLoading ? (
 
-          
-            </div>
-            <div className="grid grid-cols-3 gap-2 mt-2">
-              
-              <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
-                <div className="flex flex-col gap-4">
-                  <p className="text-[16px] text-[#302C2C] ">Schools Filter</p>
-                  <h2 className="text-[24px] font-bold text-gray-900">157</h2>
-                  <p className="text-[14px] font-light text-[#302C2C]">
-                    Popular Schools:
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">0-20</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
+              <div className="grid grid-cols-3 gap-2">
+                {[...Array(6)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="border border-white p-4 rounded-xl bg-gray-100 bg-opacity-30 animate-pulse"
+                  >
+                    <div className="space-y-4">
+                      <div className="h-4 w-40 bg-gray-300 rounded"></div>
+                      <div className="h-6 w-20 bg-gray-300 rounded"></div>
+
+                      {[...Array(3)].map((_, j) => (
+                        <div key={j} className="flex justify-between items-center">
+                          <div className="h-4 w-24 bg-gray-300 rounded"></div>
+                          <div className="h-4 w-10 bg-gray-300 rounded"></div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">21-40</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">41-60</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
-              <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
-                <div className="flex flex-col gap-4">
-                  <p className="text-[16px] text-[#302C2C] ">Graduation Year</p>
-                  <h2 className="text-[24px] font-bold text-gray-900">157</h2>
-                  <p className="text-[14px] font-light text-[#302C2C]">
-                    Popular Years:
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">Wide Receiver</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">Running Back</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">Offensive Line</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
-                    </div>
-                  </div>
-                </div>
-              </div>
+
+            ) : (
+              <>
+                <div className="grid grid-cols-3 gap-2">
                   <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
-                <div className="flex flex-col gap-4">
-                  <p className="text-[16px] text-[#302C2C] ">Position Filter</p>
-                  <h2 className="text-[24px] font-bold text-gray-900">157</h2>
-                  <p className="text-[14px] font-light text-[#302C2C]">
-                    Popular Positions:
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">Wide Receiver</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
+                    <div className="flex flex-col gap-4">
+                      <p className="text-[16px] text-[#302C2C] ">Location Filter</p>
+                      <h2 className="text-[24px] font-bold text-gray-900">157</h2>
+                      <p className="text-[14px] font-light text-[#302C2C]">
+                        Popular Locations:
+                      </p>
+                      {filterDetailsData?.data?.location?.length === 0 ? (
+                        <p className="text-sm text-gray-400 text-center">No Data Found</p>
+                      ) : filterDetailsData?.data?.location?.map((location, index) => ((
+                        <div key={index} className="flex justify-between items-center">
+                          <p className="font-bold text-[14px]">{location?._id || "N/A"}</p>
+                          <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
+                            {location?.count || "0"}
+                          </div>
+                        </div>
+
+                      )))}
+
                     </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">Running Back</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
+                  <CharacterCard
+                    title="Personal Character"
+                    score={146}
+                    data={filterDetailsData?.data?.personalCharacter}
+                  />
+
+                  <CharacterCard
+                    title="Football Character"
+                    score={148}
+                    data={filterDetailsData?.data?.footballCharacter}
+                  />
+
+
+                </div>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+
+                  <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
+                    <div className="flex flex-col gap-4">
+                      <p className="text-[16px] text-[#302C2C] ">Schools Filter</p>
+                      <h2 className="text-[24px] font-bold text-gray-900">157</h2>
+                      <p className="text-[14px] font-light text-[#302C2C]">
+                        Popular Schools:
+                      </p>
+                      {filterDetailsData?.data?.school?.length === 0 ? (
+                        <p className="text-sm text-gray-400 text-center">No Data Found</p>
+                      ) : filterDetailsData?.data?.school?.map((school, index) => (
+                        <div key={index} className="flex justify-between items-center">
+                          <p className="font-bold text-[14px]">{school?._id || "N/A"}</p>
+                          <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
+                            {school?.count || "0"}
+                          </div>
+                        </div>
+                      ))}
+
                     </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-[14px]">Offensive Line</p>
-                    <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
-                      26
+                  <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
+                    <div className="flex flex-col gap-4">
+                      <p className="text-[16px] text-[#302C2C] ">Graduation Year</p>
+                      <h2 className="text-[24px] font-bold text-gray-900">157</h2>
+                      <p className="text-[14px] font-light text-[#302C2C]">
+                        Popular Years:
+                      </p>
+                      {filterDetailsData?.data?.gradYear?.length === 0 ? (
+                        <p className="text-sm text-gray-400 text-center">No Data Found</p>
+                      ) : filterDetailsData?.data?.gradYear?.map((gradYear, index) => (
+
+                        <div key={index} className="flex justify-between items-center">
+                          <p className="font-bold text-[14px]">{gradYear?._id}</p>
+                          <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
+                            {gradYear?.count}
+                          </div>
+                        </div>
+                      ))}
+
+                    </div>
+                  </div>
+                  <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
+                    <div className="flex flex-col gap-4">
+                      <p className="text-[16px] text-[#302C2C] ">Position Filter</p>
+                      <h2 className="text-[24px] font-bold text-gray-900">157</h2>
+                      <p className="text-[14px] font-light text-[#302C2C]">
+                        Popular Positions:
+                      </p>
+                      {filterDetailsData?.data?.position?.length === 0 ? (
+                        <p className="text-sm text-gray-400 text-center">No Data Found</p>
+                      ) : (
+                        filterDetailsData?.data?.position?.map((position, index) => (
+                          <div key={index} className="flex justify-between items-center">
+                            <p className="font-bold text-[14px]">
+                              {position?._id || "N/A"}
+                            </p>
+
+                            <div className="border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
+                              {position?.count || 0}
+                            </div>
+                          </div>
+                        ))
+                      )}
+
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
           </>
         )}
-      </div>
-    </div>
+      </div >
+
+
+    </div >
   );
 }

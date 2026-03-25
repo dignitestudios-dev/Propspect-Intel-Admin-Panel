@@ -31,10 +31,13 @@ export const BasicInfoSchema = Yup.object({
     height: Yup.string().required("Height required"),
     weight: Yup.string().required("Weight required"),
     hometown: Yup.string().required("Hometown required"),
-    email: Yup.string().email("Invalid email").required("Email required"),
+    schoolName: Yup.string().required("School Name required"),
+    // email: Yup.string().email("Invalid email").required("Email required"),
+    gpa: Yup.string().required("GPA is required"),
+    gradYear: Yup.string().required("Grad year is required"),
     phone: Yup.string().required("Phone required"),
     status: Yup.string().required("Status required"),
-    team: Yup.string().required("Committed team required"),
+    committedCollege: Yup.string().required("Committed College required"),
     image: Yup.mixed().required("Profile image is required"),
 });
 

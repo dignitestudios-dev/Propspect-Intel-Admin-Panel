@@ -10,12 +10,13 @@ export default function Overview({ onNext, setSubmit }) {
   const overviewData = useAppSelector((s) => s.athleteForm.formData.overview);
 
   const formik = useFormik({
-    enableReinitialize: true,
     initialValues: {
       strengths: overviewData?.strengths?.length ? overviewData.strengths : [""],
       weaknesses: overviewData?.weaknesses?.length ? overviewData.weaknesses : [""],
     },
+    enableReinitialize: true,
     validationSchema: overviewSchema,
+
     onSubmit: (values) => {
       dispatch(updateSection({ section: "overview", data: values }));
       onNext();

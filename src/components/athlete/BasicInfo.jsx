@@ -2,32 +2,53 @@ import { FiEdit2, } from "react-icons/fi";
 import { useAppDispatch, useAppSelector } from "../../lib/store/hook";
 import { useFormik } from "formik";
 import { updateSection } from "../../lib/store/feature/athleteFormSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BasicInfoSchema } from "../../schema/athleteFormSchema/athleteSchema";
 import { InputField } from "./InputField";
 import { Selector } from "./Selector";
 import citiesData from "../../static/us";
+import { getSchool } from "../../lib/query/queryFn";
+import { useQuery } from "@tanstack/react-query";
+import Pagination from "../global/Pagination";
+import { RiArrowDropDownLine } from "react-icons/ri";
+
 
 export default function BasicInfo({ setSubmit, onNext }) {
   const basicInfo = useAppSelector((s) => s.athleteForm.formData.basicInfo);
   const dispatch = useAppDispatch();
+  console.log(basicInfo, "basicInfo")
+  const [page, setPage] = useState(1)
 
-
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedSchool, setSelectedSchool] = useState(null);
+  const SchoolId = selectedSchool?.id || ""
   const positions = [
-    "Point Guard",
-    "Shooting Guard",
-    "Small Forward",
-    "Center",
-    "Power Forward",
+    "Quarterback",
+    "Running Back",
+    "Wide Receiver",
+    "Tight End",
+    "Offensive Line",
+    "Defensive Line",
+    "Linebacker",
+    "Defensive Back",
+    "Athlete",
+    "Specialist"
   ];
 
   const statuses = [
-    "Rookie",
-    "Fresh Talent",
-    "Emerging Star",
-    "Prospect",
-    "Debutant",
+    "Medical concern",
+    "Academic concern",
+    "Transfer Risk",
+    "Off field concern",
+    "High IQ",
+    "Average IQ",
+    "Developmental IQ",
+    "Team Captain",
+    "Leader",
+    "Top Competitor",
+    "Culture Driver"
   ];
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -38,11 +59,14 @@ export default function BasicInfo({ setSubmit, onNext }) {
       weight: basicInfo?.weight || "",
       hometown: basicInfo?.hometown || "",
       state: basicInfo?.state || "",
-      email: basicInfo?.email || "",
+      // email: basicInfo?.email || "",
       phone: basicInfo?.phone || "",
-      team: basicInfo?.team || "",
+      committedCollege: basicInfo?.committedCollege || "",
       status: statuses.find(s => s.toLowerCase() === (basicInfo?.status || "").toLowerCase()) || "",
       image: basicInfo?.image || null,
+      gradYear: basicInfo?.gradYear || "",
+      gpa: basicInfo?.gpa || "",
+      schoolName: basicInfo?.schoolName || ""
     },
     validationSchema: BasicInfoSchema,
     onSubmit: (values) => {
@@ -62,6 +86,23 @@ export default function BasicInfo({ setSubmit, onNext }) {
       cityStateMap.push({ city, state });
     });
   });
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["school", page],
+    queryFn: () => getSchool({ page }),
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+
+  });
+
+  useEffect(() => {
+    if (basicInfo?.committedCollege && data?.data) {
+      const existingSchool = data.data.find(s => s._id === basicInfo.committedCollege);
+      if (existingSchool) {
+        setSelectedSchool({ id: existingSchool._id, name: existingSchool.name });
+      }
+    }
+  }, [basicInfo, data]);
 
   return (
     <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans">
@@ -164,7 +205,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
             )}
           </div>
           {/* <InputField label="Hometown" name="hometown" formik={formik} /> */}
-          <InputField label="Contact Email" name="email" type="email" formik={formik} />
+          {/* <InputField label="Contact Email" name="email" type="email" formik={formik} /> */}
 
           <div className="flex flex-col gap-1">
             <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
@@ -181,8 +222,99 @@ export default function BasicInfo({ setSubmit, onNext }) {
               <span className="text-red-500 text-xs">{formik.errors.phone}</span>
             )}
           </div>
+          <InputField label="School Name" name="schoolName" formik={formik} />
+          <div className="relative">
+            <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
+              <label className="text-xs text-gray-400">Committed College</label>
+              <div
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full bg-white p-3  rounded-xl text-sm cursor-pointer flex items-center justify-between"
+              >
+                <span className="text-gray-700 text-sm">
+                  {selectedSchool ? selectedSchool.name : "Select Institution"}
+                </span>
 
-          <InputField label="Committed Team" name="team" formik={formik} />
+                <span className="text-gray-400">
+                  <RiArrowDropDownLine size={22} color="black" />
+
+                </span>
+              </div>
+
+
+              {isOpen && (
+                <div className="absolute z-10 w-full mt-2 border rounded-xl bg-white shadow-lg max-h-60 overflow-y-auto">
+
+                  {isLoading && (
+                    <div className="p-3 space-y-2">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className="flex items-center gap-3 animate-pulse">
+                          <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {data?.data?.map((school) => (
+                    <div
+                      key={school._id}
+                      onClick={() => {
+                        setSelectedSchool({ id: school._id, name: school.name });
+                        setIsOpen(false);
+                        formik.setFieldValue("committedCollege", school._id);
+
+                      }}
+                      className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-50"
+                    >
+                      <img
+                        src={school.logo || "https://placehold.co/400"}
+                        alt={school.name}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+
+                      <span className="text-sm text-gray-700">
+                        {school.name}
+                      </span>
+                    </div>
+                  ))}
+
+
+                  <div className="mb-2">
+                    <Pagination
+                      pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
+                      onPageChange={(p) => setPage(p)}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+            {formik.touched.committedCollege && formik.errors.committedCollege && (
+              <span className="text-red-500 text-xs">{formik.errors.committedCollege}</span>
+            )}
+          </div>
+          <div >
+            <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
+              <label className="block text-xs text-gray-400 mb-4">Grad Ended</label>
+              <select
+                value={formik.values.gradYear}
+                name="gradYear"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full outline-none text-sm bg-transparent"
+              >
+                <option value="">Select</option>
+                {Array.from({ length: 5 }, (_, i) => (
+                  <option key={i} value={(2027 + i).toString()}>
+                    {2027 + i}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {formik.touched.gradYear && formik.errors.gradYear && (
+              <span className="text-red-500 text-xs">{formik.errors.gradYear}</span>
+            )}
+          </div>
+          <InputField label="Gpa" name="gpa" formik={formik} type="number" />
 
           <Selector
             label="Current Status"

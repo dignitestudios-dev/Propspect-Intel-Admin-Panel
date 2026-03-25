@@ -220,8 +220,8 @@ export default function AthleteDetails() {
           <div className="p-6 shadow-sm space-y-4 bg-white bg-opacity-25 border-2 border-white rounded-2xl">
             <h3 className="text-sm font-semibold text-gray-700">Basic Information</h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-              <Info label="Email" value={athlete?.basicInfo?.email || "N/A"} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+              {/* <Info label="Email" value={athlete?.basicInfo?.email || "N/A"} /> */}
               <Info label="Phone" value={athlete?.basicInfo?.phone || "N/A"} />
               <Info label="Hometown" value={athlete?.basicInfo?.hometown || "N/A"} />
               <Info label="Date of Birth" value={formatDate(athlete?.basicInfo?.dob) || "N/A"} />
@@ -232,8 +232,8 @@ export default function AthleteDetails() {
               "Overview",
               "Family",
               "Athlete",
-              "Stats",
-              "Education",
+              // "Stats",
+              // "Education",
               // "Achievements",
               // "Media",
             ].map((tab) => (
