@@ -19,7 +19,7 @@ export default function Overview({ onNext, setSubmit }) {
 
     onSubmit: (values) => {
       dispatch(updateSection({ section: "overview", data: values }));
-      onNext();
+      onNext(values);
     },
   });
 

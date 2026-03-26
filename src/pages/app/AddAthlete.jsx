@@ -45,7 +45,7 @@ export default function AthleteFormManager() {
       setAthleteCreated(true);
     }
   };
-  console.log(formData,"formData")
+
 
   const handlePrevious = () => {
     const currentIndex = TABS.indexOf(activeTab);
@@ -53,7 +53,7 @@ export default function AthleteFormManager() {
       setActiveTab(TABS[currentIndex - 1]);
     }
   };
-  const handleCreate = async () => {
+  const handleCreate = async ( overviewValues ) => {
     const fd = new FormData();
 
     try {
@@ -91,11 +91,11 @@ export default function AthleteFormManager() {
         fd.append(`athlete[${key}]`, value ?? "");
       });
 
-      formData.overview.strengths?.forEach((item, i) => {
+      overviewValues.strengths?.forEach((item, i) => {
         fd.append(`overview[strengths][${i}]`, item);
       });
 
-      formData.overview.weaknesses?.forEach((item, i) => {
+      overviewValues.weaknesses?.forEach((item, i) => {
         fd.append(`overview[weaknesses][${i}]`, item);
       });
 
@@ -142,7 +142,6 @@ export default function AthleteFormManager() {
       }
 
     } catch (err) {
-      console.log(err, 'err')
       ErrorToast(err?.response?.data?.message || "Failed to create athlete");
     } finally {
       setLoading(false);
