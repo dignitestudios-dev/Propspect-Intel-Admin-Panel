@@ -11,17 +11,34 @@ import { getSchool } from "../../lib/query/queryFn";
 import { useQuery } from "@tanstack/react-query";
 import Pagination from "../global/Pagination";
 import { RiArrowDropDownLine } from "react-icons/ri";
+import { MultiSelector } from "./MultiSelect";
 
 
 export default function BasicInfo({ setSubmit, onNext }) {
   const basicInfo = useAppSelector((s) => s.athleteForm.formData.basicInfo);
   const dispatch = useAppDispatch();
-  console.log(basicInfo, "basicInfo")
   const [page, setPage] = useState(1)
-
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedSchool, setSelectedSchool] = useState(null);
+  console.log(basicInfo, "basicInfo")
+  const { data, isLoading } = useQuery({
+    queryKey: ["school", page],
+    queryFn: () => getSchool({ page }),
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+
+  });
+  const initialSelectedSchool = basicInfo?.committedCollege && data?.data
+    ? data.data.find(s => s._id === basicInfo.committedCollege.id) // Compare id
+    : null;
+
+  const [selectedSchool, setSelectedSchool] = useState(
+    initialSelectedSchool
+      ? { id: initialSelectedSchool._id, name: initialSelectedSchool.name, logo: initialSelectedSchool.logo }
+      : null
+  );
   const SchoolId = selectedSchool?.id || ""
+
+
   const positions = [
     "Quarterback",
     "Running Back",
@@ -36,10 +53,10 @@ export default function BasicInfo({ setSubmit, onNext }) {
   ];
 
   const statuses = [
-    "Medical concern",
-    "Academic concern",
+    "Medical Concern",
+    "Academic Concern",
     "Transfer Risk",
-    "Off field concern",
+    "Off Field Concern",
     "High IQ",
     "Average IQ",
     "Developmental IQ",
@@ -61,8 +78,8 @@ export default function BasicInfo({ setSubmit, onNext }) {
       state: basicInfo?.state || "",
       // email: basicInfo?.email || "",
       phone: basicInfo?.phone || "",
-      committedCollege: basicInfo?.committedCollege || "",
-      status: statuses.find(s => s.toLowerCase() === (basicInfo?.status || "").toLowerCase()) || "",
+      committedCollege: basicInfo?.committedCollege?.id || "",
+      status: basicInfo?.status?.map((s) => s.trim()) || [],
       image: basicInfo?.image || null,
       gradYear: basicInfo?.gradYear || "",
       gpa: basicInfo?.gpa || "",
@@ -87,23 +104,24 @@ export default function BasicInfo({ setSubmit, onNext }) {
     });
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["school", page],
-    queryFn: () => getSchool({ page }),
-    keepPreviousData: true,
-    staleTime: 1000 * 60 * 5,
-
-  });
 
   useEffect(() => {
     if (basicInfo?.committedCollege && data?.data) {
-      const existingSchool = data.data.find(s => s._id === basicInfo.committedCollege);
+      const existingSchool = data.data.find(
+        (s) => s._id === basicInfo.committedCollege.id
+      );
       if (existingSchool) {
-        setSelectedSchool({ id: existingSchool._id, name: existingSchool.name });
+        setSelectedSchool({
+          id: existingSchool._id,
+          name: existingSchool.name,
+          logo: existingSchool.logo,
+        });
+        if (formik.values.committedCollege !== existingSchool._id) {
+          formik.setFieldValue("committedCollege", existingSchool._id);
+        }
       }
     }
   }, [basicInfo, data]);
-
   return (
     <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans">
       <div className="max-w-6xl mx-auto">
@@ -146,11 +164,11 @@ export default function BasicInfo({ setSubmit, onNext }) {
               <FiEdit2 size={14} />
             </button>
           </div>
-          {formik.touched.image && formik.errors.image && (
+          {/* {formik.touched.image && formik.errors.image && (
             <span className="text-red-500 text-xs text-center mt-1">
               {formik.errors.image}
             </span>
-          )}
+          )} */}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
 
@@ -218,9 +236,9 @@ export default function BasicInfo({ setSubmit, onNext }) {
                 className="w-full outline-none text-sm"
               />
             </div>
-            {formik.touched.phone && formik.errors.phone && (
+            {/* {formik.touched.phone && formik.errors.phone && (
               <span className="text-red-500 text-xs">{formik.errors.phone}</span>
-            )}
+            )} */}
           </div>
           <InputField label="School Name" name="schoolName" formik={formik} />
           <div className="relative">
@@ -259,9 +277,10 @@ export default function BasicInfo({ setSubmit, onNext }) {
                     <div
                       key={school._id}
                       onClick={() => {
-                        setSelectedSchool({ id: school._id, name: school.name });
-                        setIsOpen(false);
+                        // When selecting a school
+                        setSelectedSchool({ id: school._id, name: school.name, logo: school.logo });
                         formik.setFieldValue("committedCollege", school._id);
+                        setIsOpen(false);
 
                       }}
                       className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-50"
@@ -294,7 +313,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
           </div>
           <div >
             <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
-              <label className="block text-xs text-gray-400 mb-4">Grad Ended</label>
+              <label className="block text-xs text-gray-400 mb-4">Grad Year</label>
               <select
                 value={formik.values.gradYear}
                 name="gradYear"
@@ -314,15 +333,15 @@ export default function BasicInfo({ setSubmit, onNext }) {
               <span className="text-red-500 text-xs">{formik.errors.gradYear}</span>
             )}
           </div>
-          <InputField label="Gpa" name="gpa" formik={formik} type="number" />
+          <InputField label="GPA" name="gpa" formik={formik} type="number" />
 
-          <Selector
+          <MultiSelector
             label="Current Status"
             name="status"
             options={statuses}
             formik={formik}
+            isMulti={true}
           />
-
         </div>
       </div>
     </form>

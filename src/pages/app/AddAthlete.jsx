@@ -45,6 +45,7 @@ export default function AthleteFormManager() {
       setAthleteCreated(true);
     }
   };
+  console.log(formData,"formData")
 
   const handlePrevious = () => {
     const currentIndex = TABS.indexOf(activeTab);
@@ -59,7 +60,13 @@ export default function AthleteFormManager() {
       setLoading(true);
 
       Object.entries(formData.basicInfo).forEach(([key, value]) => {
-        if (key !== "image") {
+        if (key === "image") return;
+
+        if (Array.isArray(value)) {
+          value.forEach((item, i) => {
+            fd.append(`basicInfo[${key}][${i}]`, item);
+          });
+        } else {
           fd.append(`basicInfo[${key}]`, value ?? "");
         }
       });
@@ -141,7 +148,7 @@ export default function AthleteFormManager() {
       setLoading(false);
     }
   };
-  console.log(formData)
+
   const renderCurrentForm = () => {
     switch (activeTab) {
       case "Basic Info":

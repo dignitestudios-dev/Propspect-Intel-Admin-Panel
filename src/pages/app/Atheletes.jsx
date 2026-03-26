@@ -464,7 +464,7 @@ export default function Atheletes() {
                     <td className="px-5 py-4 flex items-center gap-3">
 
                       <div>
-                        <img src={athlete?.basicInfo?.image} alt={athlete?.basicInfo?.name} className="w-9 h-9 rounded-full object-cover" />
+                        <img src={athlete?.basicInfo?.image || "https://placehold.co/400"} alt={athlete?.basicInfo?.name} className="w-9 h-9 rounded-full object-cover" />
                       </div>
                       <span className="font-medium text-gray-800">
                         {athlete?.basicInfo?.name}
