@@ -53,7 +53,7 @@ export default function AthleteFormManager() {
       setActiveTab(TABS[currentIndex - 1]);
     }
   };
-  const handleCreate = async ( overviewValues ) => {
+  const handleCreate = async (overviewValues) => {
     const fd = new FormData();
 
     try {
