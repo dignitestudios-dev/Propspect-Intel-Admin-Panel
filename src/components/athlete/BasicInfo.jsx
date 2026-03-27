@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import Pagination from "../global/Pagination";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { MultiSelector } from "./MultiSelect";
+import { Flagus } from "../../assets/export";
 
 
 export default function BasicInfo({ setSubmit, onNext }) {
@@ -122,6 +123,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
       }
     }
   }, [basicInfo, data]);
+
   return (
     <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans">
       <div className="max-w-6xl mx-auto">
@@ -226,16 +228,31 @@ export default function BasicInfo({ setSubmit, onNext }) {
           {/* <InputField label="Contact Email" name="email" type="email" formik={formik} /> */}
 
           <div className="flex flex-col gap-1">
-            <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
-              <label className="text-xs text-gray-400">Phone Number</label>
+            <div className="bg-white rounded-xl px-4 py-6 border border-gray-50 flex items-center gap-2">
+              {/* US Flag + Code */}
+
+              <span className="text-xl pr-2">
+                <img
+                  src={Flagus}
+                  alt="US flag"
+                  className="w-6 h-4 mr-2"
+                />
+              </span>
+
+              <span className="text-sm text-gray-500">+1</span>
+
+              {/* Phone Input */}
               <input
                 name="phone"
                 value={formik.values.phone}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                className="w-full outline-none text-sm"
+                className="w-full outline-none text-sm pl-1"
+                placeholder="Enter phone number"
+                maxLength={10}
               />
             </div>
+
             {/* {formik.touched.phone && formik.errors.phone && (
               <span className="text-red-500 text-xs">{formik.errors.phone}</span>
             )} */}

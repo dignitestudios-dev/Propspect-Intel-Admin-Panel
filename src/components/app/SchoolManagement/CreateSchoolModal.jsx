@@ -11,8 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, logo, setLogo }) => {
   const query = useQueryClient()
-  // const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
-  // const API_URL = 'https://api.openai.com/v1/images/generations';
+  const [error, setError] = useState('')
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 
   const [aiPrompt, setAiPrompt] = useState('')
@@ -101,14 +100,20 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
       };
     });
   }
-  console.log(editMode, "editMode")
+
   const handleAddOrEditSchool = async () => {
-    if (!subject) return ErrorToast("Please enter School Name");
+    if (!subject) return setError("Please enter School Name");
+
+
+    const validNameRegex = /^[A-Za-z0-9 ]+$/;
+    if (!validNameRegex.test(subject.trim())) {
+      return setError("School Name can only contain letters, numbers, and spaces");
+    }
 
     setLoading(true);
     try {
       const fd = new FormData();
-      fd.append("name", subject);
+      fd.append("name", subject.trim());
 
       if (logo?.src?.startsWith("data:image")) {
         let smallBase64 = await resizeBase64Image(logo.src);
@@ -132,7 +137,7 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
         onNext();
       }
     } catch (err) {
-      ErrorToast(err?.response?.data?.message || "Something went wrong");
+      ErrorToast(err?.response?.data?.error || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -170,11 +175,19 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
               <input
                 type="text"
                 value={subject}
+                maxLength={70}
                 placeholder="Enter name"
-                onChange={(e) => setSubject(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const filtered = value.replace(/[^A-Za-z0-9 ]/g, '');
+                  setSubject(filtered);
+                  setError('');
+                }}
                 className="w-full mt-1 text-sm text-[#302C2C] font-medium focus:outline-none bg-transparent"
               />
             </div>
+            {error && (<span className="text-red-500 text-xs mt-2">{error}</span>)}
+
 
 
             {!logo ? (

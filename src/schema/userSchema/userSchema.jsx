@@ -2,11 +2,16 @@ import * as Yup from "yup";
 
 export const addUserSchema = (isEdit) =>
   Yup.object({
+
     username: Yup.string()
+      .trim() // removes leading/trailing spaces
       .min(3, "Username must be at least 3 characters")
       .max(50, "Username too long")
+      .matches(
+        /^[A-Za-z]+(?: [A-Za-z]+)*$/,
+        "Username can only contain letters and single spaces between words"
+      )
       .required("Username is required"),
-
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required"),

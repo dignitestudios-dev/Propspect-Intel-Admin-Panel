@@ -159,3 +159,9 @@ export const getGraphDetail = async () => {
   const res = await axiosinstance.get(`/athlete/analytics/stats`);
   return res.data;
 };
+export const getUserActivity = async (id, cursorId) => {
+  const res = await axiosinstance.get(
+    `/user/activity/${id}?cursor=${cursorId}`,
+  );
+  return res.data;
+};

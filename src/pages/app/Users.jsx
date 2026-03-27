@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { MdMonitor } from "react-icons/md";
 
@@ -14,7 +14,7 @@ import { HiUsers } from "react-icons/hi";
 import AddUserModal from "../../components/app/User/AddUserModal";
 import DeleteModal from "../../components/global/DeleteModal";
 import SuccessModal from "../../components/global/SuccessModal";
-import { getStatesUsers, getUsers } from "../../lib/query/queryFn";
+import { getStatesUsers, getUserActivity, getUsers } from "../../lib/query/queryFn";
 import { useQuery } from "@tanstack/react-query";
 import TableSkeleton from "../../components/global/TableSkeleton";
 import axiosinstance from "../../axios";
@@ -24,6 +24,7 @@ import useDebounce from "../../lib/store/hook";
 import StatsSkeleton from "../../components/global/StatsSkeleton";
 
 export default function Users() {
+  const containerRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [search, setSearch] = useState('')
@@ -37,48 +38,23 @@ export default function Users() {
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search, 500);
   const [successType, setSuccessType] = useState("");
+  const [cursorId, setCursorId] = useState('')
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [activityList, setActivityList] = useState([]);
 
 
 
   const openActivityModal = (user) => {
     setSelectedUser(user);
     setIsModalOpen(true);
+
   };
 
-  const activityLog = [
-    {
-      date: "25 Jan 2025",
-      events: [
-        { time: "8:00 PM", action: "Logged In", details: null },
-        {
-          time: "9:00 PM",
-          action: "Applied Filters",
-          details:
-            "Rating Filters (Min 0 - Max 92) ● Rating Filters (Min 0 - Max 92)",
-        },
-        {
-          time: "9:00 PM",
-          action: "Opened Player Profile",
-          details: "Marcus Johnson",
-          isPlayer: true,
-        },
-        {
-          time: "9:32 PM",
-          action: "Requested Player Info",
-          details: "Marcus Johnson",
-          isPlayer: true,
-        },
-        { time: "9:56 PM", action: "Logged Out", details: null },
-      ],
-    },
-    {
-      date: "26 Jan 2025",
-      events: [{ time: "8:00 PM", action: "Logged In", details: null }],
-    },
-  ];
 
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
+
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["users", page, debouncedSearch],
     queryFn: () => getUsers({ page, search: debouncedSearch }),
     keepPreviousData: true,
@@ -93,6 +69,35 @@ export default function Users() {
 
   });
 
+
+  const { data: userActivity, isLoading: userActivityLoading, refetch: refetchUserActivity } = useQuery({
+    queryKey: ["userActivity", selectedUser?._id, cursorId],
+    queryFn: () => getUserActivity(selectedUser?._id, cursorId),
+    enabled: !!selectedUser?._id,
+    keepPreviousData: true,
+  });
+  const fetchUserActivity = async () => {
+    if (!selectedUser || !hasMore || loadingMore) return;
+
+    setLoadingMore(true);
+
+    try {
+      const res = await getUserActivity(selectedUser._id, cursorId);
+      const newData = res?.data || [];
+
+      if (newData.length === 0) {
+        setHasMore(false);
+        return;
+      }
+
+      setActivityList(prev => [...prev, ...newData]);
+      setCursorId(newData[newData.length - 1]._id);
+    } catch (err) {
+      console.error("Failed to load activities", err);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
   const handleDelete = async () => {
     setDeleteLoading(true)
     try {
@@ -113,6 +118,24 @@ export default function Users() {
       setPage(newPage);
     }
   };
+
+
+  const handleScroll = () => {
+    if (!containerRef.current || loadingMore || !hasMore) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+      fetchUserActivity();
+    }
+  };
+  useEffect(() => {
+    if (selectedUser) {
+      setActivityList([]);
+      setCursorId('');   // start fresh
+      setHasMore(true);
+      fetchUserActivity(); // first load
+    }
+  }, [selectedUser]);
 
   return (
     <div className="w-full space-y-6">
@@ -317,59 +340,101 @@ export default function Users() {
               </div>
 
 
-              <div className="p-6 max-h-[90vh] overflow-y-auto ">
-                {activityLog?.map((day, dayIdx) => (
-                  <div key={dayIdx} className="mb-8">
-                    <h3 className="text-center text-sm font-bold text-gray-800 mb-6">
-                      {day.date}
-                    </h3>
-                    <div className="relative border-l-2 border-gray-100 ml-4 space-y-8">
-                      {day.events.map((event, eventIdx) => (
-                        <div key={eventIdx} className="relative pl-8">
+              <div 
+              className="p-6 max-h-[90vh] overflow-y-auto "
+               ref={containerRef}
+                onScroll={handleScroll}>
+                {userActivityLoading ? (
+                  <StatsSkeleton count={5} />
+                ) : activityList?.length > 0 ? (
+                  activityList?.map((event, index, arr) => {
+                    const date = new Date(event.createdAt).toLocaleDateString("en-US", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    });
 
-                          <div className="absolute -left-[17px] top-0 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center shadow-sm">
+                    const time = new Date(event.createdAt).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    });
+
+                    const type = event.metaData?.type;
+                    const prevDate = index > 0
+                      ? new Date(arr[index - 1].createdAt).toLocaleDateString("en-US", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                      : null;
+
+                    const showDate = date !== prevDate;
+                    return (
+                      <div key={index} className="mb-6" >
+                        {showDate && (
+                          <h3 className="text-center text-sm font-bold text-gray-800 mb-4">
+                            {date}
+                          </h3>
+                        )}
+
+                        <div className="relative pl-8">
+
+
+                          <div className="absolute -left-[17px] top-1 w-8 h-8 rounded-full border bg-white flex items-center justify-center shadow-sm">
                             <div className="bg-[#001F3F] p-1 rounded-sm">
                               <span className="text-[8px] text-white font-bold">
-                                PI
+                                {type === "ProfileView" ? "PI" : "UA"}
                               </span>
                             </div>
                           </div>
 
 
                           <div className="flex flex-col">
-                            <span className="text-xs text-gray-400 font-medium uppercase">
-                              {event.time}
-                            </span>
+                            <span className="text-xs text-gray-400">{time}</span>
+
                             <span className="text-sm font-bold text-gray-800">
-                              {event.action}
+                              {event.title}
                             </span>
 
-                            {event.details && !event.isPlayer && (
-                              <span className="text-xs text-gray-500 mt-1 leading-relaxed">
-                                {event.details}
-                              </span>
-                            )}
-
-                            {event.isPlayer && (
+                            {type === "ProfileView" && (
                               <div className="flex items-center gap-2 mt-2">
-                                <div className="w-6 h-6 rounded-full bg-gray-300 overflow-hidden">
-                                  <img
-                                    src={`https://ui-avatars.com/api/?name=${event.details}&background=random`}
-                                    alt="avatar"
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                                <span className="text-xs text-gray-600 font-medium">
-                                  {event.details}
+                                <img
+                                  src={event.metaData?.athleteImg}
+                                  className="w-6 h-6 rounded-full object-cover"
+                                />
+                                <span className="text-xs text-gray-600">
+                                  {event.metaData?.athleteName}
                                 </span>
                               </div>
                             )}
+
+                            {type === "Filters" && (
+                              <div className="text-xs text-gray-500 mt-1">
+                                {Object.entries(event.metaData?.filter || {}).map(([key, val]) => (
+                                  <div key={key}>
+                                    {key}: {val}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {type !== "ProfileView" && type !== "Filters" && (
+                              <span className="text-xs text-gray-500 mt-1">
+                                {event.description}
+                              </span>
+                            )}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="text-center text-gray-500 mt-4">
+                    No activity found
+                  </p>
+                )}
+                {loadingMore && <p className="text-center py-2">Loading more...</p>}
               </div>
             </div>
           </div>

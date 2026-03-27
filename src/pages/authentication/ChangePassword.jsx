@@ -58,7 +58,7 @@ const ChangePassword = () => {
 
   return (
 
-    <div className="relative w-full max-w-lg mx-4 rounded-2xl overflow-hidden shadow-2xl bg-black/70 backdrop-blur-md border border-white/20 p-8 md:p-10 lg:p-4">
+    <div className="relative w-full max-w-lg mx-4 rounded-2xl overflow-hidden shadow-2xl bg-black/30 backdrop-blur-md border border-white/20 p-8 md:p-10 lg:p-4">
 
 
       <div className="flex flex-col items-center text-center mb-6">

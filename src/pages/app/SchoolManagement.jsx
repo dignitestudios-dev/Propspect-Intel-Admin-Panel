@@ -181,8 +181,8 @@ export default function SchoolManagement() {
           onClick={() => {
             setIsSuccess(false);
           }}
-          message={`School ${editMode?._id ? "Updated" : "Added"}`}
-          title={`School has been  ${editMode?._id ? "Updated" : "Added"}.`}
+          message={`School Has Been ${editMode?._id ? "Updated" : "Added"}`}
+          title={`School  ${editMode?._id ? "Updated" : "Added"}.`}
         />
       )}
       {selectedSchool && (

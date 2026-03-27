@@ -102,7 +102,7 @@ const OTPVerification = () => {
 
   return (
 
-    <div className="relative w-full max-w-lg mx-4 rounded-2xl overflow-hidden shadow-2xl bg-black/70 backdrop-blur-md border border-white/20 p-8 md:p-10 lg:p-12">
+    <div className="relative w-full max-w-lg mx-4 rounded-2xl overflow-hidden shadow-2xl bg-black/30 backdrop-blur-md border border-white/20 p-8 md:p-10 lg:p-12">
 
       <div className="flex flex-col items-center text-center mb-4">
         <img src={Logo} alt="logo" className="w-28 h-28 md:w-32 md:h-32 object-contain mb-4" />

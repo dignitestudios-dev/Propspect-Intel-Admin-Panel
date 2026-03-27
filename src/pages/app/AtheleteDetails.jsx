@@ -75,7 +75,7 @@ export default function AthleteDetails() {
     window.URL.revokeObjectURL(url);
   };
 
-  
+
   const handleBulkArchive = async () => {
     setArchiveLoading(true);
 
@@ -222,7 +222,7 @@ export default function AthleteDetails() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
               {/* <Info label="Email" value={athlete?.basicInfo?.email || "N/A"} /> */}
-              <Info label="Phone" value={athlete?.basicInfo?.phone || "N/A"} />
+              <Info label="Phone" value={`+1 ${athlete?.basicInfo?.phone || "N/A"}`} />
               <Info label="Hometown" value={athlete?.basicInfo?.hometown || "N/A"} />
               <Info label="Date of Birth" value={formatDate(athlete?.basicInfo?.dob) || "N/A"} />
             </div>

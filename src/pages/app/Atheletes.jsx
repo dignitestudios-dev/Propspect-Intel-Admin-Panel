@@ -53,12 +53,17 @@ export default function Atheletes() {
   const [filterOpen, setFilterOpen] = useState(false)
   const [selectedIds, setSelectedIds] = useState([])
   const [archiveLoading, setArchiveLoading] = useState(false)
+  const [csvLoading, setCsvLoading] = useState(false)
+  const [csvExportLoading, setCsvExportLoading] = useState(false)
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [templateLoading, setTemplateLoading] = useState(false);
   const [selectedAgeRange, setSelectedAgeRange] = useState("")
   const [selectedPosition, setSelectedPosition] = useState("")
   const [minAge, setMinAge] = useState("")
   const [maxAge, setMaxAge] = useState("")
   const [position, setPosition] = useState("")
+  const [uploaded, setUploaded] = useState(false);
+
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["athelete", page, debouncedSearch, tabs, minAge,
@@ -205,6 +210,99 @@ export default function Atheletes() {
 
     window.URL.revokeObjectURL(url);
   };
+
+  const handleUploadCSV = async (file) => {
+    if (!file) return;
+
+    setCsvLoading(true);
+    setUploaded(false);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axiosinstance.post("/athlete/import", formData);
+
+      if (response.status === 200 || response.status === 201) {
+        SuccessToast(response.data.message || "CSV uploaded successfully");
+        setUploaded(true);
+        refetch();
+        countrefetch()
+      }
+    } catch (error) {
+      ErrorToast(error?.response?.data?.message || "Upload failed");
+    } finally {
+      setCsvLoading(false);
+    }
+  };
+
+  const handleDownloadTemplate = async () => {
+    setTemplateLoading(true);
+    try {
+      const response = await axiosinstance.get("/athlete/template/csv", {
+        responseType: "blob",
+      });
+
+      if (response.status === 200) {
+        const blob = new Blob([response.data], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "athlete_template.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        window.URL.revokeObjectURL(url);
+
+        SuccessToast("Template downloaded");
+      }
+    } catch (err) {
+      ErrorToast(err?.response?.data?.message || "Download failed");
+    } finally {
+      setTemplateLoading(false);
+    }
+  };
+
+  const handleCSVExport = async () => {
+
+
+    setCsvExportLoading(true)
+    try {
+
+      const response = await axiosinstance.post("/athlete/export/csv", {
+        ids: selectedIds,
+        ...(tabs === "Active" && { isActive: true }),
+        ...(tabs === "Archived" && { isActive: false }),
+      })
+      if (response.status === 200) {
+        const blob = new Blob([response.data], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "athlete_templates.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        window.URL.revokeObjectURL(url);
+
+        SuccessToast("Template downloaded");
+        setSelectedIds([])
+        refetch()
+        countrefetch()
+      }
+    } catch (error) {
+      ErrorToast(error?.response?.data?.message)
+    } finally {
+      setCsvExportLoading(false)
+    }
+  }
+
+
+
   return (
     <div className="w-full space-y-6">
 
@@ -225,21 +323,53 @@ export default function Atheletes() {
           </div>
 
 
-          <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 text-sm  bg-[#21A366]  rounded-md text-white hover:bg-green-700">
-              <FiUpload />
-              <span className="text-white">Upload CSV</span>
-            </button>
+          <div className="flex items-center gap-3 flex-wrap">
 
+            {/* Upload CSV */}
+            <label className={`flex items-center gap-2 px-4 py-2 text-sm rounded-md cursor-pointer 
+  bg-green-600 hover:bg-green-700 text-white`}>
+              <FiUpload />
+              <span>{csvLoading ? "Uploading..." : uploaded ? "Uploaded" : "Upload CSV"}</span>
+              <input
+                type="file"
+                accept=".csv"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  handleUploadCSV(file);
+                  e.target.value = null;
+                }}
+              />
+            </label>
+
+            {/* Add Athlete */}
             <button
-              // onClick={() => navigate("/app/add-athlete")}
               onClick={() => setIsAddAthlete(true)}
-              className="flex items-center gap-2 px-4 py-2 text-sm rounded-md bg-[#0085CA] text-white hover:bg-blue-700"
+              className="flex items-center gap-2 px-4 py-2 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700"
             >
               <FiPlus />
-              <span className="text-white"> Add Athlete</span>
+              <span>Add Athlete</span>
             </button>
 
+
+            <button
+              onClick={handleDownloadTemplate}
+              disabled={templateLoading}
+              className="flex items-center gap-2 px-4 py-2 text-sm rounded-md bg-purple-600 text-white hover:bg-purple-700"
+            >
+              <FiDownload />
+              <span>{templateLoading ? "Downloading..." : "Template"}</span>
+            </button>
+
+
+            <button
+              onClick={handleCSVExport}
+              disabled={csvExportLoading}
+              className="flex items-center gap-2 px-4 py-2 text-sm rounded-md bg-orange-500 text-white hover:bg-orange-600"
+            >
+              <FiDownload />
+              <span>{csvExportLoading ? "Exporting..." : "Export CSV"}</span>
+            </button>
 
           </div>
         </div>

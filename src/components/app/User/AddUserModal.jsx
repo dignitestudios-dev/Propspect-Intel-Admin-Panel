@@ -288,9 +288,9 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
                       setUserStatus(status);
                       formik.setFieldValue("status", status);
                     }}
-                    className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${formik.values.status === status
+                    className={`flex-1 py-1.5 text-sm font-medium rounded-lg transition-all ${formik.values.status === status
                       ? "bg-white shadow-sm text-gray-800"
-                      : "text-gray-400"
+                      : "text-[#0D0C0C99]"
                       }`}
                   >
                     {status}

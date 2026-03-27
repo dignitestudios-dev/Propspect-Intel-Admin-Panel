@@ -131,6 +131,7 @@ export default function AthleteFormManager() {
           setAthleteCreated(true);
           setSuccessType('Update')
 
+
         }
       } else {
         const response = await axiosinstance.post("/athlete", fd);
@@ -255,6 +256,7 @@ export default function AthleteFormManager() {
           onClick={() => {
             setAthleteCreated(false);
             queryClient.invalidateQueries({ queryKey: ["athelete"] });
+            queryClient.invalidateQueries({ queryKey: ["atheleteid"] });
             navigate('/app/athletes')
           }}
           message={`Athlete ${successType}`}

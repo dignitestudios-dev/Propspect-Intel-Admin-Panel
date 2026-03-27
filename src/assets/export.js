@@ -24,6 +24,7 @@ import athlete4 from "./athletePro4.png";
 import athlete5 from "./athletePro5.png";
 import prospectLogo from "./ProspectLogo.png";
 import NoImageUpload from "./no-image-png.jpg";
+import Flagus from "./flagus.webp";
 // export {
 //     FILENAME(PASCALCASE)
 // }
@@ -48,4 +49,5 @@ export {
   athlete3,
   athlete4,
   athlete5,
+  Flagus,
 };

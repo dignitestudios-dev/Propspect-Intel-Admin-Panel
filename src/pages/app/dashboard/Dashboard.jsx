@@ -139,13 +139,13 @@ export default function Dashboard() {
               </button>
               <button
                 onClick={() => setIsAddUserModalOpen(true)}
-                className="flex items-center gap-2 p-3 border-2 border-white rounded-lg hover:bg-gray-50 text-sm font-medium"
+                className="flex items-center gap-2 p-3 border-2 border-white rounded-lg hover:bg-gray-50 text-sm  font-bold"
               >
                 <FiUserPlus className="text-[#0085CA]" /> Add New User
               </button>
               <button
                 onClick={() => setRequestSendModal(true)}
-                className="flex items-center gap-2 p-3 border-2 border-white rounded-lg hover:bg-gray-50 text-sm font-medium"
+                className="flex items-center gap-2 p-3 border-2 border-white rounded-lg hover:bg-gray-50 text-sm font-bold"
               >
                 <BiSolidNotification className="text-[#0085CA]" /> Send
                 Notification
