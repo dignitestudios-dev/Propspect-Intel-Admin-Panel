@@ -49,7 +49,7 @@ const RestPassword = () => {
           Reset Password
         </h1>
         <p className="mt-2 text-white/80 text-sm md:text-base">
-          Enter email to get password recovery link with 4 digit code
+          Enter email to get password recovery link with 6 digit code
         </p>
       </div>
 

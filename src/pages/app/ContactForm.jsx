@@ -205,7 +205,7 @@ const ContactForm = () => {
                   </div>
 
 
-                  <div className="text-[#302C2C] text-sm leading-relaxed">
+                  <div className="text-[#302C2C] text-sm leading-relaxed break-words whitespace-pre-wrap">
                     {item.message}
                   </div>
 
@@ -224,7 +224,7 @@ const ContactForm = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="text-[#302C2C] text-sm text-center border-l-2 border-[#E3E3E3]">
+                    <div className="text-[#302C2C] text-sm text-center border-l-2 border-[#E3E3E3] break-words whitespace-pre-wrap px-2">
                       {item.reply ? (
                         item.reply
                       ) : (

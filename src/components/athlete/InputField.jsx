@@ -1,4 +1,4 @@
-export const InputField = ({ label, name, formik, type = "text" }) => {
+export const InputField = ({ label, name, formik, type = "text", max }) => {
     const getNested = (path, obj) => path.split(/[\.\[\]]/).filter(Boolean).reduce((o, k) => o?.[k], obj);
     const value = getNested(name, formik.values) || "";
     const error = getNested(name, formik.errors);
@@ -16,6 +16,7 @@ export const InputField = ({ label, name, formik, type = "text" }) => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     className="w-full outline-none text-sm"
+                    max={max}
                 />
             </div>
             {touched && error && (

@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../lib/store/hook";
 import { updateSection } from "../../lib/store/feature/athleteFormSlice";
 import { familyInfoSchema } from "../../schema/athleteFormSchema/athleteSchema";
 import { InputField } from "./InputField";
+import { Flagus } from "../../assets/export";
 
 export default function Family({ onNext, setSubmit }) {
   const familyInfo = useAppSelector((s) => s.athleteForm.formData.family);
@@ -54,9 +55,39 @@ export default function Family({ onNext, setSubmit }) {
         <div className="space-y-8 animate-in fade-in duration-300">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <InputField label="Mother" placeholder="Enter name" name={'motherName'} formik={formik} />
-            <InputField label="Date of Birth" type="date" placeholder="Age here" name={'motherDob'} formik={formik} />
+            <InputField label="Date of Birth" max={new Date().toISOString().split("T")[0]} type="date" placeholder="Age here" name={'motherDob'} formik={formik} />
             <InputField label="Occupation" placeholder="Enter occupation" name={'motherOccupation'} formik={formik} />
-            <InputField label="Contact" placeholder="Contact here" name={'motherContact'} formik={formik} />
+            
+              <div className="bg-white rounded-xl px-4 py-6 border border-gray-50 flex items-center gap-2">
+                {/* US Flag + Code */}
+
+                <span className="text-xl pr-2">
+                  <img
+                    src={Flagus}
+                    alt="US flag"
+                    className="w-6 h-4 mr-2"
+                  />
+                </span>
+
+                <span className="text-sm text-gray-500">+1</span>
+
+                {/* Phone Input */}
+                <input
+                  name="motherContact"
+                  value={formik.values.motherContact}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="w-full outline-none text-sm pl-1"
+                  placeholder="Enter phone number"
+                  maxLength={10}
+                />
+              </div>
+
+              {/* {formik.touched.phone && formik.errors.phone && (
+                          <span className="text-red-500 text-xs">{formik.errors.phone}</span>
+                        )} */}
+{/*             
+            <InputField label="Contact" placeholder="Contact here" name={'motherContact'} formik={formik} /> */}
           </div>
 
           <div className="w-full md:w-1/2 md:pr-4">
@@ -109,6 +140,7 @@ export default function Family({ onNext, setSubmit }) {
                       placeholder="Age here"
                       type="date"
                       formik={formik}
+                      max={new Date().toISOString().split("T")[0]}
                     />
                     {/* {formik.touched.siblings?.[index]?.dob &&
                       formik.errors.siblings?.[index]?.dob && (

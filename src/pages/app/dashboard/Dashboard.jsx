@@ -47,12 +47,13 @@ export default function Dashboard() {
 
 
   const statusStyles = {
-    Pending: "bg-white text-orange-600",
-    Contacted: "bg-white text-red-600",
-    Updated: "bg-white text-green-600",
+    pending: "bg-orange-100 text-orange-600",
+    declined: "bg-red-100 text-red-600",
+    updated: "bg-green-100 text-green-600",
   };
   const filters = ["All", "Pending", "Contacted"];
   const popularfilters = ["7d", "1m", "3m", "6m", "1y"];
+
 
 
 
@@ -253,46 +254,50 @@ export default function Dashboard() {
             ) : athleteData?.data?.length === 0 ? (
               <div className="text-center p-10">No Athletes Requests Found</div>
             ) : (
-              athleteData?.data?.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between py-4 border-b last:border-none px-4"
-                >
-                  <div className="flex items-center gap-3 w-[30%]">
+              athleteData?.data?.map((item, index) => {
+                const statusKey = item?.status?.toLowerCase();
 
-                    <img src={item?.athlete?.image || "https://placehold.co/400"} className="w-9 h-9 rounded-full " alt="athlete_img" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-800">{item?.athlete?.name}</p>
-                      <p className="text-xs text-gray-400">Athlete</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center text-gray-400 justify-center">
-                    <div className="w-auto h-auto">
-                      <img src={athlete} alt="Icon" className="w-[115px] h-[30px]" />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 w-[30%]">
-                    <img
-                      src={item?.user?.profilePicture}
-                      className="w-7 h-7 rounded-full"
-                      alt=""
-                    />
-                    <p className="text-xs text-gray-500">
-                      Requested By <br />
-                      <span className="text-gray-700 font-medium">{item?.user?.name}</span>
-                    </p>
-                  </div>
-
-                  <span
-                    className={`text-xs w-[90px] text-center px-3 py-3 rounded-lg font-medium ${statusStyles[item?.status] || "bg-gray-100 text-gray-600"
-                      }`}
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between py-4 border-b last:border-none px-4"
                   >
-                    {item?.status.toUpperCase()}
-                  </span>
-                </div>
-              ))
+                    <div className="flex items-center gap-3 w-[30%]">
+
+                      <img src={item?.athlete?.image || "https://placehold.co/400"} className="w-9 h-9 rounded-full " alt="athlete_img" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-800">{item?.athlete?.name}</p>
+                        <p className="text-xs text-gray-400">Athlete</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center text-gray-400 justify-center">
+                      <div className="w-auto h-auto">
+                        <img src={athlete} alt="Icon" className="w-[115px] h-[30px]" />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 w-[30%]">
+                      <img
+                        src={item?.user?.profilePicture}
+                        className="w-7 h-7 rounded-full"
+                        alt=""
+                      />
+                      <p className="text-xs text-gray-500">
+                        Requested By <br />
+                        <span className="text-gray-700 font-medium">{item?.user?.name}</span>
+                      </p>
+                    </div>
+
+                    <span
+                      className={`text-xs w-[90px] text-center px-3 py-3 rounded-lg font-medium ${statusStyles[statusKey] || "bg-gray-100 text-gray-600"
+                        }`}
+                    >
+                      {item?.status?.toUpperCase()}
+                    </span>
+                  </div>
+                )
+              })
             )}
           </div>
           <div className="flex justify-end mt-4">

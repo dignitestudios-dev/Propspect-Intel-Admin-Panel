@@ -144,7 +144,7 @@ export default function Notifications() {
                   <div className="font-medium text-[#2D3748] text-sm py-2 mt-4">
                     {item.title}
                   </div>
-                  <div className="text-gray-500 text-sm leading-relaxed">
+                  <div className="text-gray-500 text-sm leading-relaxed py-2 mt-4">
                     {item.description}
                   </div>
                   <div className="text-center text-gray-600 text-sm py-2 mt-4">

@@ -22,6 +22,7 @@ import { ErrorToast } from "../../components/global/Toaster";
 import Pagination from "../../components/global/Pagination";
 import useDebounce from "../../lib/store/hook";
 import StatsSkeleton from "../../components/global/StatsSkeleton";
+import { Logo, prospectLogo } from "../../assets/export";
 
 export default function Users() {
   const containerRef = useRef(null);
@@ -343,7 +344,7 @@ export default function Users() {
 
         {isModalOpen && (
           <div className="fixed inset-0  z-50  flex items-center justify-end bg-black bg-opacity-40 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl h-full shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="bg-white rounded-2xl h-full shadow-xl w-full max-w-md mx overflow-hidden">
 
               <div className="flex items-center justify-between px-6 py-4 border-b">
                 <h2 className="text-lg font-bold text-gray-800">
@@ -400,9 +401,9 @@ export default function Users() {
 
 
                           <div className="absolute -left-[17px] top-1 w-8 h-8 rounded-full border bg-white flex items-center justify-center shadow-sm">
-                            <div className="bg-[#001F3F] p-1 rounded-sm">
+                            <div className="bg p-1 rounded-sm">
                               <span className="text-[8px] text-white font-bold">
-                                {type === "ProfileView" ? "PI" : "UA"}
+                               <img src={prospectLogo} alt="" />
                               </span>
                             </div>
                           </div>

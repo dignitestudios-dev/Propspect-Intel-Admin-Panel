@@ -108,7 +108,7 @@ export const getContact = async ({
   page = 1,
   itemsPerPage = 10,
 }) => {
-  let url = `/contact?q=${search}&page=${page}&limit=${itemsPerPage}`;
+  let url = `/contact?search=${search}&page=${page}&limit=${itemsPerPage}`;
 
   if (activeTab !== "All") {
     url += `&emailStatus=${activeTab}`;

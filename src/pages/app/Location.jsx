@@ -8,19 +8,20 @@ import { useState } from "react";
 import Pagination from "../../components/global/Pagination";
 import { FiSearch } from "react-icons/fi";
 import useDebounce from "../../lib/store/hook";
+import { IpLocation } from "../../assets/export";
 
 export default function Location() {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 500);
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["locationstates"],
     queryFn: getTopLocation,
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
 
   });
-  const { data: LoggedUser, isLoading: LoggedUserLoading, refetch: LoggedUserRefetch } = useQuery({
+  const { data: LoggedUser, isLoading: LoggedUserLoading, refetch: LoggedUserRefetch, isFetching: LoggedUserFetching, } = useQuery({
     queryKey: ["logedUser", page, search],
     queryFn: () => getLoggedUser({ page, search: debouncedSearch }),
     keepPreviousData: true,
@@ -32,13 +33,14 @@ export default function Location() {
       setPage(newPage);
     }
   };
+  const isRefreshing = isFetching || LoggedUserFetching;
   const handleRefresh = () => {
-    refetch()
-    LoggedUserRefetch()
+    if (isRefreshing) return;
+    refetch();
+    LoggedUserRefetch();
+  };
 
-  }
 
-  console.log(LoggedUser?.pagination, "LoggedUser?.pagination")
   return (
     <div className="w-full space-y-6">
       {/* Header */}
@@ -47,7 +49,7 @@ export default function Location() {
           {/* Left Side */}
           <div>
             <div className="flex items-center gap-2 text-sm text-gray-400">
-              <FaFootballBall className="text-2xl text-black" />
+              <img src={IpLocation} alt="" />
               <span className="text-xl font-semibold text-gray-900 mt-1">
                 IP Location Tracking
               </span>
@@ -64,9 +66,13 @@ export default function Location() {
 
           {/* Right Side */}
           <div className="flex items-center gap-3 font-bold">
-            <button onClick={handleRefresh} className="flex items-center gap-2 px-4 py-2 text-sm rounded-md text-[#0085CA] border-[1px] border-[#E3E3E3] ">
-              <LuRefreshCcw className="font-bold " />
-              <span className="text-[#0085CA]"> Refresh</span>
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="flex items-center gap-2 px-4 py-2 text-sm rounded-md text-[#0085CA] border border-[#E3E3E3] disabled:opacity-50"
+            >
+              <LuRefreshCcw className={`${isRefreshing ? "animate-spin" : ""}`} />
+              <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
             </button>
 
             {/* Profile */}

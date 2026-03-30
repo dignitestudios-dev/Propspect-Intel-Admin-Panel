@@ -71,9 +71,9 @@ export default function AthleteInterests() {
       </div>
       <div className="grid grid-cols-3 md:grid-cols-3 gap-4 bg-[#E2E8F0] bg-opacity-60  border border-gray-300 rounded-xl p-4">
         {[
-          { label: "Total Requests", value: atheleteCount?.totalAthlete },
-          { label: "Pending", value: atheleteCount?.intrestPending },
-          { label: "Updates", value: atheleteCount?.activeAthlete },
+          { label: "Total Requests", value: athlete?.intrestStats?.total || 0 },
+          { label: "Pending", value: athlete?.intrestStats?.pending || 0 },
+          { label: "Updates", value: athlete?.intrestStats?.updated || 0 },
         ].map((item) => (
           <div
             key={item.label}

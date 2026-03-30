@@ -11,9 +11,11 @@ const Overview = ({ athlete }) => {
         {athlete?.strengths?.length > 0 ? (
           <ul className="space-y-4">
             {athlete.strengths.map((item, i) => (
-              <li key={i} className="flex items-start text-gray-700 text-sm">
-                <span className="text-black text-lg mr-3">{i + 1}</span>
-                {item}
+              <li className="flex items-center text-gray-700 text-sm">
+                <span className="text-black text-sm font-semibold mr-3 w-5 text-center">
+                  {i + 1}
+                </span>
+                <span>{item}</span>
               </li>
             ))}
           </ul>
@@ -31,9 +33,11 @@ const Overview = ({ athlete }) => {
         {athlete?.weaknesses?.length > 0 ? (
           <ul className="space-y-4">
             {athlete.weaknesses.map((item, i) => (
-              <li key={i} className="flex items-start text-gray-700 text-sm">
-                <span className="text-black text-lg mr-3">{i + 1}</span>
-                {item}
+              <li className="flex items-center text-gray-700 text-sm">
+                <span className="text-black text-sm font-semibold mr-3 w-5 text-center">
+                  {i + 1}
+                </span>
+                <span>{item}</span>
               </li>
             ))}
           </ul>

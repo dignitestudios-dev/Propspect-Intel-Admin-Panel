@@ -145,7 +145,7 @@ export default function AthleteDetails() {
                     <h2 className="text-xl font-semibold text-gray-900">
                       {athlete?.basicInfo?.name || "N/A"}
                     </h2>
-                    <span className="px-2 py-0.5 text-xs bg-purple-100 text-purple-600 rounded-full">
+                    <span className="px-2 py-0.5 text-xs capitalize bg-purple-100 text-purple-600 rounded-full">
                       {athlete?.basicInfo?.status || "N/A"}
                     </span>
                   </div>

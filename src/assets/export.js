@@ -25,12 +25,14 @@ import athlete5 from "./athletePro5.png";
 import prospectLogo from "./ProspectLogo.png";
 import NoImageUpload from "./no-image-png.jpg";
 import Flagus from "./flagus.webp";
+import IpLocation from "./ipLocation.svg";
 // export {
 //     FILENAME(PASCALCASE)
 // }
 
 export {
   Logo,
+  IpLocation,
   NoInternetImage,
   NoImageUpload,
   athletic,

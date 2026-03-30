@@ -462,13 +462,13 @@ export default function FiltersAnalytics() {
                   <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
                     <div className="flex flex-col gap-4">
                       <p className="text-[16px] text-[#302C2C] ">Location Filter</p>
-                      <h2 className="text-[24px] font-bold text-gray-900">157</h2>
+                      <h2 className="text-[24px] font-bold text-gray-900">{filterDetailsData?.data?.location?.total || 0}</h2>
                       <p className="text-[14px] font-light text-[#302C2C]">
                         Popular Locations:
                       </p>
-                      {filterDetailsData?.data?.location?.length === 0 ? (
+                      {filterDetailsData?.data?.location?.data?.length === 0 ? (
                         <p className="text-sm text-gray-400 text-center">No Data Found</p>
-                      ) : filterDetailsData?.data?.location?.map((location, index) => ((
+                      ) : filterDetailsData?.data?.location?.data?.map((location, index) => ((
                         <div key={index} className="flex justify-between items-center">
                           <p className="font-bold text-[14px]">{location?._id || "N/A"}</p>
                           <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
@@ -482,14 +482,14 @@ export default function FiltersAnalytics() {
                   </div>
                   <CharacterCard
                     title="Personal Character"
-                    score={146}
-                    data={filterDetailsData?.data?.personalCharacter}
+                    score={filterDetailsData?.data?.personalCharacter?.total || 0}
+                    data={filterDetailsData?.data?.personalCharacter?.data}
                   />
 
                   <CharacterCard
                     title="Football Character"
-                    score={148}
-                    data={filterDetailsData?.data?.footballCharacter}
+                    score={filterDetailsData?.data?.footballCharacter?.total || 0}
+                    data={filterDetailsData?.data?.footballCharacter?.data}
                   />
 
 
@@ -499,13 +499,13 @@ export default function FiltersAnalytics() {
                   <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
                     <div className="flex flex-col gap-4">
                       <p className="text-[16px] text-[#302C2C] ">Schools Filter</p>
-                      <h2 className="text-[24px] font-bold text-gray-900">157</h2>
+                      <h2 className="text-[24px] font-bold text-gray-900">{filterDetailsData?.data?.school?.total || 0}</h2>
                       <p className="text-[14px] font-light text-[#302C2C]">
                         Popular Schools:
                       </p>
-                      {filterDetailsData?.data?.school?.length === 0 ? (
+                      {filterDetailsData?.data?.school?.data?.length === 0 ? (
                         <p className="text-sm text-gray-400 text-center">No Data Found</p>
-                      ) : filterDetailsData?.data?.school?.map((school, index) => (
+                      ) : filterDetailsData?.data?.school?.data?.map((school, index) => (
                         <div key={index} className="flex justify-between items-center">
                           <p className="font-bold text-[14px]">{school?._id || "N/A"}</p>
                           <div className=" border border-[#E3E3E3] rounded-[8px] px-2 py-1 text-[#302C2C] text-[14px] font-light">
@@ -519,13 +519,13 @@ export default function FiltersAnalytics() {
                   <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
                     <div className="flex flex-col gap-4">
                       <p className="text-[16px] text-[#302C2C] ">Graduation Year</p>
-                      <h2 className="text-[24px] font-bold text-gray-900">157</h2>
+                      <h2 className="text-[24px] font-bold text-gray-900">{filterDetailsData?.data?.gradYear?.total || 0}</h2>
                       <p className="text-[14px] font-light text-[#302C2C]">
                         Popular Years:
                       </p>
-                      {filterDetailsData?.data?.gradYear?.length === 0 ? (
+                      {filterDetailsData?.data?.gradYear?.data?.length === 0 ? (
                         <p className="text-sm text-gray-400 text-center">No Data Found</p>
-                      ) : filterDetailsData?.data?.gradYear?.map((gradYear, index) => (
+                      ) : filterDetailsData?.data?.gradYear?.data?.map((gradYear, index) => (
 
                         <div key={index} className="flex justify-between items-center">
                           <p className="font-bold text-[14px]">{gradYear?._id}</p>
@@ -540,14 +540,14 @@ export default function FiltersAnalytics() {
                   <div className="border border-white p-4 rounded-xl shadow-sm bg-gray-100 bg-opacity-30">
                     <div className="flex flex-col gap-4">
                       <p className="text-[16px] text-[#302C2C] ">Position Filter</p>
-                      <h2 className="text-[24px] font-bold text-gray-900">157</h2>
+                      <h2 className="text-[24px] font-bold text-gray-900">{filterDetailsData?.data?.position?.total || 0}</h2>
                       <p className="text-[14px] font-light text-[#302C2C]">
                         Popular Positions:
                       </p>
-                      {filterDetailsData?.data?.position?.length === 0 ? (
+                      {filterDetailsData?.data?.position?.data?.length === 0 ? (
                         <p className="text-sm text-gray-400 text-center">No Data Found</p>
                       ) : (
-                        filterDetailsData?.data?.position?.map((position, index) => (
+                        filterDetailsData?.data?.position?.data?.map((position, index) => (
                           <div key={index} className="flex justify-between items-center">
                             <p className="font-bold text-[14px]">
                               {position?._id || "N/A"}
