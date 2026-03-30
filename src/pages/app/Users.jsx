@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { MdMonitor } from "react-icons/md";
 
@@ -42,6 +42,8 @@ export default function Users() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [activityList, setActivityList] = useState([]);
+  const [userActivityLoading, setUserActivityLoading] = useState(false);
+
 
 
 
@@ -70,19 +72,27 @@ export default function Users() {
   });
 
 
-  const { data: userActivity, isLoading: userActivityLoading, refetch: refetchUserActivity } = useQuery({
-    queryKey: ["userActivity", selectedUser?._id, cursorId],
-    queryFn: () => getUserActivity(selectedUser?._id, cursorId),
+  const { data: userActivity, isLoading: userActivityLoad, refetch: refetchUserActivity } = useQuery({
+    queryKey: ["userActivity", selectedUser?._id],
+    queryFn: () => getUserActivity(selectedUser?._id, ''),
     enabled: !!selectedUser?._id,
     keepPreviousData: true,
   });
-  const fetchUserActivity = async () => {
-    if (!selectedUser || !hasMore || loadingMore) return;
 
-    setLoadingMore(true);
+  const fetchUserActivity = useCallback(async (cursor = '') => {
+    const isFirstLoad = cursor === '';
+
+
+    if (isFirstLoad) {
+      setUserActivityLoading(true);
+      setLoadingMore(false);
+    } else {
+      if (loadingMore) return;
+      setLoadingMore(true);
+    }
 
     try {
-      const res = await getUserActivity(selectedUser._id, cursorId);
+      const res = await getUserActivity(selectedUser._id, cursor);
       const newData = res?.data || [];
 
       if (newData.length === 0) {
@@ -95,7 +105,30 @@ export default function Users() {
     } catch (err) {
       console.error("Failed to load activities", err);
     } finally {
+      setUserActivityLoading(false);
       setLoadingMore(false);
+    }
+  }, [selectedUser, loadingMore]);
+
+
+  useEffect(() => {
+    if (selectedUser?._id) {
+      setActivityList([]);
+      setCursorId('');
+      setHasMore(true);
+      setLoadingMore(false);
+      setUserActivityLoading(false);
+      fetchUserActivity('');
+    }
+  }, [selectedUser?._id]);
+
+
+  const handleScroll = () => {
+    if (!containerRef.current || loadingMore || !hasMore || userActivityLoading) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+      fetchUserActivity(cursorId);
     }
   };
   const handleDelete = async () => {
@@ -120,22 +153,7 @@ export default function Users() {
   };
 
 
-  const handleScroll = () => {
-    if (!containerRef.current || loadingMore || !hasMore) return;
 
-    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-    if (scrollTop + clientHeight >= scrollHeight - 50) {
-      fetchUserActivity();
-    }
-  };
-  useEffect(() => {
-    if (selectedUser) {
-      setActivityList([]);
-      setCursorId('');   // start fresh
-      setHasMore(true);
-      fetchUserActivity(); // first load
-    }
-  }, [selectedUser]);
 
   return (
     <div className="w-full space-y-6">
@@ -340,9 +358,9 @@ export default function Users() {
               </div>
 
 
-              <div 
-              className="p-6 max-h-[90vh] overflow-y-auto "
-               ref={containerRef}
+              <div
+                className="p-6 max-h-[90vh] overflow-y-auto "
+                ref={containerRef}
                 onScroll={handleScroll}>
                 {userActivityLoading ? (
                   <StatsSkeleton count={5} />
