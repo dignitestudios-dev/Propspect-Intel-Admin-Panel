@@ -109,42 +109,43 @@ const CharacterCard = ({ title, score, data }) => {
       <h3 className="text-[16px] font-semibold text-[#302C2C]">
         {title}
       </h3>
+      {grades?.length === 0 ? (
+        <p className="text-sm text-gray-400 text-center pt-10">
+          No Data Found
+        </p>
+      ) : (
+        <>
+          <h2 className="text-[36px] font-bold text-black mt-2">
+            {score}
+          </h2>
 
+          <p className="text-sm text-gray-500 mb-6">
+            Average Range
+          </p>
 
-      <div className="space-y-3">
-        {grades?.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center pt-10">No Data Found</p>
-        ) : grades?.map((grade, i) => (
-          <div>
-            <h2 className="text-[36px] font-bold text-black mt-2">
-              {score}
-            </h2>
+          <div className="space-y-3">
+            {grades.map((grade, i) => (
+              <div key={i} className="flex items-center justify-between">
 
-            <p className="text-sm text-gray-500 mb-6">
-              Average Range
-            </p>
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`w-8 h-8 flex items-center justify-center rounded-md text-sm font-bold ${getColor(
+                      grade.label
+                    )}`}
+                  >
+                    {grade.label}
+                  </span>
+                </div>
 
-            <div
-              key={i}
-              className="flex items-center justify-between"
-            >
-              <div className="flex items-center gap-3">
-                <span
-                  className={`w-8 h-8 flex items-center justify-center rounded-md text-sm font-bold ${getColor(
-                    grade.label
-                  )}`}
-                >
-                  {grade.label}
-                </span>
+                <div className="border border-gray-200 rounded-lg px-3 py-1 text-sm text-gray-700">
+                  {grade.value}
+                </div>
+
               </div>
-
-              <div className="border border-gray-200 rounded-lg px-3 py-1 text-sm text-gray-700">
-                {grade.value}
-              </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
     </div>
   );
 };
@@ -417,7 +418,7 @@ export default function FiltersAnalytics() {
                             <div key={i} className="flex items-center gap-2">
                               <span className="w-3 h-3 rounded-full bg-[#0085CA]"></span>
                               <p className="text-sm text-gray-700">
-                                {item.filter.charAt(0).toUpperCase() + item.filter.slice(1) }  - {item.percentage}%
+                                {item.filter.charAt(0).toUpperCase() + item.filter.slice(1)}  - {item.percentage}%
                               </p>
                             </div>
                           ))}
