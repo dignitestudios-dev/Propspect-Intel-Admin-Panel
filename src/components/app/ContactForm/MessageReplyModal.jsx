@@ -32,6 +32,9 @@ const MessageReplyModal = ({ onClick, onNext, contactDetail }) => {
           queryClient.invalidateQueries({
             queryKey: ["contactstats"]
           })
+          queryClient.invalidateQueries({
+            queryKey: ["contactCount"]
+          })
         }
       } catch (err) {
         ErrorToast(err?.response?.data?.message)
@@ -80,7 +83,7 @@ const MessageReplyModal = ({ onClick, onNext, contactDetail }) => {
               Original Message
             </p>
             <div className="mt-2 bg-[#FAF8F2] p-4 rounded-lg w-full">
-              <p className="text-sm text-[#302C2C] font-light">
+              <p className="text-sm text-[#302C2C] font-light  text-wrap">
                 {contactDetail?.message}
               </p>
             </div>
@@ -97,6 +100,7 @@ const MessageReplyModal = ({ onClick, onNext, contactDetail }) => {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 placeholder="Enter subject"
+                maxLength={150}
                 className="w-full mt-1 px-1 py-2 text-sm text-[#302C2C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0085CA] bg-transparent"
               />
 
@@ -114,6 +118,7 @@ const MessageReplyModal = ({ onClick, onNext, contactDetail }) => {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 name="message"
+                maxLength={300}
                 className="w-full mt-2 px-3 py-2 text-sm text-[#302C2C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0085CA] bg-transparent h-[70px] resize-none"
               ></textarea>
               {formik.touched.message && formik.errors.message && (

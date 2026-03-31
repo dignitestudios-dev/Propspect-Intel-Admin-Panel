@@ -165,6 +165,7 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.username}
+                  maxLength={50}
                   className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm"
                 />
               </div>
@@ -189,6 +190,7 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
                   onBlur={formik.handleBlur}
                   value={formik.values.email}
                   disabled={!!editUser}
+                  maxLength={150}
                   className={`w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm `}
                 />
               </div>
@@ -209,6 +211,7 @@ const AddUserModal = ({ setIsAddUserModalOpen, userStatus, setUserStatus, onNext
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.password}
+                  maxLength={50}
                   className="w-full bg-transparent text-gray-800 font-semibold focus:outline-none text-sm pr-8"
                 />
 

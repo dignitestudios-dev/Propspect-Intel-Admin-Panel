@@ -165,3 +165,8 @@ export const getUserActivity = async (id, cursorId) => {
   );
   return res.data;
 };
+
+export const getContactCount = async () => {
+  const res = await axiosinstance.get(`/contact/counts`);
+  return res.data;
+};

@@ -5,7 +5,7 @@ import { formatDate } from "../../../lib/helpers";
 const MessageDetailModal = ({ onClick, onNext, contactDetail }) => {
   return (
     <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-0 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-[12px] shadow-md px-4 py-8 w-[515px]">
+      <div className="bg-white rounded-[12px] shadow-md px-4 py-8 w-[515px] h-[600px] overflow-y-auto">
         <div className="flex justify-between">
           <div></div>
           <p className="text-[#302C2C] text-[20px] font-bold">
@@ -66,7 +66,7 @@ const MessageDetailModal = ({ onClick, onNext, contactDetail }) => {
               Full Message
             </p>
             <div className="mt-2 bg-[#FAF8F2] p-4 rounded-lg w-full">
-              <p className="text-sm text-[#302C2C] font-light">
+              <p className="text-sm text-[#302C2C] font-light text-wrap break-all">
                 {contactDetail?.message}
               </p>
             </div>

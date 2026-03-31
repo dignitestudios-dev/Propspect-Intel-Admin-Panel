@@ -182,6 +182,7 @@ const CreatePushNotificationModal = ({ onClick, onNext }) => {
                 value={formik.values.title}
                 onChange={formik.handleChange}
                 placeholder="Enter title here"
+                maxLength={50}
                 className="w-full mt-2 px-1 py-2 text-sm text-[#302C2C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0085CA] bg-transparent"
               />
             </div>
@@ -199,6 +200,7 @@ const CreatePushNotificationModal = ({ onClick, onNext }) => {
                 value={formik.values.description}
                 onChange={formik.handleChange}
                 placeholder="Enter description here"
+                maxLength={300}
                 className="w-full mt-2 px-3 py-2 text-sm text-[#302C2C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0085CA] bg-transparent h-[70px] resize-none"
               />
               {formik.touched.description && formik.errors.description && (

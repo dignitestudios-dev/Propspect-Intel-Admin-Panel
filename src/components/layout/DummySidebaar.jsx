@@ -5,11 +5,19 @@ import { LogOut } from "lucide-react";
 import { prospectLogo } from "../../assets/export";
 import { useAppDispatch } from "../../lib/store/hook";
 import { logout } from "../../lib/store/feature/authSlice";
+import { useQuery } from "@tanstack/react-query";
+import { getContactCount } from "../../lib/query/queryFn";
 
 const DummySidebar = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { data, isLoading } = useQuery({
+    queryKey: ["contactCount"],
+    queryFn: getContactCount,
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
 
+  });
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
 
@@ -37,23 +45,28 @@ const DummySidebar = () => {
             key={sidebar.link}
             to={sidebar.link}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-full text-sm font-medium transition-all
-              ${isActive
+              `flex items-center justify-between px-4 py-3 rounded-full text-sm font-medium transition-all
+      ${isActive
                 ? "bg-white text-[#1E88E5] shadow-sm"
                 : "text-[#1F2937] hover:bg-white/60"
               }`
             }
           >
-            {/* Render the icon dynamically */}
-            <span className="flex items-center justify-center w-[18px] h-[18px]">
-              {sidebar.icon}
-            </span>
-            <span>{sidebar.title}</span>
+            <div className="flex items-center gap-3">
+              <span className="flex items-center justify-center w-[18px] h-[18px]">
+                {sidebar.icon}
+              </span>
+              <span>{sidebar.title}</span>
+            </div>
+
+            {sidebar.link === "/app/contact-form" && data?.data?.totalContacts > 0 && (
+              <span className="w-6 h-6  text-center pt-[3px] text-[10px] text-white bg-red-500 rounded-full">{data?.data?.totalContacts}</span>
+            )}
           </NavLink>
         ))}
       </nav>
 
-      {/* Logout */}
+      
       <div className="mt-auto pt-6">
         <button
           onClick={() => setShowLogoutModal(true)}

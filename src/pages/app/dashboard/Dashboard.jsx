@@ -193,16 +193,14 @@ export default function Dashboard() {
                       className="flex justify-between items-center py-3 border-b last:border-none px-4"
                     >
                       <div className="flex items-center gap-3">
-                        {/* <span className="text-sm font-semibold text-gray-500">{index}.</span> */}
-                        <img
-                          src={item?.image}
-                          className="w-8 h-8 rounded-full"
-                          alt=""
-                        />
-                        <p className="text-sm font-medium">{item?.name}</p>
+
+                        <div className="flex items-center gap-3 max-w-full">
+                          <img src={item?.image || "https://placehold.co/400"} className="w-8 h-8 rounded-full" alt="" />
+                          <p className="text-sm font-medium break-all">{item?.name}</p>
+                        </div>
                       </div>
                       <span className="text-xs px-3 py-1 bg-white text-green-600 rounded-lg">
-                        💹 {item?.viewsCount || 0} Views
+                        💹 {item?.totalViews || 0} Views
                       </span>
                     </div>
                   ))
