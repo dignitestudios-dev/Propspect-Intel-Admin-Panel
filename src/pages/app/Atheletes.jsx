@@ -23,6 +23,7 @@ import Pagination from "../../components/global/Pagination";
 import axiosinstance from "../../axios";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 import StatsSkeleton from "../../components/global/StatsSkeleton";
+import { Emptyimg } from "../../assets/export";
 const ageRanges = [
   "10-20",
   "20-30",
@@ -594,7 +595,7 @@ export default function Atheletes() {
                     <td className="px-5 py-4 flex items-center gap-3">
 
                       <div>
-                        <img src={athlete?.basicInfo?.image || "https://placehold.co/400"} alt={athlete?.basicInfo?.name} className="w-9 h-9 rounded-full object-cover" />
+                        <img src={athlete?.basicInfo?.image || Emptyimg} alt={athlete?.basicInfo?.name} className="w-9 h-9 rounded-full object-cover" />
                       </div>
                     <span className="font-medium text-gray-800 max-w-[150px] truncate block">
   {athlete?.basicInfo?.name}

@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import Pagination from "../global/Pagination";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { MultiSelector } from "./MultiSelect";
-import { Flagus } from "../../assets/export";
+import { Emptyimg, Flagus } from "../../assets/export";
 
 
 export default function BasicInfo({ setSubmit, onNext }) {
@@ -303,7 +303,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
                       className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-50"
                     >
                       <img
-                        src={school.logo || "https://placehold.co/400"}
+                        src={school.logo || Emptyimg}
                         alt={school.name}
                         className="w-8 h-8 rounded-full object-cover"
                       />

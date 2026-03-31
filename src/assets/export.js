@@ -15,6 +15,7 @@ import bin from "./greyBin.png";
 import pen from "./pen.png";
 import eye from "./eyeIcon.png";
 import sms from "./smsIcon.png";
+import Emptyimg from "./emptyimg.png";
 
 import athlete from "./athlete.png";
 import athlete1 from "./athletePro1.png";
@@ -52,4 +53,5 @@ export {
   athlete4,
   athlete5,
   Flagus,
+  Emptyimg,
 };

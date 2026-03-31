@@ -7,7 +7,7 @@ import {
 } from "react-icons/fi";
 import Header from "../../../components/dashboard/Header";
 import State from "../../../components/dashboard/State";
-import { athlete } from "../../../assets/export";
+import { athlete, Emptyimg } from "../../../assets/export";
 import { IoAmericanFootballOutline } from "react-icons/io5";
 import { BiSolidNotification } from "react-icons/bi";
 import AddUserModal from "../../../components/app/User/AddUserModal";
@@ -195,7 +195,7 @@ export default function Dashboard() {
                       <div className="flex items-center gap-3">
 
                         <div className="flex items-center gap-3 max-w-full">
-                          <img src={item?.image || "https://placehold.co/400"} className="w-8 h-8 rounded-full" alt="" />
+                          <img src={item?.image || Emptyimg} className="w-8 h-8 rounded-full" alt="" />
                           <p className="text-sm font-medium break-all">{item?.name}</p>
                         </div>
                       </div>
@@ -262,7 +262,7 @@ export default function Dashboard() {
                   >
                     <div className="flex items-center gap-3 w-[30%]">
 
-                      <img src={item?.athlete?.image || "https://placehold.co/400"} className="w-9 h-9 rounded-full " alt="athlete_img" />
+                      <img src={item?.athlete?.image || Emptyimg} className="w-9 h-9 rounded-full " alt="athlete_img" />
                       <div>
                         <p className="text-sm font-medium text-gray-800">{item?.athlete?.name}</p>
                         <p className="text-xs text-gray-400">Athlete</p>
