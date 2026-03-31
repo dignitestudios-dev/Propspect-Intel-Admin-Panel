@@ -596,9 +596,9 @@ export default function Atheletes() {
                       <div>
                         <img src={athlete?.basicInfo?.image || "https://placehold.co/400"} alt={athlete?.basicInfo?.name} className="w-9 h-9 rounded-full object-cover" />
                       </div>
-                      <span className="font-medium text-gray-800">
-                        {athlete?.basicInfo?.name}
-                      </span>
+                    <span className="font-medium text-gray-800 max-w-[150px] truncate block">
+  {athlete?.basicInfo?.name}
+</span>
                     </td>
 
                     <td>{athlete?.basicInfo?.position}</td>

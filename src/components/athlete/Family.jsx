@@ -54,39 +54,39 @@ export default function Family({ onNext, setSubmit }) {
 
         <div className="space-y-8 animate-in fade-in duration-300">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-            <InputField label="Mother" placeholder="Enter name" name={'motherName'} formik={formik} />
+            <InputField label="Mother" placeholder="Enter name" name={'motherName'} formik={formik} maxLength={50} />
             <InputField label="Date of Birth" max={new Date().toISOString().split("T")[0]} type="date" placeholder="Age here" name={'motherDob'} formik={formik} />
             <InputField label="Occupation" placeholder="Enter occupation" name={'motherOccupation'} formik={formik} />
-            
-              <div className="bg-white rounded-xl px-4 py-6 border border-gray-50 flex items-center gap-2">
-                {/* US Flag + Code */}
 
-                <span className="text-xl pr-2">
-                  <img
-                    src={Flagus}
-                    alt="US flag"
-                    className="w-6 h-4 mr-2"
-                  />
-                </span>
+            <div className="bg-white rounded-xl px-4 py-6 border border-gray-50 flex items-center gap-2">
+              {/* US Flag + Code */}
 
-                <span className="text-sm text-gray-500">+1</span>
-
-                {/* Phone Input */}
-                <input
-                  name="motherContact"
-                  value={formik.values.motherContact}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  className="w-full outline-none text-sm pl-1"
-                  placeholder="Enter phone number"
-                  maxLength={10}
+              <span className="text-xl pr-2">
+                <img
+                  src={Flagus}
+                  alt="US flag"
+                  className="w-6 h-4 mr-2"
                 />
-              </div>
+              </span>
 
-              {/* {formik.touched.phone && formik.errors.phone && (
+              <span className="text-sm text-gray-500">+1</span>
+
+              {/* Phone Input */}
+              <input
+                name="motherContact"
+                value={formik.values.motherContact}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full outline-none text-sm pl-1"
+                placeholder="Enter phone number"
+                maxLength={10}
+              />
+            </div>
+
+            {/* {formik.touched.phone && formik.errors.phone && (
                           <span className="text-red-500 text-xs">{formik.errors.phone}</span>
                         )} */}
-{/*             
+            {/*             
             <InputField label="Contact" placeholder="Contact here" name={'motherContact'} formik={formik} /> */}
           </div>
 
@@ -126,6 +126,7 @@ export default function Family({ onNext, setSubmit }) {
                       name={`siblings[${index}].name`}
                       placeholder="Enter name"
                       formik={formik}
+                      maxLength={50}
                     />
                     {/* {formik.touched.siblings?.[index]?.name &&
                       formik.errors.siblings?.[index]?.name && (
@@ -193,6 +194,7 @@ export default function Family({ onNext, setSubmit }) {
               value={formik.values.keyInfluences}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              maxLength={300}
             />
             {formik.touched.keyInfluences && formik.errors.keyInfluences && (
               <span className="text-red-500 text-xs">{formik.errors.keyInfluences}</span>

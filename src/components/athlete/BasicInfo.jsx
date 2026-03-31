@@ -174,7 +174,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
 
-          <InputField label="Athlete Name" name="name" formik={formik} />
+          <InputField label="Athlete Name" maxLength={50} name="name" formik={formik} />
           <InputField label="Date of Birth" name="dob" type="date" formik={formik} />
 
           <Selector
@@ -257,7 +257,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
               <span className="text-red-500 text-xs">{formik.errors.phone}</span>
             )} */}
           </div>
-          <InputField label="School Name" name="schoolName" formik={formik} />
+          <InputField label="School Name" name="schoolName" maxLength={150} formik={formik} />
           <div className="relative">
             <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
               <label className="text-xs text-gray-400">Committed College</label>

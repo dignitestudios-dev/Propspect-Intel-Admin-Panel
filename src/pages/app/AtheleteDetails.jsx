@@ -141,16 +141,24 @@ export default function AthleteDetails() {
                 />
 
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-semibold text-gray-900">
-                      {athlete?.basicInfo?.name || "N/A"}
-                    </h2>
-                    <span className="px-2 py-0.5 text-xs capitalize bg-purple-100 text-purple-600 rounded-full">
+                  <div className="flex items-start gap-2">
+
+                    <div className="min-w-0 max-w-[500px]">
+                      <h2
+                        className="text-xl font-semibold text-gray-900 break-words"
+                        title={athlete?.basicInfo?.name}
+                      >
+                        {athlete?.basicInfo?.name || "N/A"}
+                      </h2>
+                    </div>
+
+                    <span className="px-2 py-0.5 text-xs capitalize bg-purple-100 text-purple-600 rounded-full whitespace-nowrap">
                       {athlete?.basicInfo?.status || "N/A"}
                     </span>
+
                   </div>
 
-                  <button onClick={handleDownloadCSV} className="mt-1 border-2 border-gray-300 p-2 rounded-lg flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700">
+                  <button onClick={handleDownloadCSV} className="mt-2 border-2  border-gray-300 p-2 rounded-lg flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700">
                     <TbPdf />
                     Download CSV
                     <FiDownload />

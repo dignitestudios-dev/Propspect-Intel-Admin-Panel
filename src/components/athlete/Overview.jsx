@@ -68,6 +68,7 @@ export default function Overview({ onNext, setSubmit }) {
                   onChange={(e) => updateItem("strengths", index, e.target.value)}
                   placeholder="Enter strength"
                   className="w-full p-3 outline-none text-sm text-gray-700"
+                  maxLength={150}
                 />
                 <div className="text-red-500 text-xs">{formik.errors.strengths?.[index]}</div>
               </div>
@@ -110,6 +111,7 @@ export default function Overview({ onNext, setSubmit }) {
                   onChange={(e) => updateItem("weaknesses", index, e.target.value)}
                   placeholder="Enter weakness"
                   className="w-full p-3 outline-none text-sm text-gray-700"
+                  maxLength={150}
                 />
                 <div className="text-red-500 text-xs">{formik.errors.weaknesses?.[index]}</div>
               </div>

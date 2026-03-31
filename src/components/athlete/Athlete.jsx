@@ -44,10 +44,10 @@ export default function Athlete({ setSubmit, onNext }) {
 
           <section className="space-y-4">
             <h3 className="font-bold text-gray-800">Athletic Background</h3>
-            <InputField label="Other Sports" placeholder="Enter name" fullWidth name="otherSports" formik={formik} />
+            <InputField label="Other Sports" maxLength={150} placeholder="Enter name" fullWidth name="otherSports" formik={formik} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-              <InputField label="Activities" placeholder="Activities here" name="activities" formik={formik} />
-              <InputField label="Coach Evaluation" placeholder="Evaluation here" name="coachEvaluation" formik={formik} />
+              <InputField label="Activities" maxLength={150} placeholder="Activities here" name="activities" formik={formik} />
+              <InputField label="Coach Evaluation" maxLength={150} placeholder="Evaluation here" name="coachEvaluation" formik={formik} />
             </div>
           </section>
 
@@ -109,6 +109,7 @@ export default function Athlete({ setSubmit, onNext }) {
                   placeholder="Enter description..."
                   name="footballDescription"
                   formik={formik}
+                  maxLength={300}
                 />
               </div>
 
@@ -174,6 +175,7 @@ export default function Athlete({ setSubmit, onNext }) {
                   placeholder="Enter description..."
                   name="personalDescription"
                   formik={formik}
+                  maxLength={300}
                 />
               </div>
 
@@ -190,6 +192,7 @@ export default function Athlete({ setSubmit, onNext }) {
               value={formik.values.otherInfo}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              maxLength={300}
             />
             {formik.touched.otherInfo && formik.errors.otherInfo && (
               <span className="text-red-500 text-xs">{formik.errors.otherInfo}</span>
