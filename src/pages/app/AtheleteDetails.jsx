@@ -29,6 +29,7 @@ import axiosinstance from "../../axios";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 import DeleteModal from "../../components/global/DeleteModal";
 import DetailPageSkeleton from "../../components/global/DetailPageSkeleton";
+import { Emptyimg } from "../../assets/export";
 
 export default function AthleteDetails() {
   const { id } = useParams();
@@ -113,7 +114,26 @@ export default function AthleteDetails() {
       setIsDeleteLoading(false)
     }
   }
+  const getStatusConfig = (status) => {
+    if (typeof status !== "string") {
+      return "bg-gray-100 text-gray-600";
+    }
 
+    switch (status.toLowerCase()) {
+      case "active":
+        return "bg-green-100 text-green-700";
+      case "pending":
+        return "bg-yellow-100 text-yellow-700";
+      case "rejected":
+        return "bg-red-100 text-red-700";
+      case "contacted":
+        return "bg-blue-100 text-blue-700";
+      case "approved":
+        return "bg-emerald-100 text-emerald-700";
+      default:
+        return "bg-purple-100 text-purple-700";
+    }
+  };
 
   return (
     <div className="w-full min-h-screen p-6 font-sans space-y-6">
@@ -135,7 +155,7 @@ export default function AthleteDetails() {
 
               <div className="flex items-center gap-4">
                 <img
-                  src={athlete?.basicInfo?.image || "https://i.pravatar.cc/100?img=12"}
+                  src={athlete?.basicInfo?.image || Emptyimg}
                   alt="athlete"
                   className="w-16 h-16 rounded-full object-cover"
                 />
@@ -152,10 +172,19 @@ export default function AthleteDetails() {
                       </h2>
                     </div>
 
-                    <span className="px-2 py-0.5 text-xs capitalize bg-purple-100 text-purple-600 rounded-full whitespace-nowrap">
-                      {athlete?.basicInfo?.status || "N/A"}
-                    </span>
-
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {(Array.isArray(athlete?.basicInfo?.status)
+                        ? athlete?.basicInfo?.status
+                        : [athlete?.basicInfo?.status]
+                      ).map((status, i) => (
+                        <span
+                          key={i}
+                          className="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700"
+                        >
+                          {status?.toUpperCase() || "N/A"}
+                        </span>
+                      ))}
+                    </div>
                   </div>
 
                   <button onClick={handleDownloadCSV} className="mt-2 border-2  border-gray-300 p-2 rounded-lg flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700">

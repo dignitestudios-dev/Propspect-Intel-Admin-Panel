@@ -78,10 +78,13 @@ export const getAthleteRequest = async ({
   itemsPerPage = 10,
   active,
 }) => {
-  const statusQuery =
-    active && active.toLowerCase() !== "all"
-      ? `&status=${active.toLowerCase()}`
-      : "";
+  let status = active?.toLowerCase();
+
+  if (status === "contacted") {
+    status = "updated";
+  }
+
+  const statusQuery = status && status !== "all" ? `&status=${status}` : "";
 
   const res = await axiosinstance.get(
     `/dashboard/admin/requests?page=${page}&limit=${itemsPerPage}${statusQuery}`,

@@ -22,7 +22,7 @@ export default function Location() {
 
   });
   const { data: LoggedUser, isLoading: LoggedUserLoading, refetch: LoggedUserRefetch, isFetching: LoggedUserFetching, } = useQuery({
-    queryKey: ["logedUser", page, search],
+    queryKey: ["logedUser", page, debouncedSearch],
     queryFn: () => getLoggedUser({ page, search: debouncedSearch }),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,

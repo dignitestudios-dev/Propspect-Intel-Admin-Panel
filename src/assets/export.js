@@ -15,7 +15,7 @@ import bin from "./greyBin.png";
 import pen from "./pen.png";
 import eye from "./eyeIcon.png";
 import sms from "./smsIcon.png";
-import Emptyimg from "./emptyimg.png";
+import Emptyimg from "./default.svg";
 
 import athlete from "./athlete.png";
 import athlete1 from "./athletePro1.png";

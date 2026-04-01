@@ -25,18 +25,14 @@ ChartJS.register(
   Legend
 );
 
-const barData = {
-  labels: ["Location", "Position", "Rating", "School", "Grad Year"],
-  datasets: [
-    {
-      label: "Usage Count",
-      data: [8000, 6000, 4000, 2000, 1000],
-      backgroundColor: "#d5dceb", // single color for all bars
-      hoverBackgroundColor: "#0085CA", // hover color
-      borderRadius: 6,
-    },
-  ],
-};
+const donutColors = [
+  "#21A366",
+  "#0085CA",
+  "#FFBB28",
+  "#FF8042",
+  "#8884D8",
+  "#21A366",
+];
 
 const barOptions = {
   responsive: true,
@@ -202,13 +198,7 @@ export default function FiltersAnalytics() {
     datasets: [
       {
         data: percentages,
-        backgroundColor: [
-          "#21A366",
-          "#0085CA",
-          "#FFBB28",
-          "#FF8042",
-          "#8884D8",
-        ],
+        backgroundColor: donutColors,
         borderWidth: 1,
       },
     ],
@@ -407,18 +397,21 @@ export default function FiltersAnalytics() {
                         </p>
                       </div>
                       <div className="flex items-center gap-6">
-                        {/* Donut Chart */}
                         <div className="w-[350px] h-[350px]">
                           <Doughnut data={dynamicDonutData} options={donutOptions} />
                         </div>
 
 
                         <div className="flex flex-col gap-3">
-                          {graphData.map((item, i) => (
+                          {graphData?.map((item, i) => (
                             <div key={i} className="flex items-center gap-2">
-                              <span className="w-3 h-3 rounded-full bg-[#0085CA]"></span>
+                              <span
+                                className="w-3 h-3 rounded-full"
+                                style={{ backgroundColor: donutColors[i] }}
+                              ></span>
+
                               <p className="text-sm text-gray-700">
-                                {item.filter.charAt(0).toUpperCase() + item.filter.slice(1)}  - {item.percentage}%
+                                {item.filter.charAt(0).toUpperCase() + item.filter.slice(1)} - {item.percentage}%
                               </p>
                             </div>
                           ))}

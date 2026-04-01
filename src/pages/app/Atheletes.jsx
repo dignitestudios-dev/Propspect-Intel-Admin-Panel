@@ -597,14 +597,14 @@ export default function Atheletes() {
                       <div>
                         <img src={athlete?.basicInfo?.image || Emptyimg} alt={athlete?.basicInfo?.name} className="w-9 h-9 rounded-full object-cover" />
                       </div>
-                    <span className="font-medium text-gray-800 max-w-[150px] truncate block">
-  {athlete?.basicInfo?.name}
-</span>
+                      <span className="font-medium text-gray-800 max-w-[150px] truncate block">
+                        {athlete?.basicInfo?.name || "N/A"}
+                      </span>
                     </td>
 
-                    <td>{athlete?.basicInfo?.position}</td>
+                    <td>{athlete?.basicInfo?.position || "N/A"}</td>
                     <td>{calculateAge(athlete?.basicInfo?.dob) || "--------"}</td>
-                    <td>{athlete?.basicInfo?.intrestCount}</td>
+                    <td>{athlete?.basicInfo?.intrestCount || 0}</td>
 
                     <td>
                       <span
