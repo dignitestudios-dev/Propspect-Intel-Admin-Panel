@@ -9,6 +9,7 @@ import { useLocation, useNavigate, useParams } from "react-router";
 import { formatDate } from "../../lib/helpers";
 import axiosinstance from "../../axios";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
+import { Emptyimg } from "../../assets/export";
 
 export default function AthleteInterests() {
   const { id } = useParams();
@@ -58,15 +59,23 @@ export default function AthleteInterests() {
       </div>
       <div className="flex items-center gap-4">
         <img
-          src={athlete?.basicInfo?.image || "https://i.pravatar.cc/100?img=12"}
+          src={athlete?.basicInfo?.image || Emptyimg}
           alt="athlete"
           className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-sm"
         />
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <h2 className="text-2xl font-bold text-gray-900">{athlete?.basicInfo?.name || "N/A"}</h2>
-          <span className="px-3 py-1 text-xs border border-purple-300 text-purple-600 rounded-full font-medium">
-            ● {athlete?.basicInfo?.status}
-          </span>
+          {(Array.isArray(athlete?.basicInfo?.status)
+            ? athlete?.basicInfo?.status
+            : [athlete?.basicInfo?.status]
+          ).map((status, i) => (
+            <span
+              key={i}
+              className="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700"
+            >
+             ● {status?.toUpperCase() || "N/A"}
+            </span>
+          ))}
         </div>
       </div>
       <div className="grid grid-cols-3 md:grid-cols-3 gap-4 bg-[#E2E8F0] bg-opacity-60  border border-gray-300 rounded-xl p-4">
@@ -188,12 +197,12 @@ const StatusBadge = ({ status }) => {
   const styles = {
     pending: "bg-orange-50 text-orange-500 border-orange-100",
     declined: "bg-red-50 text-red-500 border-red-100",
-    approved: "bg-green-50 text-green-500 border-green-100",
+    updated: "bg-green-50 text-green-500 border-green-100",
   };
 
   return (
     <span className={`px-3 py-1 rounded-lg text-[11px] font-bold border ${styles[s]}`}>
-      {status}
+      {status.toUpperCase()}
     </span>
   );
 };

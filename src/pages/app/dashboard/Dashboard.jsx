@@ -106,6 +106,11 @@ export default function Dashboard() {
       setUserPage(newPage);
     }
   };
+  const getOrdinal = (n) => {
+    const s = ["th", "st", "nd", "rd"];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  };
 
 
 
@@ -193,9 +198,13 @@ export default function Dashboard() {
                       className="flex justify-between items-center py-3 border-b last:border-none px-4"
                     >
                       <div className="flex items-center gap-3">
-
+                        <div className="font-[700]">{getOrdinal(index + 1)}</div> 
                         <div className="flex items-center gap-3 max-w-full">
-                          <img src={item?.image || Emptyimg} className="w-8 h-8 rounded-full" alt="" />
+                          <img
+                            src={item?.image || Emptyimg}
+                            className="w-8 h-8 rounded-full"
+                            alt=""
+                          />
                           <p className="text-sm font-medium break-all">{item?.name}</p>
                         </div>
                       </div>
@@ -208,12 +217,12 @@ export default function Dashboard() {
               </div>
 
 
-              <div className="flex justify-end p-4 border-t">
+              {/* <div className="flex justify-end p-4 border-t">
                 <Pagination
                   pagination={athleteMostViewData?.pagination || { currentPage: 1, totalPages: 1 }}
                   onPageChange={handleMostViewPageChange}
                 />
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
