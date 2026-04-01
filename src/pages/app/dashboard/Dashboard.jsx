@@ -190,7 +190,7 @@ export default function Dashboard() {
                 {athleteMostViewLoading ? (
                   <TableSkeleton />
                 ) : athleteMostViewData?.data?.length === 0 ? (
-                  <div className="p-4 text-center text-gray-500">No Most Athlete Found</div>
+                  <div className="p-4 text-center text-gray-500">No Most Viewed Athletes Found</div>
                 ) : (
                   athleteMostViewData?.data?.map((item, index) => (
                     <div
@@ -198,7 +198,7 @@ export default function Dashboard() {
                       className="flex justify-between items-center py-3 border-b last:border-none px-4"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="font-[700]">{getOrdinal(index + 1)}</div> 
+                        <div className="font-[700]">{getOrdinal(index + 1)}</div>
                         <div className="flex items-center gap-3 max-w-full">
                           <img
                             src={item?.image || Emptyimg}

@@ -27,10 +27,13 @@ export default function Family({ onNext, setSubmit }) {
     enableReinitialize: true,
     initialValues: {
       motherName: familyInfo?.motherName || "",
+      fatherName: familyInfo?.fatherName || "",
       motherDob: familyInfo?.motherDob ? new Date(familyInfo?.motherDob).toISOString().split("T")[0] : "",
       motherOccupation: familyInfo?.motherOccupation || "",
       motherContact: familyInfo?.motherContact || "",
-      fatherName: familyInfo?.fatherName || "",
+      fatherDob: familyInfo?.fatherDob ? new Date(familyInfo?.fatherDob).toISOString().split("T")[0] : "",
+      fatherOccupation: familyInfo?.fatherOccupation || "",
+      fatherContact: familyInfo?.fatherContact || "",
       keyInfluences: familyInfo?.keyInfluences || "",
       siblings: initialSiblings,
 
@@ -58,41 +61,76 @@ export default function Family({ onNext, setSubmit }) {
             <InputField label="Date of Birth" max={new Date().toISOString().split("T")[0]} type="date" placeholder="Age here" name={'motherDob'} formik={formik} />
             <InputField label="Occupation" placeholder="Enter occupation" maxLength={50} name={'motherOccupation'} formik={formik} />
 
-            <div className="bg-white rounded-xl px-4 py-6 border border-gray-50 flex items-center gap-2">
-              {/* US Flag + Code */}
+            <div >
+              <div className="bg-white rounded-xl px-4 py-6 border border-gray-50 flex items-center gap-2">
+                {/* US Flag + Code */}
 
-              <span className="text-xl pr-2">
-                <img
-                  src={Flagus}
-                  alt="US flag"
-                  className="w-6 h-4 mr-2"
+                <span className="text-xl pr-2">
+                  <img
+                    src={Flagus}
+                    alt="US flag"
+                    className="w-6 h-4 mr-2"
+                  />
+                </span>
+
+                <span className="text-sm text-gray-500">+1</span>
+
+                {/* Phone Input */}
+                <input
+                  name="motherContact"
+                  value={formik.values.motherContact}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="w-full outline-none text-sm pl-1"
+                  placeholder="Enter phone number"
+                  maxLength={10}
                 />
-              </span>
-
-              <span className="text-sm text-gray-500">+1</span>
-
-              {/* Phone Input */}
-              <input
-                name="motherContact"
-                value={formik.values.motherContact}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="w-full outline-none text-sm pl-1"
-                placeholder="Enter phone number"
-                maxLength={10}
-              />
+              </div>
+              {formik.touched.motherContact && formik.errors.motherContact && (
+                <span className="text-red-500 text-xs">{formik.errors.motherContact}</span>
+              )}
             </div>
 
-            {/* {formik.touched.phone && formik.errors.phone && (
-                          <span className="text-red-500 text-xs">{formik.errors.phone}</span>
-                        )} */}
             {/*             
             <InputField label="Contact" placeholder="Contact here" name={'motherContact'} formik={formik} /> */}
           </div>
 
-          <div className="w-full md:w-1/2 md:pr-4">
-            <InputField label="Father"  maxLength={50} placeholder="Father Name" name={'fatherName'} formik={formik} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+            <InputField label="Father" maxLength={50} placeholder="Father Name" name={'fatherName'} formik={formik} />
+            <InputField label="Date of Birth" max={new Date().toISOString().split("T")[0]} type="date" placeholder="Age here" name={'fatherDob'} formik={formik} />
+            <InputField label="Occupation" placeholder="Enter occupation" maxLength={50} name={'fatherOccupation'} formik={formik} />
+
+            <div >
+              <div className="bg-white rounded-xl px-4 py-6 border border-gray-50 flex items-center gap-2">
+                {/* US Flag + Code */}
+
+                <span className="text-xl pr-2">
+                  <img
+                    src={Flagus}
+                    alt="US flag"
+                    className="w-6 h-4 mr-2"
+                  />
+                </span>
+
+                <span className="text-sm text-gray-500">+1</span>
+
+                {/* Phone Input */}
+                <input
+                  name="fatherContact"
+                  value={formik.values.fatherContact}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="w-full outline-none text-sm pl-1"
+                  placeholder="Enter phone number"
+                  maxLength={10}
+                />
+              </div>
+              {formik.touched.fatherContact && formik.errors.fatherContact && (
+                <span className="text-red-500 text-xs">{formik.errors.fatherContact}</span>
+              )}
+            </div>
           </div>
+
 
           <div className="space-y-4">
             <h3 className="font-bold text-gray-800">Sibling</h3>

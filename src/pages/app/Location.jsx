@@ -134,14 +134,23 @@ export default function Location() {
                 // key={item.id}
                 className="grid grid-cols-5 gap-4 px-6 pt-2 hover:bg-blue-50/30 transition-colors border-t border-[#E3E3E3] group"
               >
-                <div className="font-medium text-[#2D3748] text-sm  flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center text-white font-semibold">
+                <div className="font-medium text-[#2D3748] text-sm flex items-center gap-2">
+
+                  {/* Avatar */}
+                  <div className="w-8 h-8 min-w-[32px] rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center text-white font-semibold">
                     {(item?.user?.name?.trim()?.charAt(0) || "U").toUpperCase()}
                   </div>
-                  <div>
-                    <h2 className="text-gray-900 font-semibold">{item?.user?.name || "N/A"}</h2>
-                    <p className="text-[#302C2C] text-[14px]">{item?.user?.email || "N/A"}</p>
+
+                  {/* Text */}
+                  <div className="flex flex-col overflow-hidden">
+                    <h2 title={item?.user?.name || "N/A"} className="text-gray-900 font-semibold truncate">
+                      {item?.user?.name || "N/A"}
+                    </h2>
+                    <p className="text-[#302C2C] text-[14px] truncate">
+                      {item?.user?.email || "N/A"}
+                    </p>
                   </div>
+
                 </div>
                 <div className=" mt-4">
                   <button className="bg-[#EAEEF8] border border-gray-100 px-3 py-2 rounded-xl text-sm text-[#2D3748]  hover:shadow-md transition-shadow inline-flex items-center gap-2">
@@ -154,7 +163,7 @@ export default function Location() {
                   <p>{item?.state || "N/A"}</p>
                 </div>
                 <div className=" text-[#302C2C] text-sm py-2 mt-4">
-                  {item?.deviceType}
+                  {item?.deviceType.toUpperCase() || "N/A"}
                 </div>
                 <div className=" text-[#302C2C] text-sm py-2 mt-4">
                   {new Date(item?.createdAt).toLocaleString("en-US", {

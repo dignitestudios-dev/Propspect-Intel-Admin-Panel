@@ -603,7 +603,7 @@ export default function Atheletes() {
                     </td>
 
                     <td>{athlete?.basicInfo?.position || "N/A"}</td>
-                    <td>{calculateAge(athlete?.basicInfo?.dob) || "--------"}</td>
+                    <td>{calculateAge(athlete?.basicInfo?.dob)}</td>
                     <td>{athlete?.basicInfo?.intrestCount || 0}</td>
 
                     <td>

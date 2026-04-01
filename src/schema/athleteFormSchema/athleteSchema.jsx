@@ -2,7 +2,9 @@
 import * as Yup from "yup";
 
 export const BasicInfoSchema = Yup.object({
-    name: Yup.string().required("Athlete name required"),
+    name: Yup.string()
+        .matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed")
+        .required("Athlete name required"),
     // dob: Yup.string()
     //     .required("Date of birth required")
     //     .test("valid-age", "You must be at least 13 years old", (value) => {
@@ -38,7 +40,9 @@ export const BasicInfoSchema = Yup.object({
         .min(0, "Weight cannot be negative")
         .required("Weight required"),
     hometown: Yup.string().required("Hometown required"),
-    schoolName: Yup.string().required("School Name required"),
+    schoolName: Yup.string()
+        .matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed").required("School Name required"),
+        
     // email: Yup.string().email("Invalid email").required("Email required"),
     gpa: Yup.number()
         .typeError("GPA must be a number")
@@ -47,7 +51,8 @@ export const BasicInfoSchema = Yup.object({
         .nullable()
         .notRequired(),
     gradYear: Yup.string().required("Grad year is required"),
-    // phone: Yup.string().required("Phone required"),
+    phone: Yup.string()
+        .matches(/^\d*$/, "Only numbers are allowed"),
     status: Yup.array()
         .of(Yup.string())
         .min(1, "At least one status is required"),
@@ -56,7 +61,8 @@ export const BasicInfoSchema = Yup.object({
 });
 
 export const familyInfoSchema = Yup.object({
-    motherName: Yup.string().notRequired("Mother name required"),
+    motherName: Yup.string()
+        .matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed").notRequired("Mother name required"),
     motherDob: Yup.date()
         .nullable()
         .test("not-today", "Date of Birth cannot be today", (value) => {
@@ -66,8 +72,23 @@ export const familyInfoSchema = Yup.object({
 
 
     motherOccupation: Yup.string().notRequired("Mother occupation required"),
-    motherContact: Yup.string().notRequired("Mother contact required"),
-    fatherName: Yup.string().notRequired("Father name required"),
+    motherContact: Yup.string()
+        .matches(/^\d*$/, "Only numbers are allowed"),
+    fatherDob: Yup.date()
+        .nullable()
+        .test("not-today", "Date of Birth cannot be today", (value) => {
+            if (!value) return true;
+            return new Date(value).toDateString() !== new Date().toDateString();
+        }),
+
+
+    fatherOccupation: Yup.string().notRequired("Mother occupation required"),
+    fatherContact: Yup.string()
+        .matches(/^\d*$/, "Only numbers are allowed"),
+    fatherName: Yup.string()
+        .matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed").notRequired("Father name required"),
+
+
     keyInfluences: Yup.string().required("Key influences required"),
     siblings: Yup.array().of(
         Yup.object({

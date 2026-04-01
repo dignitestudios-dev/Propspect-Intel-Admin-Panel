@@ -125,7 +125,7 @@ const CharacterCard = ({ title, score, data }) => {
 
                 <div className="flex items-center gap-3">
                   <span
-                    className={`w-8 h-8 flex items-center justify-center rounded-md text-sm font-bold ${getColor(
+                    className={`w-10 h-10 flex items-center justify-center rounded-md text-sm font-bold ${getColor(
                       grade.label
                     )}`}
                   >
@@ -151,21 +151,21 @@ export default function FiltersAnalytics() {
   const ranges = ["7d", "1m", "3m", "6m", "1y"];
   const [activeTab, setActiveTab] = useState("Overview");
   const [range, setRange] = useState("")
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, refetch, isFetching: analyticsFetching } = useQuery({
     queryKey: ["analytics", range],
     queryFn: () => getAnalytics({ range }),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
 
   });
-  const { data: filterDetailsData, isLoading: filterDetailsLoading } = useQuery({
+  const { data: filterDetailsData, isLoading: filterDetailsLoading, isFetching: analyticsfilterdetails } = useQuery({
     queryKey: ["filterdetails"],
     queryFn: getFilterDetail,
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
 
   });
-  const { data: overViewDetail, isLoading: overViewDetailLoading } = useQuery({
+  const { data: overViewDetail, isLoading: overViewDetailLoading, isFetching: analyticsOverview } = useQuery({
     queryKey: ["overViewDetail"],
     queryFn: getGraphDetail,
     keepPreviousData: true,
@@ -204,6 +204,12 @@ export default function FiltersAnalytics() {
     ],
   };
 
+  const isRefreshing = analyticsFetching || analyticsfilterdetails || analyticsOverview;
+  const handleRefresh = () => {
+    if (isRefreshing) return;
+    refetch();
+    LoggedUserRefetch();
+  };
 
 
   return (
@@ -250,14 +256,12 @@ export default function FiltersAnalytics() {
             </div>
 
             <button
-              onClick={() => {
-                refetch()
-                setRange('')
-              }}
-              className="flex items-center gap-2 px-4 py-2 text-sm rounded-md text-[#0085CA] border-[1px] border-[#E3E3E3]"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="flex items-center gap-2 px-4 py-2 text-sm rounded-md text-[#0085CA] border border-[#E3E3E3] disabled:opacity-50"
             >
-              <LuRefreshCcw />
-              <span>Refresh</span>
+              <LuRefreshCcw className={`${isRefreshing ? "animate-spin" : ""}`} />
+              <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
             </button>
           </div>
         </div>
@@ -278,13 +282,13 @@ export default function FiltersAnalytics() {
                 {
                   label: "Total Searches",
                   value: data?.data?.totalSearches || "N/A",
-                  days: "from last 7 days",
+                  days: `from last ${range} `,
                 },
                 {
                   label: "Users using filters",
                   value: data?.data?.usersUsingFilters || "N/A"
                   ,
-                  days: "from last 7 days",
+                  days: `from last ${range} `,
                 },
                 {
                   label: "Avg Filters Per Search",
@@ -293,9 +297,15 @@ export default function FiltersAnalytics() {
                 },
                 {
                   label: "Most Popular Filter",
-                  value: data?.data?.mostPopularFilter?.charAt(0).toUpperCase() + data?.data?.mostPopularFilter?.slice(1) || "N/A",
-                  days: `${data?.data?.mostPopularPercentage}% usage` || "N/A",
-                },
+                  value: data?.data?.mostPopularFilter
+                    ? data.data.mostPopularFilter
+                      .replace(/([A-Z])/g, " $1")
+                      .replace(/^./, (str) => str.toUpperCase())
+                    : "N/A",
+                  days: data?.data?.mostPopularPercentage
+                    ? `${data.data.mostPopularPercentage}% usage`
+                    : "N/A",
+                }
               ].map((item, i) => (
                 <div
                   key={i}

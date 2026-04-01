@@ -184,8 +184,8 @@ export default function BasicInfo({ setSubmit, onNext }) {
             formik={formik}
           />
 
-          <InputField label="Height (Ft)" name="height" formik={formik} />
-          <InputField label="Weight (Lbs)" name="weight" formik={formik} />
+          <InputField label="Height (Ft)" maxLength={3} name="height" formik={formik} />
+          <InputField label="Weight (Lbs)" maxLength={3} name="weight" formik={formik} />
           <div className="flex flex-col gap-1">
             <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
 
@@ -253,9 +253,9 @@ export default function BasicInfo({ setSubmit, onNext }) {
               />
             </div>
 
-            {/* {formik.touched.phone && formik.errors.phone && (
+            {formik.touched.phone && formik.errors.phone && (
               <span className="text-red-500 text-xs">{formik.errors.phone}</span>
-            )} */}
+            )}
           </div>
           <InputField label="School Name" name="schoolName" maxLength={150} formik={formik} />
           <div className="relative">
@@ -290,37 +290,40 @@ export default function BasicInfo({ setSubmit, onNext }) {
                     </div>
                   )}
 
-                  {data?.data?.map((school) => (
-                    <div
-                      key={school._id}
-                      onClick={() => {
-                        // When selecting a school
-                        setSelectedSchool({ id: school._id, name: school.name, logo: school.logo });
-                        formik.setFieldValue("committedCollege", school._id);
-                        setIsOpen(false);
+                  {data?.data?.length === 0 ? (
+                    <div className="p-4 text-center text-gray-500">No institutions found</div>
+                  ) : (
+                    data?.data?.map((school) => (
+                      <div
+                        key={school._id}
+                        onClick={() => {
+                          // When selecting a school
+                          setSelectedSchool({ id: school._id, name: school.name, logo: school.logo });
+                          formik.setFieldValue("committedCollege", school._id);
+                          setIsOpen(false);
+                        }}
+                        className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-50"
+                      >
+                        <img
+                          src={school.logo || Emptyimg}
+                          alt={school.name}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
 
-                      }}
-                      className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-50"
-                    >
-                      <img
-                        src={school.logo || Emptyimg}
-                        alt={school.name}
-                        className="w-8 h-8 rounded-full object-cover"
+                        <span className="text-sm text-gray-700">
+                          {school.name}
+                        </span>
+                      </div>
+                    )))}
+
+                  {data?.data?.length > 0 && (
+                    <div className="mb-2">
+                      <Pagination
+                        pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
+                        onPageChange={(p) => setPage(p)}
                       />
-
-                      <span className="text-sm text-gray-700">
-                        {school.name}
-                      </span>
                     </div>
-                  ))}
-
-
-                  <div className="mb-2">
-                    <Pagination
-                      pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
-                      onPageChange={(p) => setPage(p)}
-                    />
-                  </div>
+                  )}
                 </div>
               )}
             </div>
