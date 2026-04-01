@@ -56,7 +56,7 @@ export default function Family({ onNext, setSubmit }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <InputField label="Mother" placeholder="Enter name" name={'motherName'} formik={formik} maxLength={50} />
             <InputField label="Date of Birth" max={new Date().toISOString().split("T")[0]} type="date" placeholder="Age here" name={'motherDob'} formik={formik} />
-            <InputField label="Occupation" placeholder="Enter occupation" name={'motherOccupation'} formik={formik} />
+            <InputField label="Occupation" placeholder="Enter occupation" maxLength={50} name={'motherOccupation'} formik={formik} />
 
             <div className="bg-white rounded-xl px-4 py-6 border border-gray-50 flex items-center gap-2">
               {/* US Flag + Code */}
@@ -91,7 +91,7 @@ export default function Family({ onNext, setSubmit }) {
           </div>
 
           <div className="w-full md:w-1/2 md:pr-4">
-            <InputField label="Father" placeholder="Father Name" name={'fatherName'} formik={formik} />
+            <InputField label="Father"  maxLength={50} placeholder="Father Name" name={'fatherName'} formik={formik} />
           </div>
 
           <div className="space-y-4">

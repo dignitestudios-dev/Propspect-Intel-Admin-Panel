@@ -237,8 +237,8 @@ export default function AthleteDetails() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#E2E8F0] bg-opacity-60  border border-gray-60  rounded-xl p-4">
               {[
                 { label: "Age", value: calculateAge(athlete?.basicInfo?.dob) || "N/A" },
-                { label: "Height", value: athlete?.basicInfo?.height || "N/A" },
-                { label: "Weight", value: athlete?.basicInfo?.weight || "N/A" },
+                { label: "Height", value: `${athlete?.basicInfo?.height} "` || "N/A" },
+                { label: "Weight", value: `${athlete?.basicInfo?.weight} lbs` || "N/A" },
                 { label: "Position", value: athlete?.basicInfo?.position || "N/A" },
               ]?.map((item) => (
                 <div
@@ -259,7 +259,7 @@ export default function AthleteDetails() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
               {/* <Info label="Email" value={athlete?.basicInfo?.email || "N/A"} /> */}
-              <Info label="Phone" value={`+1 ${athlete?.basicInfo?.phone || "N/A"}`} />
+              <Info label="Phone" value={`${athlete?.basicInfo?.phone || "N/A"}`} />
               <Info label="Hometown" value={athlete?.basicInfo?.hometown || "N/A"} />
               <Info label="Date of Birth" value={formatDate(athlete?.basicInfo?.dob) || "N/A"} />
             </div>
@@ -299,13 +299,13 @@ export default function AthleteDetails() {
                   <div className="space-y-3">
                     <DataRow label="Mother" value={athlete?.family?.motherName || "N/A"} />
                     <DataRow label="Occupation" value={athlete.family.motherOccupation || "N/A"} />
-                    <DataRow label="Contact" value={athlete?.family?.mother?.phone || "N/A"} />
+                    <DataRow label="Contact" value={`+1 ${athlete?.family?.motherContact}` || "N/A"} />
                     <DataRow label="DOB" value={formatDate(athlete?.family?.motherDob) || "N/A"} />
                     <div className="pt-2 border-t border-gray-100 space-y-3">
                       <DataRow label="Father" value={athlete?.family?.fatherName || "Not In Picture"} />
-                      <DataRow label="Occupation" value={athlete?.family?.father?.occupation || "N/A"} />
+                      {/* <DataRow label="Occupation" value={athlete?.family?.father?.occupation || "N/A"} />
                       <DataRow label="Contact" value={athlete?.family?.father?.phone || "N/A"} />
-                      <DataRow label="DOB" value={athlete?.family?.father?.dob || "N/A"} />
+                      <DataRow label="DOB" value={athlete?.family?.father?.dob || "N/A"} /> */}
                     </div>
                   </div>
                 </FamilyCard>

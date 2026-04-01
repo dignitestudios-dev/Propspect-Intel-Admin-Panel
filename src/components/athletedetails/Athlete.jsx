@@ -146,7 +146,7 @@ const Athlete = ({ athlete }) => {
                 {/* {athlete?.athleticBackground?.activities?.map((activity, index) => ( */}
                 <span
                   // key={index}
-                  className="px-3  py-1 border-2 border-green-400 text-black rounded-md text-xs font-medium bg-transparent mr-2"
+                  className="px-3  py-1 border-2 border-green-400 text-black rounded-md text-xs text-wrap break-all font-medium bg-transparent mr-2"
                 >
                   {athlete?.activities}
                 </span>
