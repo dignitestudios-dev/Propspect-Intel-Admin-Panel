@@ -28,9 +28,10 @@ export default function BasicInfo({ setSubmit, onNext }) {
     staleTime: 1000 * 60 * 5,
 
   });
-  const initialSelectedSchool = basicInfo?.committedCollege && data?.data
-    ? data.data.find(s => s._id === basicInfo.committedCollege.id) // Compare id
-    : null;
+  const initialSelectedSchool =
+    basicInfo?.committedCollege && data?.data
+      ? data.data.find(s => s._id === basicInfo.committedCollege)
+      : null;
 
   const [selectedSchool, setSelectedSchool] = useState(
     initialSelectedSchool
@@ -79,7 +80,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
       state: basicInfo?.state || "",
       // email: basicInfo?.email || "",
       phone: basicInfo?.phone || "",
-      committedCollege: basicInfo?.committedCollege?.id || "",
+      committedCollege: basicInfo.committedCollege || "",
       status: basicInfo?.status?.map((s) => s.trim()) || [],
       image: basicInfo?.image || null,
       gradYear: basicInfo?.gradYear || "",
@@ -111,18 +112,22 @@ export default function BasicInfo({ setSubmit, onNext }) {
       const existingSchool = data.data.find(
         (s) => s._id === basicInfo.committedCollege.id
       );
+
       if (existingSchool) {
         setSelectedSchool({
           id: existingSchool._id,
           name: existingSchool.name,
           logo: existingSchool.logo,
         });
+
         if (formik.values.committedCollege !== existingSchool._id) {
           formik.setFieldValue("committedCollege", existingSchool._id);
         }
       }
     }
   }, [basicInfo, data]);
+
+
 
   return (
     <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans">
@@ -297,8 +302,12 @@ export default function BasicInfo({ setSubmit, onNext }) {
                       <div
                         key={school._id}
                         onClick={() => {
-                          // When selecting a school
-                          setSelectedSchool({ id: school._id, name: school.name, logo: school.logo });
+                          setSelectedSchool({
+                            id: school._id,
+                            name: school.name,
+                            logo: school.logo
+                          });
+
                           formik.setFieldValue("committedCollege", school._id);
                           setIsOpen(false);
                         }}

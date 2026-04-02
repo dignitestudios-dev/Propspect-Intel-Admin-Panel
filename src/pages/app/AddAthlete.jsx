@@ -62,7 +62,9 @@ export default function AthleteFormManager() {
       Object.entries(formData.basicInfo).forEach(([key, value]) => {
         if (key === "image") return;
 
-        if (Array.isArray(value)) {
+        if (key === "committedCollege" && typeof value === "object") {
+          fd.append(`basicInfo[${key}]`, value.id);
+        } else if (Array.isArray(value)) {
           value.forEach((item, i) => {
             fd.append(`basicInfo[${key}][${i}]`, item);
           });

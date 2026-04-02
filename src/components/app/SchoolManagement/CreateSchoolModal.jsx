@@ -137,7 +137,7 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
         onNext();
       }
     } catch (err) {
-      ErrorToast(err?.response?.data?.error || "Something went wrong");
+      ErrorToast(err?.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }

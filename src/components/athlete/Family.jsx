@@ -16,10 +16,10 @@ export default function Family({ onNext, setSubmit }) {
     }
 
     return familyInfo.siblings.map((s) => ({
-      id: s.id ?? s.name,             // stable id
+      id: s.id ?? s.name,
       type: s.type || "Sister",
       name: s.name || "",
-      dob: s.dob ? s.dob.split("T")[0] : "",  // convert ISO to YYYY-MM-DD
+      dob: s.dob ? s.dob.split("T")[0] : "",
     }));
   }, [familyInfo?.siblings]);
 

@@ -270,8 +270,9 @@ export default function Users() {
                           className="w-9 h-9 rounded-full object-cover"
                         />
                       </div>
-                      <span className="font-medium text-gray-800">{user?.name}</span>
-                    </td>
+                      <span className="font-medium text-gray-800 max-w-[140px] truncate block">
+                        {user?.name}
+                      </span>                    </td>
 
                     <td>{user?.email}</td>
 
@@ -403,7 +404,7 @@ export default function Users() {
                           <div className="absolute -left-[17px] top-1 w-8 h-8 rounded-full border bg-white flex items-center justify-center shadow-sm">
                             <div className="bg p-1 rounded-sm">
                               <span className="text-[8px] text-white font-bold">
-                               <img src={prospectLogo} alt="" />
+                                <img src={prospectLogo} alt="" />
                               </span>
                             </div>
                           </div>
