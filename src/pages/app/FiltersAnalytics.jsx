@@ -421,7 +421,10 @@ export default function FiltersAnalytics() {
                               ></span>
 
                               <p className="text-sm text-gray-700">
-                                {item.filter.charAt(0).toUpperCase() + item.filter.slice(1)} - {item.percentage}%
+                                {item.filter
+                                  .replace(/([A-Z])/g, " $1")
+                                  .replace(/^./, str => str.toUpperCase())
+                                  .trim()}
                               </p>
                             </div>
                           ))}

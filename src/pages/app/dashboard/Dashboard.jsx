@@ -292,12 +292,12 @@ export default function Dashboard() {
                       />
                       <p className="text-xs text-gray-500">
                         Requested By <br />
-                        <span className="text-gray-700 font-medium">{item?.user?.name}</span>
+                        <span className="text-gray-700 font-medium break-all ">{item?.user?.name}</span>
                       </p>
                     </div>
 
                     <span
-                      className={`text-xs w-[90px] text-center px-3 py-3 rounded-lg font-medium ${statusStyles[statusKey] || "bg-gray-100 text-gray-600"
+                      className={`text-xs w-[90px] mx-3  text-center px-3 py-3 rounded-lg font-medium ${statusStyles[statusKey] || "bg-gray-100 text-gray-600"
                         }`}
                     >
                       {item?.status?.toUpperCase()}

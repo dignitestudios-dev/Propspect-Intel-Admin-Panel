@@ -236,7 +236,7 @@ export default function AthleteDetails() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#E2E8F0] bg-opacity-60  border border-gray-60  rounded-xl p-4">
               {[
-                { label: "Age", value: calculateAge(athlete?.basicInfo?.dob)  },
+                { label: "Age", value: calculateAge(athlete?.basicInfo?.dob) },
                 { label: "Height", value: `${athlete?.basicInfo?.height} "` || "N/A" },
                 { label: "Weight", value: `${athlete?.basicInfo?.weight} lbs` || "N/A" },
                 { label: "Position", value: athlete?.basicInfo?.position || "N/A" },
@@ -299,12 +299,12 @@ export default function AthleteDetails() {
                   <div className="space-y-3">
                     <DataRow label="Mother" value={athlete?.family?.motherName || "N/A"} />
                     <DataRow label="Occupation" value={athlete.family.motherOccupation || "N/A"} />
-                    <DataRow label="Contact" value={`+1 ${athlete?.family?.motherContact}` || "N/A"} />
+                    <DataRow label="Contact" value={`${athlete?.family?.motherContact ? `+1 ${athlete?.family?.motherContact}` : "N/A"}`} />
                     <DataRow label="DOB" value={formatDate(athlete?.family?.motherDob) || "N/A"} />
                     <div className="pt-2 border-t border-gray-100 space-y-3">
                       <DataRow label="Father" value={athlete?.family?.fatherName || "Not In Picture"} />
                       <DataRow label="Occupation" value={athlete?.family?.fatherOccupation || "N/A"} />
-                      <DataRow label="Contact" value={athlete?.family?.fatherContact || "N/A"} />
+                      <DataRow label="Contact" value={`${athlete?.family?.fatherContact ? `+1 ${athlete?.family?.fatherContact}` : "N/A"}`} />
                       <DataRow label="DOB" value={athlete?.family?.fatherDob || "N/A"} />
                     </div>
                   </div>
