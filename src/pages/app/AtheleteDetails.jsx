@@ -172,19 +172,36 @@ export default function AthleteDetails() {
                       </h2>
                     </div>
 
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {(Array.isArray(athlete?.basicInfo?.status)
-                        ? athlete?.basicInfo?.status
-                        : [athlete?.basicInfo?.status]
-                      ).map((status, i) => (
-                        <span
-                          key={i}
-                          className="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700"
-                        >
-                          {status?.toUpperCase() || "N/A"}
-                        </span>
-                      ))}
-                    </div>
+                    {athlete?.basicInfo?.status?.length > 0 ? (
+                      <div className="flex flex-wrap justify-center gap-1">
+                        {athlete?.basicInfo?.status?.map((tag, idx) => {
+                          const colors = [
+                            { bg: "#FF3A44", text: "#fff" },
+                            { bg: "#3FB185", text: "#fff" },
+                            { bg: "#7A4D8B", text: "#fff" },
+                          ];
+
+                          const color = colors[idx % colors.length];
+
+                          return (
+                            <span
+                              key={idx}
+                              className="py-1 px-2 text-[10px] rounded-full font-semibold"
+                              style={{
+                                border: `1px solid ${color.bg}`,
+                                color: 'black',
+                              }}
+                            >
+                              {tag.toUpperCase()}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <span className="py-1 px-2 text-[10px] rounded-full bg-gray-200 text-gray-500 font-semibold">
+                        N/A
+                      </span>
+                    )}
                   </div>
 
                   <button onClick={handleDownloadCSV} className="mt-2 border-2  border-gray-300 p-2 rounded-lg flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700">

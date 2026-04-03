@@ -175,7 +175,7 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
               <input
                 type="text"
                 value={subject}
-                maxLength={70}
+                maxLength={40}
                 placeholder="Enter name"
                 onChange={(e) => {
                   const value = e.target.value;

@@ -273,7 +273,7 @@ export default function Atheletes() {
     try {
 
       const response = await axiosinstance.post("/athlete/export/csv", {
-        ids: selectedIds,
+        athletes: selectedIds,
         ...(tabs === "Active" && { isActive: true }),
         ...(tabs === "Archived" && { isActive: false }),
       })
