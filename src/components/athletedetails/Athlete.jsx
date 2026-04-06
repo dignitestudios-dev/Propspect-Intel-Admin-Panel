@@ -124,14 +124,15 @@ const Athlete = ({ athlete }) => {
                 <span className="mr-2">🏅 Other Sports</span>
 
                 <div className="flex space-x-2">
-                  {/* {athlete?.athleticBackground?.otherSports?.map((sport) => ( */}
-                  <span
-                    // key={sport}
-                    className="px-3 py-1 border-2 border-blue-400 text-black rounded-md text-xs font-medium bg-transparent"
-                  >
-                    {athlete?.otherSports}
-                  </span>
-                  {/* // ))}/ */}
+                  {athlete?.otherSports ? (
+                    <span className="px-3 py-1 border-2 border-blue-400 text-black rounded-md text-xs font-medium bg-transparent">
+                      {athlete.otherSports}
+                    </span>
+                  ) : (
+                    <span className="px-3 py-1 border-2 border-gray-300 text-gray-400 rounded-md text-xs font-medium bg-transparent italic">
+                      N/A
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -142,15 +143,16 @@ const Athlete = ({ athlete }) => {
               <div className="flex items-center text-gray-700 font-medium mb-1">
                 <span className="mr-2">📉</span> Activities
               </div>
-              <p className="text-gray-800  mt-4 text-sm leading-relaxed">
-                {/* {athlete?.athleticBackground?.activities?.map((activity, index) => ( */}
-                <span
-                  // key={index}
-                  className="px-3  py-1 border-2 border-green-400 text-black rounded-md text-xs text-wrap break-all font-medium bg-transparent mr-2"
-                >
-                  {athlete?.activities}
-                </span>
-                {/* ))} */}
+              <p className="text-gray-800 mt-4 text-sm leading-relaxed">
+                {athlete?.activities ? (
+                  <span className="px-3 py-1 border-2 border-green-400 text-black rounded-md text-xs text-wrap break-all font-medium bg-transparent mr-2">
+                    {athlete.activities}
+                  </span>
+                ) : (
+                  <span className="px-3 py-1 border-2 border-gray-300 text-gray-400 rounded-md text-xs font-medium bg-transparent italic">
+                    N/A
+                  </span>
+                )}
               </p>
             </div>
 
@@ -163,7 +165,7 @@ const Athlete = ({ athlete }) => {
             </div>
 
             <p className="text-gray-600 text-sm leading-relaxed italic">
-              {athlete?.coachEvaluation}
+              {athlete?.coachEvaluation || <span className="text-gray-400">No coach evaluation available.</span>}
             </p>
           </div>
 
@@ -178,7 +180,9 @@ const Athlete = ({ athlete }) => {
         icon={<img src={football} alt="Football" className="text-blue-600" />}
         scoreColorClass="text-[#0085CA]"
       >
-        <p className="text-gray-700 text-sm leading-relaxed">{athlete?.footballDescription}</p>
+        <p className="text-gray-700 text-sm leading-relaxed">
+          {athlete?.footballDescription || <span className="text-gray-400 italic">No football character information available.</span>}
+        </p>
       </InfoBox>
 
       <InfoBox
@@ -187,7 +191,9 @@ const Athlete = ({ athlete }) => {
         icon={<img src={personal} alt="personal" className="text-orange-600" />}
         scoreColorClass="text-[#FFC145]"
       >
-        <p className="text-gray-700 text-sm leading-relaxed">{athlete?.personalDescription}</p>
+        <p className="text-gray-700 text-sm leading-relaxed">
+          {athlete?.personalDescription || <span className="text-gray-400 italic">No personal character information available.</span>}
+        </p>
       </InfoBox>
 
       <InfoBox title="Other Relevant Information" icon={<img src={other} alt="Other" className="text-[#7A4D8B]" />}>

@@ -8,10 +8,10 @@ const Overview = ({ athlete }) => {
           STRENGTH
         </h3>
 
-        {athlete?.strengths?.length > 0 ? (
+        {athlete?.strengths?.filter(item => item?.trim())?.length > 0 ? (
           <ul className="space-y-4">
-            {athlete.strengths.map((item, i) => (
-              <li className="flex items-center text-gray-700 text-sm">
+            {athlete.strengths.filter(item => item?.trim()).map((item, i) => (
+              <li key={i} className="flex items-center text-gray-700 text-sm">
                 <span className="text-black text-sm font-semibold mr-3 w-5 text-center">
                   {i + 1}
                 </span>
@@ -30,10 +30,10 @@ const Overview = ({ athlete }) => {
           WEAKNESS
         </h3>
 
-        {athlete?.weaknesses?.length > 0 ? (
+        {athlete?.weaknesses?.filter(item => item?.trim())?.length > 0 ? (
           <ul className="space-y-4">
-            {athlete.weaknesses.map((item, i) => (
-              <li className="flex items-center text-gray-700 text-sm">
+            {athlete.weaknesses.filter(item => item?.trim()).map((item, i) => (
+              <li key={i} className="flex items-center text-gray-700 text-sm">
                 <span className="text-black text-sm font-semibold mr-3 w-5 text-center">
                   {i + 1}
                 </span>

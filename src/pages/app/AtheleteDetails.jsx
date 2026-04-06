@@ -319,7 +319,7 @@ export default function AthleteDetails() {
                     <DataRow label="Contact" value={`${athlete?.family?.motherContact ? `+1 ${athlete?.family?.motherContact}` : "N/A"}`} />
                     <DataRow label="DOB" value={formatDate(athlete?.family?.motherDob) || "N/A"} />
                     <div className="pt-2 border-t border-gray-100 space-y-3">
-                      <DataRow label="Father" value={athlete?.family?.fatherName || "Not In Picture"} />
+                      <DataRow label="Father" value={athlete?.family?.fatherName || "N/A"} />
                       <DataRow label="Occupation" value={athlete?.family?.fatherOccupation || "N/A"} />
                       <DataRow label="Contact" value={`${athlete?.family?.fatherContact ? `+1 ${athlete?.family?.fatherContact}` : "N/A"}`} />
                       <DataRow label="DOB" value={athlete?.family?.fatherDob || "N/A"} />

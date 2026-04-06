@@ -42,7 +42,7 @@ export const BasicInfoSchema = Yup.object({
     hometown: Yup.string().required("Hometown required"),
     schoolName: Yup.string()
         .matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed").required("School Name required"),
-        
+
     // email: Yup.string().email("Invalid email").required("Email required"),
     gpa: Yup.number()
         .typeError("GPA must be a number")
@@ -89,11 +89,11 @@ export const familyInfoSchema = Yup.object({
         .matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed").notRequired("Father name required"),
 
 
-    keyInfluences: Yup.string().required("Key influences required"),
+    keyInfluences: Yup.string().notRequired("Key influences required"),
     siblings: Yup.array().of(
         Yup.object({
-            type: Yup.string().required("Relation required"),
-            name: Yup.string().required("Name required"),
+            type: Yup.string().notRequired("Relation required"),
+            name: Yup.string().notRequired("Name required"),
             dob: Yup.date()
                 .nullable()
                 .test(
@@ -111,19 +111,19 @@ export const familyInfoSchema = Yup.object({
 
 });
 export const athleteInfoSchema = Yup.object({
-    otherSports: Yup.string().required("Other sports required"),
-    activities: Yup.string().required("Activities required"),
-    coachEvaluation: Yup.string().required("Coach evaluation required"),
-    footballPiScore: Yup.string().required("Football Pi Score required"),
-    footballDescription: Yup.string().required("Football description required"),
-    personalPiScore: Yup.string().required("Personal Pi Score required"),
-    personalDescription: Yup.string().required("Personal description required"),
-    otherInfo: Yup.string().required("Other info required"),
+    otherSports: Yup.string().notRequired("Other sports required"),
+    activities: Yup.string().notRequired("Activities required"),
+    coachEvaluation: Yup.string().notRequired("Coach evaluation required"),
+    footballPiScore: Yup.string().notRequired("Football Pi Score required"),
+    footballDescription: Yup.string().notRequired("Football description required"),
+    personalPiScore: Yup.string().notRequired("Personal Pi Score required"),
+    personalDescription: Yup.string().notRequired("Personal description required"),
+    otherInfo: Yup.string().notRequired("Other info required"),
 });
 
 export const overviewSchema = Yup.object({
-    strengths: Yup.array().of(Yup.string().required("Required")),
-    weaknesses: Yup.array().of(Yup.string().required("Required")),
+    strengths: Yup.array().of(Yup.string().notRequired("Required")),
+    weaknesses: Yup.array().of(Yup.string().notRequired("Required")),
 });
 export const statsInfoSchema = Yup.object({
     tries: Yup.string().required("Tries required"),
