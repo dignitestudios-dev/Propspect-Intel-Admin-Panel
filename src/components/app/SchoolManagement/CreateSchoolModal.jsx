@@ -113,7 +113,13 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
     setLoading(true);
     try {
       const fd = new FormData();
-      fd.append("name", subject.trim());
+      if (editMode?._id) {
+        if (subject.trim() !== editMode.name) {
+          fd.append("name", subject.trim());
+        }
+      } else {
+        fd.append("name", subject.trim());
+      }
 
       if (logo?.src?.startsWith("data:image")) {
         let smallBase64 = await resizeBase64Image(logo.src);
@@ -231,10 +237,10 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-white rounded-lg border border-gray-100 flex items-center justify-center">
 
-                    <img src={logo?.src} alt="" className="w-6 h-6 rounded" />
+                    <img src={logo?.src} alt="" className="px-0.5 rounded " />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-[#302C2C]">{logo.name}</p>
+                    <p className="text-sm font-bold text-[#302C2C]">this is {logo.name}</p>
                     <p className="text-xs text-gray-400">{logo.size}</p>
                   </div>
                 </div>
