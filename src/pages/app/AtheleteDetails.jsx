@@ -7,10 +7,10 @@ import {
   FiArchive,
   FiUser,
   FiHeart,
-  FiTrendingUp
+  FiTrendingUp,
 } from "react-icons/fi";
-import { FiMail, FiPhone } from 'react-icons/fi';
-import { HiLocationMarker, HiCalendar } from 'react-icons/hi';
+import { FiMail, FiPhone } from "react-icons/fi";
+import { HiLocationMarker, HiCalendar } from "react-icons/hi";
 import Overview from "../../components/athletedetails/Overview";
 import Athlete from "../../components/athletedetails/Athlete";
 import Stats from "../../components/athletedetails/Stats";
@@ -22,9 +22,17 @@ import { TbPdf } from "react-icons/tb";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAtheleteById } from "../../lib/query/queryFn";
-import { calculateAge, formatAthleteForCSV, formatDate } from "../../lib/helpers";
+import {
+  calculateAge,
+  formatAthleteForCSV,
+  formatDate,
+} from "../../lib/helpers";
 import { useAppDispatch } from "../../lib/store/hook";
-import { setAthleteId, setFormData, setMode } from "../../lib/store/feature/athleteFormSlice";
+import {
+  setAthleteId,
+  setFormData,
+  setMode,
+} from "../../lib/store/feature/athleteFormSlice";
 import axiosinstance from "../../axios";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 import DeleteModal from "../../components/global/DeleteModal";
@@ -33,24 +41,27 @@ import { Emptyimg } from "../../assets/export";
 
 export default function AthleteDetails() {
   const { id } = useParams();
-  const dispatch = useAppDispatch()
-  const query = useQueryClient()
+  const dispatch = useAppDispatch();
+  const query = useQueryClient();
   const location = useLocation();
   const atheleteCount = location.state?.atheleteCount;
   const [activeTab, setActiveTab] = useState("Overview");
-  const [archiveLoading, setArchiveLoading] = useState(false)
+  const [archiveLoading, setArchiveLoading] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const navigate = useNavigate();
 
-  const { data: athlete, isLoading, refetch } = useQuery({
+  const {
+    data: athlete,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["atheleteid", id],
     queryFn: () => getAtheleteById(id),
     enabled: !!id,
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
   });
-
 
   const handleDownloadCSV = () => {
     if (!athlete) return;
@@ -62,7 +73,7 @@ export default function AthleteDetails() {
 
     const csv = [
       headers.join(","),
-      values.map(v => `"${v ?? ""}"`).join(",")
+      values.map((v) => `"${v ?? ""}"`).join(","),
     ].join("\n");
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -76,21 +87,19 @@ export default function AthleteDetails() {
     window.URL.revokeObjectURL(url);
   };
 
-
   const handleBulkArchive = async () => {
     setArchiveLoading(true);
 
     try {
       const response = await axiosinstance.post("/athlete/update/bulk/status", {
         ids: [id],
-        isActive: !athlete?.isActive
+        isActive: !athlete?.isActive,
       });
 
       if (response?.status === 200 || response?.status === 201) {
         SuccessToast(response?.data?.message);
         refetch();
       }
-
     } catch (error) {
       ErrorToast(error?.response?.data?.message);
     } finally {
@@ -98,22 +107,21 @@ export default function AthleteDetails() {
     }
   };
   const handleDelete = async () => {
-    setIsDeleteLoading(true)
+    setIsDeleteLoading(true);
     try {
-      const response = await axiosinstance.delete(`/athlete/${id}`)
+      const response = await axiosinstance.delete(`/athlete/${id}`);
       if (response.status === 200 || response.status === 201) {
-        SuccessToast(response?.data?.message)
-        setIsDelete(false)
-        navigate('/app/athletes')
-        query.invalidateQueries({ queryKey: ["athelete"] })
-
+        SuccessToast(response?.data?.message);
+        setIsDelete(false);
+        navigate("/app/athletes");
+        query.invalidateQueries({ queryKey: ["athelete"] });
       }
     } catch (err) {
-      ErrorToast(err?.response?.data?.message)
+      ErrorToast(err?.response?.data?.message);
     } finally {
-      setIsDeleteLoading(false)
+      setIsDeleteLoading(false);
     }
-  }
+  };
   const getStatusConfig = (status) => {
     if (typeof status !== "string") {
       return "bg-gray-100 text-gray-600";
@@ -137,22 +145,20 @@ export default function AthleteDetails() {
 
   return (
     <div className="w-full min-h-screen p-6 font-sans space-y-6">
-
-
       {isLoading ? (
         <DetailPageSkeleton />
       ) : (
         <>
-
-          <div onClick={() => navigate(-1)} className="flex items-center gap-2 text-lg font-bold text-black cursor-pointer">
+          <div
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-lg font-bold text-black cursor-pointer"
+          >
             <FiArrowLeft />
             <span>Athlete Details</span>
           </div>
 
           <div className=" rounded-2xl p-2 space-y-6">
-
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-
               <div className="flex items-center gap-4">
                 <img
                   src={athlete?.basicInfo?.image || Emptyimg}
@@ -162,7 +168,6 @@ export default function AthleteDetails() {
 
                 <div>
                   <div className="flex items-start gap-2">
-
                     <div className="min-w-0 max-w-[500px]">
                       <h2
                         className="text-xl font-semibold text-gray-900 break-words"
@@ -189,7 +194,7 @@ export default function AthleteDetails() {
                               className="py-1 px-2 text-[10px] rounded-full font-semibold"
                               style={{
                                 border: `1px solid ${color.bg}`,
-                                color: 'black',
+                                color: "black",
                               }}
                             >
                               {tag.toUpperCase()}
@@ -204,7 +209,10 @@ export default function AthleteDetails() {
                     )}
                   </div>
 
-                  <button onClick={handleDownloadCSV} className="mt-2 border-2  border-gray-300 p-2 rounded-lg flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700">
+                  <button
+                    onClick={handleDownloadCSV}
+                    className="mt-2 border-2  border-gray-300 p-2 rounded-lg flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700"
+                  >
                     <TbPdf />
                     Download CSV
                     <FiDownload />
@@ -223,7 +231,10 @@ export default function AthleteDetails() {
                 >
                   <Users /> Interests ({athlete?.basicInfo?.intrestCount})
                 </button>
-                <button onClick={() => setIsDelete(true)} className="px-4 py-2 border font-bold border-red-200 text-red-600 rounded-lg text-sm hover:bg-red-50 flex items-center gap-2">
+                <button
+                  onClick={() => setIsDelete(true)}
+                  className="px-4 py-2 border font-bold border-red-200 text-red-600 rounded-lg text-sm hover:bg-red-50 flex items-center gap-2"
+                >
                   <FiTrash2 />
                   Delete
                 </button>
@@ -238,13 +249,16 @@ export default function AthleteDetails() {
                       ? "Archive"
                       : "Unarchive"}
                 </button>
-                <button onClick={() => {
-                  dispatch(setFormData(athlete))
-                  dispatch(setMode("edit"))
-                  dispatch(setAthleteId(athlete._id))
+                <button
+                  onClick={() => {
+                    dispatch(setFormData(athlete));
+                    dispatch(setMode("edit"));
+                    dispatch(setAthleteId(athlete._id));
 
-                  navigate("/app/athleteform")
-                }} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm flex items-center gap-2 hover:bg-blue-700">
+                    navigate("/app/athleteform");
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm flex items-center gap-2 hover:bg-blue-700"
+                >
                   <FiEdit />
                   Edit
                 </button>
@@ -254,9 +268,18 @@ export default function AthleteDetails() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#E2E8F0] bg-opacity-60  border border-gray-60  rounded-xl p-4">
               {[
                 { label: "Age", value: calculateAge(athlete?.basicInfo?.dob) },
-                { label: "Height", value: `${athlete?.basicInfo?.height} "` || "N/A" },
-                { label: "Weight", value: `${athlete?.basicInfo?.weight} lbs` || "N/A" },
-                { label: "Position", value: athlete?.basicInfo?.position || "N/A" },
+                {
+                  label: "Height",
+                  value: `${athlete?.basicInfo?.height}` || "N/A",
+                },
+                {
+                  label: "Weight",
+                  value: `${athlete?.basicInfo?.weight} lbs` || "N/A",
+                },
+                {
+                  label: "Position",
+                  value: athlete?.basicInfo?.position || "N/A",
+                },
               ]?.map((item) => (
                 <div
                   key={item.label}
@@ -272,13 +295,24 @@ export default function AthleteDetails() {
           </div>
 
           <div className="p-6 shadow-sm space-y-4 bg-white bg-opacity-25 border-2 border-white rounded-2xl">
-            <h3 className="text-sm font-semibold text-gray-700">Basic Information</h3>
+            <h3 className="text-sm font-semibold text-gray-700">
+              Basic Information
+            </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
               {/* <Info label="Email" value={athlete?.basicInfo?.email || "N/A"} /> */}
-              <Info label="Phone" value={`+1 ${athlete?.basicInfo?.phone || "N/A"}`} />
-              <Info label="Hometown" value={athlete?.basicInfo?.hometown || "N/A"} />
-              <Info label="Date of Birth" value={formatDate(athlete?.basicInfo?.dob) || "N/A"} />
+              <Info
+                label="Phone"
+                value={`+1 ${athlete?.basicInfo?.phone || "N/A"}`}
+              />
+              <Info
+                label="Hometown"
+                value={athlete?.basicInfo?.hometown || "N/A"}
+              />
+              <Info
+                label="Date of Birth"
+                value={formatDate(athlete?.basicInfo?.dob) || "N/A"}
+              />
             </div>
           </div>
           <div className="flex gap-4 bg-[#E2E8F0]  border border-gray-60 bg-opacity-30 rounded-2xl p-2">
@@ -294,58 +328,96 @@ export default function AthleteDetails() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex-grow px-4 py-2 text-sm font-medium rounded-lg transition ${activeTab === tab
-                  ? "bg-white text-[#1A202C]"
-                  : "text-gray-500 hover:text-gray-700"
-                  }`}
+                className={`flex-grow px-4 py-2 text-sm font-medium rounded-lg transition ${
+                  activeTab === tab
+                    ? "bg-white text-[#1A202C]"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
               >
                 {tab}
               </button>
             ))}
           </div>
 
-
-
           <div className="min-h-[300px]">
             {activeTab === "Family" && (
-
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-2">
-
-
-                <FamilyCard title="Parents" icon={<FiHeart className="text-red-500" />}>
+                <FamilyCard
+                  title="Parents"
+                  icon={<FiHeart className="text-red-500" />}
+                >
                   <div className="space-y-3">
-                    <DataRow label="Mother" value={athlete?.family?.motherName || "N/A"} />
-                    <DataRow label="Occupation" value={athlete.family.motherOccupation || "N/A"} />
-                    <DataRow label="Contact" value={`${athlete?.family?.motherContact ? `+1 ${athlete?.family?.motherContact}` : "N/A"}`} />
-                    <DataRow label="DOB" value={formatDate(athlete?.family?.motherDob) || "N/A"} />
+                    <DataRow
+                      label="Mother"
+                      value={athlete?.family?.motherName || "N/A"}
+                    />
+                    <DataRow
+                      label="Occupation"
+                      value={athlete.family.motherOccupation || "N/A"}
+                    />
+                    <DataRow
+                      label="Contact"
+                      value={`${athlete?.family?.motherContact ? `+1 ${athlete?.family?.motherContact}` : "N/A"}`}
+                    />
+                    <DataRow
+                      label="DOB"
+                      value={formatDate(athlete?.family?.motherDob) || "N/A"}
+                    />
                     <div className="pt-2 border-t border-gray-100 space-y-3">
-                      <DataRow label="Father" value={athlete?.family?.fatherName || "N/A"} />
-                      <DataRow label="Occupation" value={athlete?.family?.fatherOccupation || "N/A"} />
-                      <DataRow label="Contact" value={`${athlete?.family?.fatherContact ? `+1 ${athlete?.family?.fatherContact}` : "N/A"}`} />
-                      <DataRow label="DOB" value={athlete?.family?.fatherDob || "N/A"} />
+                      <DataRow
+                        label="Father"
+                        value={athlete?.family?.fatherName || "N/A"}
+                      />
+                      <DataRow
+                        label="Occupation"
+                        value={athlete?.family?.fatherOccupation || "N/A"}
+                      />
+                      <DataRow
+                        label="Contact"
+                        value={`${athlete?.family?.fatherContact ? `+1 ${athlete?.family?.fatherContact}` : "N/A"}`}
+                      />
+                      <DataRow
+                        label="DOB"
+                        value={athlete?.family?.fatherDob || "N/A"}
+                      />
                     </div>
                   </div>
                 </FamilyCard>
 
-
-                <FamilyCard title="Siblings" icon={<FiUser className="text-green-500" />}>
+                <FamilyCard
+                  title="Siblings"
+                  icon={<FiUser className="text-green-500" />}
+                >
                   <div className="space-y-3">
                     {athlete?.family?.siblings.length === 0 ? (
-                      <p className="text-gray-500 text-sm">No siblings information available</p>
+                      <p className="text-gray-500 text-sm">
+                        No siblings information available
+                      </p>
                     ) : (
                       athlete?.family?.siblings?.map((sibling) => (
-                        <div key={sibling.id} className="border-b border-gray-100 pb-2">
+                        <div
+                          key={sibling.id}
+                          className="border-b border-gray-100 pb-2"
+                        >
                           <DataRow label="Name" value={sibling.name || "N/A"} />
-                          <DataRow label="Relation" value={sibling.type || "N/A"} />
-                          <DataRow label="DOB" value={formatDate(sibling.dob) || "N/A"} />
+                          <DataRow
+                            label="Relation"
+                            value={sibling.type || "N/A"}
+                          />
+                          <DataRow
+                            label="DOB"
+                            value={formatDate(sibling.dob) || "N/A"}
+                          />
                         </div>
                       ))
                     )}
-
                   </div>
                 </FamilyCard>
 
-                <FamilyCard title="Key Influences" icon={<FiTrendingUp className="text-blue-500" />}>
+                <FamilyCard
+                  title="Key Influences"
+                  icon={<FiTrendingUp className="text-blue-500" />}
+                >
                   <p className="text-sm text-gray-700 leading-relaxed">
                     {athlete?.family?.keyInfluences || "N/A"}
                   </p>
@@ -353,20 +425,22 @@ export default function AthleteDetails() {
               </div>
             )}
 
-            {activeTab === "Overview" && <Overview athlete={athlete?.overview} />}
+            {activeTab === "Overview" && (
+              <Overview athlete={athlete?.overview} />
+            )}
 
             {activeTab === "Athlete" && <Athlete athlete={athlete?.athlete} />}
             {activeTab === "Stats" && <Stats athlete={athlete?.stats} />}
-            {activeTab === "Education" && <Education athlete={athlete?.education} />}
-            {activeTab === "Achievements" && <Achievements athlete={athlete?.achievements} />}
+            {activeTab === "Education" && (
+              <Education athlete={athlete?.education} />
+            )}
+            {activeTab === "Achievements" && (
+              <Achievements athlete={athlete?.achievements} />
+            )}
             {activeTab === "Media" && <Media athlete={athlete?.media} />}
-
           </div>
         </>
-
       )}
-
-
 
       {isDelete && (
         <DeleteModal
@@ -384,21 +458,20 @@ export default function AthleteDetails() {
   );
 }
 
-
 const Info = ({ label, value }) => {
   let IconComponent;
 
   switch (label) {
-    case 'Email':
+    case "Email":
       IconComponent = FiMail;
       break;
-    case 'Phone':
+    case "Phone":
       IconComponent = FiPhone;
       break;
-    case 'Hometown':
+    case "Hometown":
       IconComponent = HiLocationMarker;
       break;
-    case 'Date of Birth':
+    case "Date of Birth":
       IconComponent = HiCalendar;
       break;
     default:
@@ -414,11 +487,9 @@ const Info = ({ label, value }) => {
         </div>
         <p className="font-medium text-gray-800 mt-1">{value}</p>
       </div>
-
     </div>
   );
 };
-
 
 const FamilyCard = ({ title, icon, children }) => (
   <div className="bg-white bg-opacity-40 backdrop-blur-sm rounded-2xl border-2 border-white p-6 shadow-sm min-h-[250px]">
@@ -436,4 +507,3 @@ const DataRow = ({ label, value }) => (
     <span className="text-gray-800 font-medium w-2/3 text-right">{value}</span>
   </div>
 );
-

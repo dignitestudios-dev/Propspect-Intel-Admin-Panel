@@ -27,13 +27,14 @@ const TABS = [
 ];
 
 export default function AthleteFormManager() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("Basic Info");
   const [athleteCreated, setAthleteCreated] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [submitCurrentForm, setSubmitCurrentForm] = useState(() => () => { });
+  const [submitCurrentForm, setSubmitCurrentForm] = useState(() => () => {});
   const formData = useAppSelector((s) => s.athleteForm.formData);
+  console.log("first===> data ", formData);
   const mode = useAppSelector((s) => s.athleteForm.mode);
   const atheletId = useAppSelector((s) => s.athleteForm.athleteId);
   const [successType, setSuccessType] = useState("");
@@ -45,7 +46,6 @@ export default function AthleteFormManager() {
       setAthleteCreated(true);
     }
   };
-
 
   const handlePrevious = () => {
     const currentIndex = TABS.indexOf(activeTab);
@@ -62,12 +62,29 @@ export default function AthleteFormManager() {
       Object.entries(formData.basicInfo).forEach(([key, value]) => {
         if (key === "image") return;
 
-        if (key === "committedCollege" && typeof value === "object") {
-          fd.append(`basicInfo[${key}]`, value.id);
+        if (key === "committedCollege") {
+          if (typeof value === "object" && value?.id) {
+            fd.append(`basicInfo[${key}]`, value.id);
+          } else if (typeof value === "string" && value.trim() !== "") {
+            fd.append(`basicInfo[${key}]`, value);
+          }
+          // Skip if empty string or invalid
+        } else if (key === "status") {
+          if (Array.isArray(value) && value.length > 0) {
+            value.forEach((item, i) => {
+              fd.append(`basicInfo[${key}][${i}]`, item);
+            });
+          }
+          // Skip if empty array
         } else if (Array.isArray(value)) {
-          value.forEach((item, i) => {
-            fd.append(`basicInfo[${key}][${i}]`, item);
-          });
+          if (value.length === 0) {
+            // Send empty array explicitly to backend
+            fd.append(`basicInfo[${key}][]`, "");
+          } else {
+            value.forEach((item, i) => {
+              fd.append(`basicInfo[${key}][${i}]`, item);
+            });
+          }
         } else {
           fd.append(`basicInfo[${key}]`, value ?? "");
         }
@@ -129,21 +146,22 @@ export default function AthleteFormManager() {
       if (mode === "edit") {
         const response = await axiosinstance.put(`/athlete/${atheletId}`, fd);
         if (response.status === 200 || response.status === 201) {
-          SuccessToast(response?.data?.message || "Athlete created successfully");
+          SuccessToast(
+            response?.data?.message || "Athlete created successfully",
+          );
           setAthleteCreated(true);
-          setSuccessType('Update')
-
-
+          setSuccessType("Update");
         }
       } else {
         const response = await axiosinstance.post("/athlete", fd);
         if (response.status === 200 || response.status === 201) {
-          SuccessToast(response?.data?.message || "Athlete created successfully");
+          SuccessToast(
+            response?.data?.message || "Athlete created successfully",
+          );
           setAthleteCreated(true);
-          setSuccessType('Created')
+          setSuccessType("Created");
         }
       }
-
     } catch (err) {
       ErrorToast(err?.response?.data?.message || "Failed to create athlete");
     } finally {
@@ -154,13 +172,17 @@ export default function AthleteFormManager() {
   const renderCurrentForm = () => {
     switch (activeTab) {
       case "Basic Info":
-        return <BasicInfo onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
+        return (
+          <BasicInfo onNext={handleNext} setSubmit={setSubmitCurrentForm} />
+        );
       case "Family":
         return <Family onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
       case "Athlete":
         return <Athlete onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
       case "Overview":
-        return <Overview onNext={handleCreate} setSubmit={setSubmitCurrentForm} />;
+        return (
+          <Overview onNext={handleCreate} setSubmit={setSubmitCurrentForm} />
+        );
       // case "Stats":
       //   return <Stats onNext={handleNext} setSubmit={setSubmitCurrentForm} />;
       // case "Education":
@@ -174,11 +196,8 @@ export default function AthleteFormManager() {
     }
   };
 
-
-
   return (
     <div className="min-h-screen p-2 font-sans">
-
       <div className="mb-6  mx-auto">
         <button className="flex items-center gap-2 text-gray-800 hover:text-black mb-2 font-bold text-lg">
           <FiArrowLeft size={18} onClick={() => navigate(-1)} />
@@ -189,16 +208,16 @@ export default function AthleteFormManager() {
         </p>
       </div>
       <div className="border-2 border-gray-200 p-4 rounded-xl">
-
         <div className="bg-[#E3E3E3] bg-opacity-10  rounded-2xl p-2 shadow-sm border border-white flex items-center justify-between mb-8 overflow-x-auto max-w-6xl mx-auto">
           {TABS.map((tab, index) => (
             <React.Fragment key={tab}>
               <button
                 onClick={() => setActiveTab(tab)}
-                className={`px-5 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab
-                  ? " text-black font-extrabold"
-                  : "text-gray-400 hover:text-gray-600"
-                  }`}
+                className={`px-5 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+                  activeTab === tab
+                    ? " text-black font-extrabold"
+                    : "text-gray-400 hover:text-gray-600"
+                }`}
               >
                 {tab}
               </button>
@@ -209,15 +228,11 @@ export default function AthleteFormManager() {
           ))}
         </div>
 
-
         <div className=" rounded-3xl  max-w-6xl mx-auto min-h-[600px] flex flex-col justify-between">
           <div className="flex-grow">{renderCurrentForm()}</div>
         </div>
-
-
       </div>
       <div className="flex justify-center md:justify-end items-center gap-4 mt-12">
-
         <button
           onClick={() => navigate(-1)}
           className="px-10 py-3 rounded-xl font-semibold text-gray-700 bg-[#F1F5F9] hover:bg-gray-200 transition-colors"
@@ -227,10 +242,11 @@ export default function AthleteFormManager() {
 
         <button
           disabled={activeTab === "Basic Info"}
-          className={`px-10 py-3 rounded-xl font-semibold border border-gray-100 transition-colors ${activeTab === "Basic Info"
-            ? "text-gray-200 bg-gray-50 cursor-not-allowed"
-            : "text-gray-400 bg-white hover:bg-gray-50"
-            }`}
+          className={`px-10 py-3 rounded-xl font-semibold border border-gray-100 transition-colors ${
+            activeTab === "Basic Info"
+              ? "text-gray-200 bg-gray-50 cursor-not-allowed"
+              : "text-gray-400 bg-white hover:bg-gray-50"
+          }`}
           onClick={handlePrevious}
         >
           Previous
@@ -259,7 +275,7 @@ export default function AthleteFormManager() {
             setAthleteCreated(false);
             queryClient.invalidateQueries({ queryKey: ["athelete"] });
             queryClient.invalidateQueries({ queryKey: ["atheleteid"] });
-            navigate('/app/athletes')
+            navigate("/app/athletes");
           }}
           message={`Athlete ${successType}`}
           title={`Athlete profile has been ${successType}.`}
