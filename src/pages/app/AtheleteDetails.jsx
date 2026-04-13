@@ -375,7 +375,7 @@ export default function AthleteDetails() {
                       />
                       <DataRow
                         label="DOB"
-                        value={athlete?.family?.fatherDob || "N/A"}
+                        value={formatDate(athlete?.family?.fatherDob) || "N/A"}
                       />
                     </div>
                   </div>
