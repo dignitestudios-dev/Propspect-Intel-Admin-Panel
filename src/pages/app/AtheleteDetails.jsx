@@ -305,10 +305,7 @@ export default function AthleteDetails() {
                 label="Phone"
                 value={`+1 ${athlete?.basicInfo?.phone || "N/A"}`}
               />
-              <Info
-                label="Hometown"
-                value={athlete?.basicInfo?.hometown || "N/A"}
-              />
+              <Info label="State" value={athlete?.basicInfo?.state || "N/A"} />
               <Info
                 label="Date of Birth"
                 value={formatDate(athlete?.basicInfo?.dob) || "N/A"}
