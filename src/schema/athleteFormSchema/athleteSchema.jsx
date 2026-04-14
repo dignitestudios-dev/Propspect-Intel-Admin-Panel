@@ -1,9 +1,7 @@
 import * as Yup from "yup";
 
 export const BasicInfoSchema = Yup.object({
-  name: Yup.string()
-    .matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed")
-    .required("Athlete name required"),
+  name: Yup.string().required("Athlete name required"),
   // dob: Yup.string()
   //     .required("Date of birth required")
   //     .test("valid-age", "You must be at least 13 years old", (value) => {
@@ -43,15 +41,12 @@ export const BasicInfoSchema = Yup.object({
   //   hometown: Yup.string().required("Hometown required"),
   state: Yup.string().required("State required"),
 
-  schoolName: Yup.string()
-    .matches(/^[A-Za-z\s]+$/, "Only letters and spaces are allowed")
-    .required("School Name required"),
+  schoolName: Yup.string().required("School Name required"),
 
   // email: Yup.string().email("Invalid email").required("Email required"),
   gpa: Yup.number()
     .typeError("GPA must be a number")
     .min(0, "GPA cannot be negative")
-    .max(4, "GPA cannot be more than 4")
     .nullable()
     .notRequired(),
   gradYear: Yup.string().required("Grad year is required"),

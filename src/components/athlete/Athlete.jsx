@@ -56,7 +56,6 @@ export default function Athlete({ setSubmit, onNext }) {
               />
               <InputField
                 label="Coach Evaluation"
-                maxLength={150}
                 placeholder="Evaluation here"
                 name="coachEvaluation"
                 formik={formik}

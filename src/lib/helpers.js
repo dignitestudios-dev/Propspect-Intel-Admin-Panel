@@ -2,9 +2,11 @@
 // The functions that you're using multiple times must be there.
 // e.g. formatDateToMMDDYYYY, formatEpochToMMDDYYYY, etc.
 export const formatDate = (date) => {
-  if (!date) return "--------";
+  if (!date) return "N/A";
 
   const d = new Date(date);
+
+  if (isNaN(d.getTime())) return "N/A";
 
   return d.toLocaleDateString("en-US", {
     month: "short",
@@ -55,7 +57,9 @@ export const formatAthleteForCSV = (athlete) => {
     Email: athlete.basicInfo?.email,
     Phone: athlete.basicInfo?.phone,
     Hometown: athlete.basicInfo?.hometown,
-    DOB: new Date(athlete.basicInfo?.dob).toLocaleDateString(),
+    DOB: athlete.basicInfo?.dob
+      ? new Date(athlete.basicInfo.dob).toLocaleDateString()
+      : "",
     Position: athlete.basicInfo?.position,
     Height: athlete.basicInfo?.height,
     Weight: athlete.basicInfo?.weight,
