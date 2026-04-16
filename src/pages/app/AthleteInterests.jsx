@@ -178,7 +178,7 @@ export default function AthleteInterests() {
                   <span>{req?.user?.email}</span>
                 </div>
 
-                <div className="flex items-center gap-2 bg-white border border-gray-100 rounded-xl p-4 shadow-inner text-sm text-gray-600 leading-relaxed italic">
+                <div className="flex items-center gap-2 bg-white border border-gray-100 rounded-xl p-4 shadow-inner text-sm text-gray-600 leading-relaxed ">
                   <FiMessageSquare className="text-black" />
                   {req?.description}
                 </div>
