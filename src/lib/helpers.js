@@ -126,11 +126,29 @@ export const formatAthleteForCSV = (athlete) => {
   };
 };
 
-
 export const getTodayLocal = () => {
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = String(today.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+};
+
+export const formatPhoneNumber = (phone) => {
+  if (!phone) return "N/A";
+
+  // keep digits only
+  const digits = phone.replace(/\D/g, "");
+
+  // remove leading 1 if present
+  const normalized =
+    digits.length === 11 && digits.startsWith("1") ? digits.slice(1) : digits;
+
+  // format 10-digit US number
+  if (normalized.length === 10) {
+    return `+1 (${normalized.slice(0, 3)}) ${normalized.slice(3, 6)}-${normalized.slice(6)}`;
+  }
+
+  // fallback
+  return phone;
 };

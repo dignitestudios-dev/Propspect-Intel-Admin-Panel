@@ -26,6 +26,7 @@ import {
   calculateAge,
   formatAthleteForCSV,
   formatDate,
+  formatPhoneNumber,
 } from "../../lib/helpers";
 import { useAppDispatch } from "../../lib/store/hook";
 import {
@@ -303,7 +304,7 @@ export default function AthleteDetails() {
               {/* <Info label="Email" value={athlete?.basicInfo?.email || "N/A"} /> */}
               <Info
                 label="Phone"
-                value={`+1 ${athlete?.basicInfo?.phone || "N/A"}`}
+                value={`+1 ${formatPhoneNumber(athlete?.basicInfo?.phone) || "N/A"}`}
               />
               <Info label="State" value={athlete?.basicInfo?.state || "N/A"} />
               <Info
@@ -354,7 +355,7 @@ export default function AthleteDetails() {
                     />
                     <DataRow
                       label="Contact"
-                      value={`${athlete?.family?.motherContact ? `+1 ${athlete?.family?.motherContact}` : "N/A"}`}
+                      value={`${athlete?.family?.motherContact ? `+1 ${formatPhoneNumber(athlete?.family?.motherContact)}` : "N/A"}`}
                     />
                     <DataRow
                       label="DOB"
@@ -371,7 +372,7 @@ export default function AthleteDetails() {
                       />
                       <DataRow
                         label="Contact"
-                        value={`${athlete?.family?.fatherContact ? `+1 ${athlete?.family?.fatherContact}` : "N/A"}`}
+                        value={`${athlete?.family?.fatherContact ? `+1 ${formatPhoneNumber(athlete?.family?.fatherContact)}` : "N/A"}`}
                       />
                       <DataRow
                         label="DOB"

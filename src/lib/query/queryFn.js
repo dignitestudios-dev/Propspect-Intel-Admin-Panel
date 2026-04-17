@@ -33,13 +33,19 @@ export const getAthelete = async ({
   itemsPerPage = 10,
   search,
   active,
-  minAge,
-  maxAge,
+  gradYear,
   position,
 }) => {
-  const res = await axiosinstance.get(
-    `/athlete?page=${page}&limit=${itemsPerPage}&search=${search}&active=${active}&minAge=${minAge}&maxAge=${maxAge}&position=${position}`,
-  );
+  const params = new URLSearchParams({
+    page,
+    limit: itemsPerPage,
+    search,
+    active,
+    ...(gradYear ? { gradYear } : {}),
+    ...(position ? { position } : {}),
+  });
+
+  const res = await axiosinstance.get(`/athlete?${params.toString()}`);
   return res.data;
 };
 export const getAtheleteCount = async () => {
