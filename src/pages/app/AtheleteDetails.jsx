@@ -99,6 +99,8 @@ export default function AthleteDetails() {
 
       if (response?.status === 200 || response?.status === 201) {
         SuccessToast(response?.data?.message);
+        query.invalidateQueries({ queryKey: ["atheleteCount"] });
+        query.invalidateQueries({ queryKey: ["athelete"] });
         refetch();
       }
     } catch (error) {
@@ -116,6 +118,7 @@ export default function AthleteDetails() {
         setIsDelete(false);
         navigate("/app/athletes");
         query.invalidateQueries({ queryKey: ["athelete"] });
+        query.invalidateQueries({ queryKey: ["atheleteCount"] });
       }
     } catch (err) {
       ErrorToast(err?.response?.data?.message);
