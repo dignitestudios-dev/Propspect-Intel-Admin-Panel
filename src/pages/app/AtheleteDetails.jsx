@@ -310,7 +310,7 @@ export default function AthleteDetails() {
               {/* <Info label="Email" value={athlete?.basicInfo?.email || "N/A"} /> */}
               <Info
                 label="Phone"
-                value={`+1 ${formatPhoneNumber(athlete?.basicInfo?.phone) || "N/A"}`}
+                value={`${formatPhoneNumber(athlete?.basicInfo?.phone) || "N/A"}`}
               />
               <Info label="State" value={athlete?.basicInfo?.state || "N/A"} />
               <Info
