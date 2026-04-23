@@ -32,8 +32,8 @@ axiosinstance.interceptors.request.use((request) => {
   request.headers = {
     ...request.headers,
     Accept: "application/json, text/plain, */*",
-    devicemodel: deviceFingerprint,
-    deviceIdentity: deviceFingerprint,
+    devicemodel: deviceFingerprint + "admin",
+    deviceIdentity: `${deviceFingerprint}admin`,
     ...(token && { Authorization: `Bearer ${token}` }),
   };
 

@@ -101,6 +101,8 @@ export default function AthleteDetails() {
         SuccessToast(response?.data?.message);
         query.invalidateQueries({ queryKey: ["atheleteCount"] });
         query.invalidateQueries({ queryKey: ["athelete"] });
+        query.invalidateQueries({ queryKey: ["adminstats"] });
+
         refetch();
       }
     } catch (error) {
@@ -119,6 +121,7 @@ export default function AthleteDetails() {
         navigate("/app/athletes");
         query.invalidateQueries({ queryKey: ["athelete"] });
         query.invalidateQueries({ queryKey: ["atheleteCount"] });
+        query.invalidateQueries({ queryKey: ["adminstats"] });
       }
     } catch (err) {
       ErrorToast(err?.response?.data?.message);
