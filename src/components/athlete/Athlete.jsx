@@ -118,7 +118,7 @@ export default function Athlete({ setSubmit, onNext }) {
                   placeholder="Enter description..."
                   name="footballDescription"
                   formik={formik}
-                  disabled={formik.values.footballPiScore === "N/A"}
+                  // disabled={formik.values.footballPiScore === "N/A"}
                 />
               </div>
             </div>
@@ -181,7 +181,7 @@ export default function Athlete({ setSubmit, onNext }) {
                   placeholder="Enter description..."
                   name="personalDescription"
                   formik={formik}
-                  disabled={formik.values.personalPiScore === "N/A"}
+                  // disabled={formik.values.personalPiScore === "N/A"}
                 />
               </div>
             </div>

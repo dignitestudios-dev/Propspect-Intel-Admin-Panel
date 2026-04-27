@@ -61,7 +61,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
     "Transfer Risk",
     "Off Field Concern",
     "High FB IQ",
-    "Average FB IQ",
+    "NIL-Focused Recruitment",
     "Developmental FB IQ",
     "Team Captain",
     "Leader",
