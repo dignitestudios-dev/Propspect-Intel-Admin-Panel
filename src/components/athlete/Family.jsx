@@ -28,20 +28,23 @@ export default function Family({ onNext, setSubmit }) {
     initialValues: {
       motherName: familyInfo?.motherName || "",
       fatherName: familyInfo?.fatherName || "",
-      motherDob: familyInfo?.motherDob ? new Date(familyInfo?.motherDob).toISOString().split("T")[0] : "",
+      motherDob: familyInfo?.motherDob
+        ? new Date(familyInfo?.motherDob).toISOString().split("T")[0]
+        : "",
       motherOccupation: familyInfo?.motherOccupation || "",
       motherContact: familyInfo?.motherContact || "",
-      fatherDob: familyInfo?.fatherDob ? new Date(familyInfo?.fatherDob).toISOString().split("T")[0] : "",
+      fatherDob: familyInfo?.fatherDob
+        ? new Date(familyInfo?.fatherDob).toISOString().split("T")[0]
+        : "",
       fatherOccupation: familyInfo?.fatherOccupation || "",
       fatherContact: familyInfo?.fatherContact || "",
       keyInfluences: familyInfo?.keyInfluences || "",
       siblings: initialSiblings,
-
     },
     validationSchema: familyInfoSchema,
     onSubmit: (values) => {
       dispatch(updateSection({ section: "family", data: values }));
-      onNext()
+      onNext();
     },
   });
 
@@ -49,28 +52,40 @@ export default function Family({ onNext, setSubmit }) {
     setSubmit(() => formik.submitForm);
   }, []);
 
-
   return (
     <div className="min-h-screen font-sans">
-
       <div className="rounded-3xl max-w-6xl mx-auto min-h-[600px] flex flex-col justify-between">
-
         <div className="space-y-8 animate-in fade-in duration-300">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-            <InputField label="Mother" placeholder="Enter name" name={'motherName'} formik={formik} maxLength={50} />
-            <InputField label="Date of Birth" max={new Date().toISOString().split("T")[0]} type="date" placeholder="Age here" name={'motherDob'} formik={formik} />
-            <InputField label="Occupation" placeholder="Enter occupation" maxLength={50} name={'motherOccupation'} formik={formik} />
+            <InputField
+              label="Mother"
+              placeholder="Enter name"
+              name={"motherName"}
+              formik={formik}
+              maxLength={50}
+            />
+            <InputField
+              label="Date of Birth"
+              max={new Date().toISOString().split("T")[0]}
+              type="date"
+              placeholder="Age here"
+              name={"motherDob"}
+              formik={formik}
+            />
+            <InputField
+              label="Occupation"
+              placeholder="Enter occupation"
+              maxLength={50}
+              name={"motherOccupation"}
+              formik={formik}
+            />
 
-            <div >
+            <div>
               <div className="bg-white rounded-xl px-4 py-6 border border-gray-50 flex items-center gap-2">
                 {/* US Flag + Code */}
 
                 <span className="text-xl pr-2">
-                  <img
-                    src={Flagus}
-                    alt="US flag"
-                    className="w-6 h-4 mr-2"
-                  />
+                  <img src={Flagus} alt="US flag" className="w-6 h-4 mr-2" />
                 </span>
 
                 <span className="text-sm text-gray-500">+1</span>
@@ -87,7 +102,9 @@ export default function Family({ onNext, setSubmit }) {
                 />
               </div>
               {formik.touched.motherContact && formik.errors.motherContact && (
-                <span className="text-red-500 text-xs">{formik.errors.motherContact}</span>
+                <span className="text-red-500 text-xs">
+                  {formik.errors.motherContact}
+                </span>
               )}
             </div>
 
@@ -96,20 +113,35 @@ export default function Family({ onNext, setSubmit }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-            <InputField label="Father" maxLength={50} placeholder="Father Name" name={'fatherName'} formik={formik} />
-            <InputField label="Date of Birth" max={new Date().toISOString().split("T")[0]} type="date" placeholder="Age here" name={'fatherDob'} formik={formik} />
-            <InputField label="Occupation" placeholder="Enter occupation" maxLength={50} name={'fatherOccupation'} formik={formik} />
+            <InputField
+              label="Father"
+              maxLength={50}
+              placeholder="Father Name"
+              name={"fatherName"}
+              formik={formik}
+            />
+            <InputField
+              label="Date of Birth"
+              max={new Date().toISOString().split("T")[0]}
+              type="date"
+              placeholder="Age here"
+              name={"fatherDob"}
+              formik={formik}
+            />
+            <InputField
+              label="Occupation"
+              placeholder="Enter occupation"
+              maxLength={50}
+              name={"fatherOccupation"}
+              formik={formik}
+            />
 
-            <div >
+            <div>
               <div className="bg-white rounded-xl px-4 py-6 border border-gray-50 flex items-center gap-2">
                 {/* US Flag + Code */}
 
                 <span className="text-xl pr-2">
-                  <img
-                    src={Flagus}
-                    alt="US flag"
-                    className="w-6 h-4 mr-2"
-                  />
+                  <img src={Flagus} alt="US flag" className="w-6 h-4 mr-2" />
                 </span>
 
                 <span className="text-sm text-gray-500">+1</span>
@@ -126,11 +158,12 @@ export default function Family({ onNext, setSubmit }) {
                 />
               </div>
               {formik.touched.fatherContact && formik.errors.fatherContact && (
-                <span className="text-red-500 text-xs">{formik.errors.fatherContact}</span>
+                <span className="text-red-500 text-xs">
+                  {formik.errors.fatherContact}
+                </span>
               )}
             </div>
           </div>
-
 
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -157,7 +190,9 @@ export default function Family({ onNext, setSubmit }) {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-4 flex-grow">
                     <div className="flex flex-col gap-1 w-full">
                       <div className="bg-white rounded-xl px-4 py-3 border border-gray-50 w-full">
-                        <label className="text-xs text-gray-400">Relation</label>
+                        <label className="text-xs text-gray-400">
+                          Relation
+                        </label>
                         <select
                           name={`siblings[${index}].type`}
                           value={formik.values.siblings[index].type}
@@ -169,11 +204,13 @@ export default function Family({ onNext, setSubmit }) {
                           <option value="Sister">Sister</option>
                         </select>
                       </div>
-                      {formik.touched.siblings && formik.errors.siblings && formik.errors.siblings[index] && (
-                        <span className="text-red-500 text-xs">
-                          {formik.errors.siblings[index].type}
-                        </span>
-                      )}
+                      {formik.touched.siblings &&
+                        formik.errors.siblings &&
+                        formik.errors.siblings[index] && (
+                          <span className="text-red-500 text-xs">
+                            {formik.errors.siblings[index].type}
+                          </span>
+                        )}
                     </div>
                     <div>
                       <InputField
@@ -215,7 +252,12 @@ export default function Family({ onNext, setSubmit }) {
                         onClick={() =>
                           formik.setFieldValue("siblings", [
                             ...formik.values.siblings,
-                            { id: Date.now(), type: "Brother", name: "", dob: "" },
+                            {
+                              id: Date.now(),
+                              type: "Brother",
+                              name: "",
+                              dob: "",
+                            },
                           ])
                         }
                         className="p-3 rounded-xl border border-gray-100 bg-white text-green-500 hover:bg-green-50 transition-colors"
@@ -241,14 +283,13 @@ export default function Family({ onNext, setSubmit }) {
               onBlur={formik.handleBlur}
             />
             {formik.touched.keyInfluences && formik.errors.keyInfluences && (
-              <span className="text-red-500 text-xs">{formik.errors.keyInfluences}</span>
+              <span className="text-red-500 text-xs">
+                {formik.errors.keyInfluences}
+              </span>
             )}
           </div>
         </div>
-
-
       </div>
     </div>
   );
 }
-
