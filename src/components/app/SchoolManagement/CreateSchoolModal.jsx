@@ -9,32 +9,36 @@ import axiosinstance from "../../../axios";
 import { base64ToBinaryFile } from "../../../lib/helpers";
 import { useQueryClient } from "@tanstack/react-query";
 
-const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, logo, setLogo }) => {
-  const query = useQueryClient()
-  const [error, setError] = useState('')
+const CreateSchoolModal = ({
+  onClick,
+  onNext,
+  editMode,
+  subject,
+  setSubject,
+  logo,
+  setLogo,
+}) => {
+  const query = useQueryClient();
+  const [error, setError] = useState("");
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 
-  const [aiPrompt, setAiPrompt] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [loading, setLoading] = useState(false);
   const handleGenerate = () => {
     if (subject.length === 0) {
-      ErrorToast('Please enter Subject')
+      ErrorToast("Please enter Subject");
     } else {
-      setIsAiModalOpen(true)
-
+      setIsAiModalOpen(true);
     }
-
-  }
+  };
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
 
     if (file.size > 50 * 1024 * 1024) {
       ErrorToast("File is too large! Max 50MB.");
       return;
     }
-
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -48,28 +52,19 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
     reader.readAsDataURL(file);
   };
   const generateImage = async () => {
-
     const payload = {
       schoolName: subject,
-      prompt: aiPrompt
-    }
+      prompt: aiPrompt,
+    };
     try {
-      const response = await axiosinstance.post(
-        '/school/ai/logo',
-        payload
-
-      );
+      const response = await axiosinstance.post("/school/ai/logo", payload);
       if (response?.status === 200 || response?.status === 201) {
         const data = response.data.data;
 
         if (data) return `data:image/png;base64,${data}`;
-
       }
-
-
-
     } catch (error) {
-      console.error('Error generating image:', error);
+      console.error("Error generating image:", error);
       return null;
     }
   };
@@ -104,16 +99,23 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
   const handleAddOrEditSchool = async () => {
     if (!subject) return setError("Please enter School Name");
 
-
-    const validNameRegex = /^[A-Za-z0-9 ]+$/;
+    const validNameRegex = /^[A-Za-z0-9-& ]+$/;
     if (!validNameRegex.test(subject.trim())) {
-      return setError("School Name can only contain letters, numbers, and spaces");
+      return setError(
+        "School Name can only contain letters, numbers, and spaces",
+      );
     }
 
     setLoading(true);
     try {
       const fd = new FormData();
-      fd.append("name", subject.trim());
+      if (editMode?._id) {
+        if (subject.trim() !== editMode.name) {
+          fd.append("name", subject.trim());
+        }
+      } else {
+        fd.append("name", subject.trim());
+      }
 
       if (logo?.src?.startsWith("data:image")) {
         let smallBase64 = await resizeBase64Image(logo.src);
@@ -123,25 +125,32 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
 
       let response;
       if (editMode?._id) {
-
         response = await axiosinstance.patch(`/school/${editMode._id}`, fd);
       } else {
-
         response = await axiosinstance.post("/school", fd);
       }
 
       if (response?.status === 200 || response?.status === 201) {
-        const message = response?.data?.message || (editMode?._id ? "School updated successfully" : "School added successfully");
+        const message =
+          response?.data?.message ||
+          (editMode?._id
+            ? "School updated successfully"
+            : "School added successfully");
         SuccessToast(message);
-        query.invalidateQueries({ queryKey: ["school"] })
+        query.invalidateQueries({ queryKey: ["school"] });
         onNext();
       }
     } catch (err) {
-      ErrorToast(err?.response?.data?.message || err?.response?.data?.error || "Something went wrong");
+      ErrorToast(
+        err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          "Something went wrong",
+      );
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <>
       <div className="fixed -inset-6 bg-[#0A150F80] bg-opacity-50 z-50 flex items-center justify-center">
@@ -169,7 +178,6 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
           </div>
 
           <div className="flex flex-col border-[1px] border-[#E3E3E3] rounded-3xl p-4">
-
             <div className="bg-[#FAF8F2] p-4 rounded-2xl w-full">
               <p className="text-xs text-gray-400 font-light">School Name</p>
               <input
@@ -179,16 +187,16 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
                 placeholder="Enter name"
                 onChange={(e) => {
                   const value = e.target.value;
-                  const filtered = value.replace(/[^A-Za-z0-9-& ]/g, '');
-                  setSubject(filtered);
-                  setError('');
+                  // const filtered = value.replace(/[^A-Za-z0-9 ]/g, "");
+                  setSubject(value);
+                  setError("");
                 }}
                 className="w-full mt-1 text-sm text-[#302C2C] font-medium focus:outline-none bg-transparent"
               />
             </div>
-            {error && (<span className="text-red-500 text-xs mt-2">{error}</span>)}
-
-
+            {error && (
+              <span className="text-red-500 text-xs mt-2">{error}</span>
+            )}
 
             {!logo ? (
               <>
@@ -204,7 +212,9 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
                 <div className="border-2 border-gray-200 border-dashed rounded-2xl mt-4 bg-[#EAEEF8] overflow-hidden">
                   <div className="p-12 flex flex-col items-center justify-center bg-white/30">
                     <Upload size={48} className="text-[#0D0C0C99] mb-4" />
-                    <h4 className="font-bold text-[#302C2C] mb-1">Upload School Logo</h4>
+                    <h4 className="font-bold text-[#302C2C] mb-1">
+                      Upload School Logo
+                    </h4>
                     <p className="text-[14px] text-[#0D0C0C99] mb-6 text-center">
                       Or click to browse files · Max 50MB per file
                     </p>
@@ -216,7 +226,9 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
                       onChange={handleFileUpload}
                     />
                     <button
-                      onClick={() => document.getElementById("manualLogoUpload").click()}
+                      onClick={() =>
+                        document.getElementById("manualLogoUpload").click()
+                      }
                       className="flex items-center gap-2 px-6 py-2 rounded-md bg-white shadow-sm text-[#0085CA] font-bold hover:bg-blue-50 transition-colors"
                     >
                       <Upload size={18} />
@@ -226,15 +238,15 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
                 </div>
               </>
             ) : (
-
               <div className="mt-4 bg-[#FAF8F2] p-4 rounded-2xl flex items-center justify-between border border-gray-100">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-white rounded-lg border border-gray-100 flex items-center justify-center">
-
-                    <img src={logo?.src} alt="" className="w-6 h-6 rounded" />
+                    <img src={logo?.src} alt="" className="px-0.5 rounded " />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-[#302C2C]">{logo.name}</p>
+                    <p className="text-sm font-bold text-[#302C2C]">
+                      this is {logo.name}
+                    </p>
                     <p className="text-xs text-gray-400">{logo.size}</p>
                   </div>
                 </div>
@@ -253,9 +265,12 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
                 className="w-full py-3 bg-[#0085CA] text-white rounded-xl font-bold hover:bg-[#0074b3] transition-colors"
               >
                 {loading
-                  ? editMode?._id ? "Updating..." : "Adding..."
-                  : editMode?._id ? "Update School" : "Add School"
-                }
+                  ? editMode?._id
+                    ? "Updating..."
+                    : "Adding..."
+                  : editMode?._id
+                    ? "Update School"
+                    : "Add School"}
               </button>
               <button
                 onClick={onClick}
@@ -277,7 +292,11 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
         generateImage={generateImage}
         onUseLogo={(imgSrc) => {
           // imgSrc = Base64 or URL from modal
-          setLogo({ name: "AI_Generated_Logo.png", size: "1.2 mb", src: imgSrc });
+          setLogo({
+            name: "AI_Generated_Logo.png",
+            size: "1.2 mb",
+            src: imgSrc,
+          });
           setIsAiModalOpen(false);
         }}
       />

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiSearch, FiPlus } from "react-icons/fi";
 import { BiSolidNotification } from "react-icons/bi";
 import { bin } from "../../assets/export";
@@ -13,44 +13,51 @@ import Pagination from "../../components/global/Pagination";
 import axiosinstance from "../../axios";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 
-
 export default function Notifications() {
   const [activeTab, setActiveTab] = useState("All");
   const [requestSendModal, setRequestSendModal] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [search, setSearch] = useState("")
-  const [selectedId, setSelectedId] = useState(null)
-  const [page, setPage] = useState(1)
-  const debouncedSearch = useDebounce(search, 500)
+  const [search, setSearch] = useState("");
+  const [selectedId, setSelectedId] = useState(null);
+  const [page, setPage] = useState(1);
+  const debouncedSearch = useDebounce(search, 500);
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["notification", page, debouncedSearch, activeTab],
-    queryFn: () => getNotification({ page, search: debouncedSearch, activeTab }),
+    queryFn: () =>
+      getNotification({ page, search: debouncedSearch, activeTab }),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
-
   });
+
+  // Reset page to 1 when search or type filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, activeTab]);
+
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= data?.pagination?.totalPages) {
       setPage(newPage);
     }
   };
   const handleDelete = async () => {
-    setIsDeleteLoading(true)
+    setIsDeleteLoading(true);
     try {
-      const response = await axiosinstance.delete(`/notification/${selectedId}`)
+      const response = await axiosinstance.delete(
+        `/notification/${selectedId}`,
+      );
       if (response.status === 200 || response.status === 201) {
-        SuccessToast(response?.data?.message)
-        setIsDelete(false)
-        refetch()
+        SuccessToast(response?.data?.message);
+        setIsDelete(false);
+        refetch();
       }
     } catch (err) {
-      ErrorToast(err?.response?.data?.message)
+      ErrorToast(err?.response?.data?.message);
     } finally {
-      setIsDeleteLoading(false)
+      setIsDeleteLoading(false);
     }
-  }
+  };
   return (
     <div className="w-full min-h-screen  p-4 font-sans">
       {/* Header Section */}
@@ -91,10 +98,11 @@ export default function Notifications() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-8 py-2 text-sm font-medium rounded-lg transition-all min-w-[200px] ${activeTab === tab
-                  ? "bg-white text-[#1A202C] shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
-                  }`}
+                className={`px-8 py-2 text-sm font-medium rounded-lg transition-all min-w-[200px] ${
+                  activeTab === tab
+                    ? "bg-white text-[#1A202C] shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
               >
                 {tab}
               </button>
@@ -162,10 +170,9 @@ export default function Notifications() {
                   </div> */}
                     <div
                       onClick={() => {
+                        setSelectedId(item?._id);
 
-                        setSelectedId(item?._id)
-
-                        setIsDelete(true)
+                        setIsDelete(true);
                       }}
                       className="cursor-pointer p-1 w-6 h-6 hover:bg-red-100 rounded-full transition-colors"
                     >
@@ -173,7 +180,8 @@ export default function Notifications() {
                     </div>
                   </div>
                 </div>
-              )))}
+              ))
+            )}
           </div>
         </div>
         <Pagination

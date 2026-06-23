@@ -1,6 +1,5 @@
-import React from 'react'
-import { athletic, football, personal, other } from '../../assets/export';
-
+import React from "react";
+import { athletic, football, personal, other } from "../../assets/export";
 
 const playerProfileData = {
   name: "Liam O’Sullivan",
@@ -30,19 +29,21 @@ const playerProfileData = {
       occupation: "Hair stylist, Revenue Specialist / Part time hair stylist",
       contact: "423.293.9055",
       dob: "8/12/1962",
-    }
+    },
   ],
   siblings: [
     { name: "Alicia", dob: "12/12/2015" },
     { name: "Alicia", dob: "12/12/2015" },
   ],
-  keyInfluences: "Malik has 2 trainers he relies heavily on, Donald Fusilier and Marlon Williams*.",
+  keyInfluences:
+    "Malik has 2 trainers he relies heavily on, Donald Fusilier and Marlon Williams*.",
 
   // Right Column Data
   athleticBackground: {
     otherSports: "Track, Basketball",
     activities: "LA boosterjays club team, Attended multiple camps/combines",
-    coachEvaluation: "\"7v7 coach (secondary source) says Malik is extremely competitive. He mentioned that he is so competitive when something goes wrong he can get really down on himself that sometimes creates a snowball effect on following plays.\"",
+    coachEvaluation:
+      '"7v7 coach (secondary source) says Malik is extremely competitive. He mentioned that he is so competitive when something goes wrong he can get really down on himself that sometimes creates a snowball effect on following plays."',
   },
   footballCharacter: {
     piScore: "A",
@@ -54,9 +55,14 @@ const playerProfileData = {
   },
 };
 
-
-const InfoBox = ({ title, score, icon, children, scoreColorClass = 'text-blue-600' }) => (
-  <div className='bg-white bg-opacity-25 p-4 pt-4 rounded-xl border-2 border-white'>
+const InfoBox = ({
+  title,
+  score,
+  icon,
+  children,
+  scoreColorClass = "text-blue-600",
+}) => (
+  <div className="bg-white bg-opacity-25 p-4 pt-4 rounded-xl border-2 border-white">
     <div className="flex justify-between items-center mb-4">
       <h3 className="flex items-center p-2 pb-0 text-xl font-bold text-gray-800">
         {icon}
@@ -64,13 +70,16 @@ const InfoBox = ({ title, score, icon, children, scoreColorClass = 'text-blue-60
       </h3>
       {score && (
         <div className="flex items-center border border-gray-300 rounded-lg p-2 bg-gray-50">
-          <span className="text-xs font-semibold text-gray-700 mr-2">PI Score</span>
-          <span className={`text-xl font-bold ${scoreColorClass}`}>{score}</span>
+          <span className="text-xs font-semibold text-gray-700 mr-2">
+            PI Score
+          </span>
+          <span className={`text-xl font-bold ${scoreColorClass}`}>
+            {score}
+          </span>
         </div>
       )}
     </div>
     <div className="p-6 rounded-xl shadow-sm mb-6 border-2 border-white">
-
       <div>{children}</div>
     </div>
   </div>
@@ -80,16 +89,16 @@ const InfoBox = ({ title, score, icon, children, scoreColorClass = 'text-blue-60
 const InfoRow = ({ label, value, isBold = false }) => (
   <div className="flex justify-between py-1">
     <span className="text-gray-600 text-sm">{label}:</span>
-    <span className={`text-gray-900 text-sm ${isBold ? 'font-semibold' : 'font-normal'}`}>{value}</span>
+    <span
+      className={`text-gray-900 text-sm ${isBold ? "font-semibold" : "font-normal"}`}
+    >
+      {value}
+    </span>
   </div>
 );
 
 const AthleticBox = ({ title, icon, children }) => (
   <div className="bg-white bg-opacity-25  pt-4  border-2 border-white rounded-2xl p-5">
-
-
-
-
     <div className="bg-white bg-opacity-25 p-4 pt-4 rounded-xl border-2 border-white  shadow-sm">
       <div className="flex items-center mb-4">
         <div className="flex items-center text-lg font-semibold text-gray-900">
@@ -107,18 +116,12 @@ const Athlete = ({ athlete }) => {
 
   return (
     <div className=" space-y-8 ">
-
-
       <AthleticBox
         title="Athletic Background"
-        icon={<img src={athletic} alt="icon" className="w-5 h-5" />}>
-
+        icon={<img src={athletic} alt="icon" className="w-5 h-5" />}
+      >
         <div className="grid grid-cols-2 gap-10">
-
-
           <div className="space-y-4">
-
-
             <div>
               <div className="flex  justify-between text-gray-700 font-medium mb-1">
                 <span className="mr-2">🏅 Other Sports</span>
@@ -135,9 +138,7 @@ const Athlete = ({ athlete }) => {
                   )}
                 </div>
               </div>
-
             </div>
-
 
             <div>
               <div className="flex items-center text-gray-700 font-medium mb-1">
@@ -155,24 +156,23 @@ const Athlete = ({ athlete }) => {
                 )}
               </p>
             </div>
-
           </div>
-
 
           <div className="bg-white bg-opacity-25 p-4 pt-4 rounded-xl border-2 border-white  shadow-sm">
             <div className="flex items-center text-gray-700 font-medium mb-2">
               <span className="mr-2">⚡</span> Coach Evaluation
             </div>
 
-            <p className="text-gray-600 text-sm leading-relaxed italic">
-              {athlete?.coachEvaluation || <span className="text-gray-400">No coach evaluation available.</span>}
+            <p className="text-gray-600 text-sm leading-relaxed ">
+              {athlete?.coachEvaluation || (
+                <span className="text-gray-400">
+                  No coach evaluation available.
+                </span>
+              )}
             </p>
           </div>
-
         </div>
       </AthleticBox>
-
-
 
       <InfoBox
         title="Football Character"
@@ -181,7 +181,11 @@ const Athlete = ({ athlete }) => {
         scoreColorClass="text-[#0085CA]"
       >
         <p className="text-gray-700 text-sm leading-relaxed">
-          {athlete?.footballDescription || <span className="text-gray-400 italic">No football character information available.</span>}
+          {athlete?.footballDescription || (
+            <span className="text-gray-400 italic">
+              No football character information available.
+            </span>
+          )}
         </p>
       </InfoBox>
 
@@ -192,17 +196,24 @@ const Athlete = ({ athlete }) => {
         scoreColorClass="text-[#FFC145]"
       >
         <p className="text-gray-700 text-sm leading-relaxed">
-          {athlete?.personalDescription || <span className="text-gray-400 italic">No personal character information available.</span>}
+          {athlete?.personalDescription || (
+            <span className="text-gray-400 italic">
+              No personal character information available.
+            </span>
+          )}
         </p>
       </InfoBox>
 
-      <InfoBox title="Other Relevant Information" icon={<img src={other} alt="Other" className="text-[#7A4D8B]" />}>
-
-        <p className="text-gray-700 text-sm italic ">
-          {athlete?.otherInfo || "No other relevant information available"}                              </p>
+      <InfoBox
+        title="Other Relevant Information"
+        icon={<img src={other} alt="Other" className="text-[#7A4D8B]" />}
+      >
+        <p className="text-gray-700 text-sm ">
+          {athlete?.otherInfo || "No other relevant information available"}{" "}
+        </p>
       </InfoBox>
     </div>
-  )
-}
+  );
+};
 
-export default Athlete
+export default Athlete;

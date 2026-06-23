@@ -1,10 +1,7 @@
 import React from "react";
 import { useState } from "react";
 
-import {
-  FiUserPlus,
-  FiEye,
-} from "react-icons/fi";
+import { FiUserPlus, FiEye } from "react-icons/fi";
 import Header from "../../../components/dashboard/Header";
 import State from "../../../components/dashboard/State";
 import { athlete, Emptyimg } from "../../../assets/export";
@@ -16,13 +13,17 @@ import AddAthleteModal from "../../../components/athlete/AddAthleteModal";
 import AthleteAiModal from "../../../components/athlete/AthleteAiModal";
 import useDebounce, { useAuth } from "../../../lib/store/hook";
 import { useQuery } from "@tanstack/react-query";
-import { getAdminStats, getAthleteRequest, getMostViewAthlete, getUsers } from "../../../lib/query/queryFn";
+import {
+  getAdminStats,
+  getAthleteRequest,
+  getMostViewAthlete,
+  getUsers,
+} from "../../../lib/query/queryFn";
 import TableSkeleton from "../../../components/global/TableSkeleton";
 import Pagination from "../../../components/global/Pagination";
 import SuccessModal from "../../../components/global/SuccessModal";
 
 export default function Dashboard() {
-
   const { user } = useAuth();
   const [active, setActive] = useState("All");
   const [popularactive, setpopularActive] = useState("7d");
@@ -30,21 +31,20 @@ export default function Dashboard() {
   const [requestSendModal, setRequestSendModal] = useState(false);
   const [isAddAthleteModalOpen, setIsAddAthleteModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
-  const [aiModal, setAiModal] = useState(false)
-  const [statsFilter, setStatsFilter] = useState('7d')
+  const [aiModal, setAiModal] = useState(false);
+  const [statsFilter, setStatsFilter] = useState("7d");
   const [userStatus, setUserStatus] = useState("Active");
-  const [page, setPage] = useState(1)
-  const [userPage, setUserPage] = useState(1)
-  const [search, setSearch] = useState('')
-  const [mostViewPage, setMostViewPage] = useState(1)
+  const [page, setPage] = useState(1);
+  const [userPage, setUserPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [mostViewPage, setMostViewPage] = useState(1);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [appliedStartDate, setAppliedStartDate] = useState("");
   const [appliedEndDate, setAppliedEndDate] = useState("");
-  const debouncedSearch = useDebounce(search, 500)
+  const debouncedSearch = useDebounce(search, 500);
   const [successType, setSuccessType] = useState("");
-
 
   const statusStyles = {
     pending: "bg-orange-100 text-orange-600",
@@ -54,40 +54,50 @@ export default function Dashboard() {
   const filters = ["All", "Pending", "Contacted"];
   const popularfilters = ["7d", "1m", "3m", "6m", "1y"];
 
-
-
-
-
-  const { data, isLoading, } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["adminstats", statsFilter],
     queryFn: () => getAdminStats({ statsFilter }),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
-
   });
-  const { data: athleteData, isLoading: athleteLoading, } = useQuery({
+  const { data: athleteData, isLoading: athleteLoading } = useQuery({
     queryKey: ["athleteRequest", page, active],
     queryFn: () => getAthleteRequest({ page, active }),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
-
   });
 
+  const { data: athleteMostViewData, isLoading: athleteMostViewLoading } =
+    useQuery({
+      queryKey: ["athleteMostView", mostViewPage, popularactive],
+      queryFn: () => getMostViewAthlete({ page: mostViewPage, popularactive }),
+      keepPreviousData: true,
+      staleTime: 1000 * 60 * 5,
+    });
 
-  const { data: athleteMostViewData, isLoading: athleteMostViewLoading, } = useQuery({
-    queryKey: ["athleteMostView", mostViewPage, popularactive],
-    queryFn: () => getMostViewAthlete({ page: mostViewPage, popularactive }),
+  const {
+    data: userData,
+    isLoading: userLoading,
+    refetch: userRefetch,
+  } = useQuery({
+    queryKey: [
+      "users",
+      userPage,
+      debouncedSearch,
+      appliedStartDate,
+      appliedEndDate,
+      statusFilter,
+    ],
+    queryFn: () =>
+      getUsers({
+        page: userPage,
+        search: debouncedSearch,
+        startDate: appliedStartDate,
+        endDate: appliedEndDate,
+        statusFilter,
+      }),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
-
-  });
-
-  const { data: userData, isLoading: userLoading, refetch: userRefetch } = useQuery({
-    queryKey: ["users", userPage, debouncedSearch, appliedStartDate, appliedEndDate, statusFilter],
-    queryFn: () => getUsers({ page: userPage, search: debouncedSearch, startDate: appliedStartDate, endDate: appliedEndDate, statusFilter }),
-    keepPreviousData: true,
-    staleTime: 1000 * 60 * 5,
-
   });
 
   const handlePageChange = (newPage) => {
@@ -97,7 +107,10 @@ export default function Dashboard() {
   };
 
   const handleMostViewPageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= athleteMostViewData?.pagination?.totalPages) {
+    if (
+      newPage >= 1 &&
+      newPage <= athleteMostViewData?.pagination?.totalPages
+    ) {
       setMostViewPage(newPage);
     }
   };
@@ -112,20 +125,17 @@ export default function Dashboard() {
     return n + (s[(v - 20) % 10] || s[v] || s[0]);
   };
 
-
-
-
   return (
     <div className="w-full space-y-3 ">
-
-      <Header user={user} setStatsFilter={setStatsFilter} statsFilter={statsFilter} />
-
+      <Header
+        user={user}
+        setStatsFilter={setStatsFilter}
+        statsFilter={statsFilter}
+      />
 
       <State adminState={data} loading={isLoading} statsFilter={statsFilter} />
 
-
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
-
         <div className="">
           <div className="bg-[#FFFFFF4D] border-2 border-white rounded-xl p-5 shadow-sm h-[160px]">
             <div className="flex items-center">
@@ -185,12 +195,13 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="h-[700px] flex flex-col">
-
               <div className="flex-1 overflow-y-auto">
                 {athleteMostViewLoading ? (
                   <TableSkeleton />
                 ) : athleteMostViewData?.data?.length === 0 ? (
-                  <div className="p-4 text-center text-gray-500">No Most Viewed Athletes Found</div>
+                  <div className="p-4 text-center text-gray-500">
+                    No Most Viewed Athletes Found
+                  </div>
                 ) : (
                   athleteMostViewData?.data?.map((item, index) => (
                     <div
@@ -198,14 +209,18 @@ export default function Dashboard() {
                       className="flex justify-between items-center py-3 border-b last:border-none px-4"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="font-[700]">{getOrdinal(index + 1)}</div>
+                        <div className="font-[700]">
+                          {getOrdinal(index + 1)}
+                        </div>
                         <div className="flex items-center gap-3 max-w-full">
                           <img
                             src={item?.image || Emptyimg}
                             className="w-8 h-8 rounded-full"
                             alt=""
                           />
-                          <p className="text-sm font-medium break-all">{item?.name}</p>
+                          <p className="text-sm font-medium break-all">
+                            {item?.name}
+                          </p>
                         </div>
                       </div>
                       <span className="text-xs px-3 py-1 bg-white text-green-600 rounded-lg">
@@ -215,7 +230,6 @@ export default function Dashboard() {
                   ))
                 )}
               </div>
-
 
               {/* <div className="flex justify-end p-4 border-t">
                 <Pagination
@@ -228,7 +242,6 @@ export default function Dashboard() {
         </div>
 
         <div className="bg-[#FFFFFF4D] h-[972px] flex flex-col border-2 border-white rounded-xl p-5 shadow-sm w-full">
-
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
               <div className="border-8 border-l h-[28px] border-[#0085CA] mr-2 rounded-sm"></div>
@@ -254,7 +267,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-
           <div className="flex-1 overflow-y-auto">
             {athleteLoading ? (
               <TableSkeleton />
@@ -270,17 +282,26 @@ export default function Dashboard() {
                     className="flex items-center justify-between py-4 border-b last:border-none px-4"
                   >
                     <div className="flex items-center gap-3 w-[30%]">
-
-                      <img src={item?.athlete?.image || Emptyimg} className="w-9 h-9 rounded-full " alt="athlete_img" />
+                      <img
+                        src={item?.athlete?.image || Emptyimg}
+                        className="w-9 h-9 rounded-full "
+                        alt="athlete_img"
+                      />
                       <div>
-                        <p className="text-sm font-medium text-gray-800">{item?.athlete?.name}</p>
+                        <p className="text-sm font-medium text-gray-800">
+                          {item?.athlete?.name}
+                        </p>
                         <p className="text-xs text-gray-400">Athlete</p>
                       </div>
                     </div>
 
                     <div className="flex items-center text-gray-400 justify-center">
                       <div className="w-auto h-auto">
-                        <img src={athlete} alt="Icon" className="w-[115px] h-[30px]" />
+                        <img
+                          src={athlete}
+                          alt="Icon"
+                          className="w-[115px] h-[30px]"
+                        />
                       </div>
                     </div>
 
@@ -292,32 +313,35 @@ export default function Dashboard() {
                       />
                       <p className="text-xs text-gray-500">
                         Requested By <br />
-                        <span className="text-gray-700 font-medium break-all ">{item?.user?.name}</span>
+                        <span className="text-gray-700 font-medium break-all ">
+                          {item?.user?.name}
+                        </span>
                       </p>
                     </div>
 
                     <span
-                      className={`text-xs w-[90px] mx-3  text-center px-3 py-3 rounded-lg font-medium ${statusStyles[statusKey] || "bg-gray-100 text-gray-600"
-                        }`}
+                      className={`text-xs w-[90px] mx-3  text-center px-3 py-3 rounded-lg font-medium ${
+                        statusStyles[statusKey] || "bg-gray-100 text-gray-600"
+                      }`}
                     >
                       {item?.status?.toUpperCase()}
                     </span>
                   </div>
-                )
+                );
               })
             )}
           </div>
           <div className="flex justify-end mt-4">
             <Pagination
-              pagination={athleteData?.pagination || { currentPage: 1, totalPages: 1 }}
+              pagination={
+                athleteData?.pagination || { currentPage: 1, totalPages: 1 }
+              }
               onPageChange={handlePageChange}
             />
           </div>
-
         </div>
       </div>
       <div className="bg-[#FFFFFF4D] border-2 border-white rounded-xl p-5 shadow-sm w-full mt-6">
-
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
             <div className="border-8 border-l h-[28px] border-[#0085CA] mr-2 rounded-sm"></div>
@@ -361,7 +385,7 @@ export default function Dashboard() {
                   setAppliedStartDate("");
                   setAppliedEndDate("");
                   setPage(1);
-                  userRefetch()
+                  userRefetch();
                 }}
                 className="px-3 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600"
               >
@@ -383,7 +407,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-
         <div className="overflow-x-auto border rounded-xl mt-4">
           <h1 className="p-4 pb-0 font-bold">All Users</h1>
           <table className="w-full text-sm">
@@ -399,17 +422,22 @@ export default function Dashboard() {
 
             <tbody>
               {userLoading ? (
-                <TableSkeleton />) : userData?.data?.length === 0 ? (
-                  <tr>
-                    <td colSpan="6" className=" py-4 text-center text-gray-500">
-                      No users found
-                    </td>
-                  </tr>
-                ) :
+                <TableSkeleton />
+              ) : userData?.data?.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className=" py-4 text-center text-gray-500">
+                    No users found
+                  </td>
+                </tr>
+              ) : (
                 userData?.data?.map((user, index) => (
                   <tr key={index} className="border-b last:border-none">
                     <td className="px-5 py-4 flex items-center gap-3">
-                      <img src={user?.profilePicture} className="w-9 h-9 rounded-full " alt="" />
+                      <img
+                        src={user?.profilePicture}
+                        className="w-9 h-9 rounded-full "
+                        alt=""
+                      />
                       <span className="font-medium text-gray-800">
                         {user.name}
                       </span>
@@ -419,9 +447,7 @@ export default function Dashboard() {
 
                     <td>
                       <div className="flex items-center gap-2 mx-3">
-                        <span className="text-gray-800">
-                          {"********"}
-                        </span>
+                        <span className="text-gray-800">{"********"}</span>
                         {/* <FiEye className="cursor-pointer hover:text-gray-700" /> */}
                       </div>
                     </td>
@@ -430,14 +456,18 @@ export default function Dashboard() {
 
                     <td>
                       <span
-                        className={`px-3 py-1 text-xs rounded-md font-medium ${user.isActive ? "bg-white text-green-600" : "bg-white text-orange-600"
-                          }`}
+                        className={`px-3 py-1 text-xs rounded-md font-medium ${
+                          user.isActive
+                            ? "bg-white text-green-600"
+                            : "bg-white text-orange-600"
+                        }`}
                       >
                         ● {user.isActive ? "Active" : "Archived"}
                       </span>
                     </td>
                   </tr>
-                ))}
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -481,9 +511,8 @@ export default function Dashboard() {
         <AddAthleteModal
           onClick={() => setIsAddAthleteModalOpen(false)}
           handleAiModal={() => {
-            setAiModal(true)
+            setAiModal(true);
             setIsAddAthleteModalOpen(false);
-
           }}
         />
       )}

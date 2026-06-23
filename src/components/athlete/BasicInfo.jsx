@@ -1,4 +1,4 @@
-import { FiEdit2, } from "react-icons/fi";
+import { FiEdit2 } from "react-icons/fi";
 import { useAppDispatch, useAppSelector } from "../../lib/store/hook";
 import { useFormik } from "formik";
 import { updateSection } from "../../lib/store/feature/athleteFormSlice";
@@ -14,32 +14,33 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { MultiSelector } from "./MultiSelect";
 import { Emptyimg, Flagus } from "../../assets/export";
 
-
 export default function BasicInfo({ setSubmit, onNext }) {
   const basicInfo = useAppSelector((s) => s.athleteForm.formData.basicInfo);
   const dispatch = useAppDispatch();
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
-  console.log(basicInfo, "basicInfo")
+  console.log(basicInfo, "basicInfo");
   const { data, isLoading } = useQuery({
     queryKey: ["school", page],
     queryFn: () => getSchool({ page }),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
-
   });
   const initialSelectedSchool =
     basicInfo?.committedCollege && data?.data
-      ? data.data.find(s => s._id === basicInfo.committedCollege)
+      ? data.data.find((s) => s._id === basicInfo.committedCollege)
       : null;
 
   const [selectedSchool, setSelectedSchool] = useState(
     initialSelectedSchool
-      ? { id: initialSelectedSchool._id, name: initialSelectedSchool.name, logo: initialSelectedSchool.logo }
-      : null
+      ? {
+          id: initialSelectedSchool._id,
+          name: initialSelectedSchool.name,
+          logo: initialSelectedSchool.logo,
+        }
+      : null,
   );
-  const SchoolId = selectedSchool?.id || ""
-
+  const SchoolId = selectedSchool?.id || "";
 
   const positions = [
     "Quarterback",
@@ -51,7 +52,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
     "Linebacker",
     "Defensive Back",
     "Athlete",
-    "Specialist"
+    "Specialist",
   ];
 
   const statuses = [
@@ -59,20 +60,22 @@ export default function BasicInfo({ setSubmit, onNext }) {
     "Academic Concern",
     "Transfer Risk",
     "Off Field Concern",
-    "High IQ",
-    "Average IQ",
-    "Developmental IQ",
+    "High FB IQ",
+    "NIL-Focused Recruitment",
+    "Developmental FB IQ",
     "Team Captain",
     "Leader",
     "Top Competitor",
-    "Culture Driver"
+    "Culture Driver",
   ];
 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       name: basicInfo?.name || "",
-      dob: basicInfo?.dob ? new Date(basicInfo.dob).toISOString().split("T")[0] : "",
+      dob: basicInfo?.dob
+        ? new Date(basicInfo.dob).toISOString().split("T")[0]
+        : "",
       position: basicInfo?.position || "",
       height: basicInfo?.height || "",
       weight: basicInfo?.weight || "",
@@ -85,12 +88,12 @@ export default function BasicInfo({ setSubmit, onNext }) {
       image: basicInfo?.image || null,
       gradYear: basicInfo?.gradYear || "",
       gpa: basicInfo?.gpa || "",
-      schoolName: basicInfo?.schoolName || ""
+      schoolName: basicInfo?.schoolName || "",
     },
     validationSchema: BasicInfoSchema,
     onSubmit: (values) => {
       dispatch(updateSection({ section: "basicInfo", data: values }));
-      onNext()
+      onNext();
     },
   });
 
@@ -106,11 +109,15 @@ export default function BasicInfo({ setSubmit, onNext }) {
     });
   });
 
+  const states = Object.keys(citiesData);
+  const filteredCities = formik.values.state
+    ? citiesData[formik.values.state] || []
+    : cityStateMap.map((item) => item.city);
 
   useEffect(() => {
     if (basicInfo?.committedCollege && data?.data) {
       const existingSchool = data.data.find(
-        (s) => s._id === basicInfo.committedCollege.id
+        (s) => s._id === basicInfo.committedCollege.id,
       );
 
       if (existingSchool) {
@@ -127,7 +134,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
     }
   }, [basicInfo, data]);
 
-
+  console.log("formik.errors --- > ", formik.errors);
 
   return (
     <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans">
@@ -166,7 +173,9 @@ export default function BasicInfo({ setSubmit, onNext }) {
             <button
               type="button"
               className="absolute bottom-0 right-0 p-1.5 bg-white rounded-full border border-gray-200 text-blue-400 shadow-sm"
-              onClick={() => document.querySelector('input[type="file"]').click()}
+              onClick={() =>
+                document.querySelector('input[type="file"]').click()
+              }
             >
               <FiEdit2 size={14} />
             </button>
@@ -178,9 +187,18 @@ export default function BasicInfo({ setSubmit, onNext }) {
           )} */}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-
-          <InputField label="Athlete Name" maxLength={50} name="name" formik={formik} />
-          <InputField label="Date of Birth" name="dob" type="date" formik={formik} />
+          <InputField
+            label="Athlete Name"
+            maxLength={50}
+            name="name"
+            formik={formik}
+          />
+          <InputField
+            label="Date of Birth"
+            name="dob"
+            type="date"
+            formik={formik}
+          />
 
           <Selector
             label="Select Position"
@@ -189,11 +207,58 @@ export default function BasicInfo({ setSubmit, onNext }) {
             formik={formik}
           />
 
-          <InputField label="Height (Ft)" maxLength={3} name="height" formik={formik} />
-          <InputField label="Weight (Lbs)" maxLength={3} name="weight" formik={formik} />
+          <InputField
+            label="Height"
+            maxLength={6}
+            name="height"
+            formik={formik}
+          />
+          <InputField
+            label="Weight (Lbs)"
+            maxLength={3}
+            name="weight"
+            formik={formik}
+          />
           <div className="flex flex-col gap-1">
             <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
+              <label className="text-xs text-gray-400">State</label>
 
+              <select
+                name="state"
+                value={formik.values.state}
+                onChange={(e) => {
+                  const selectedState = e.target.value;
+                  formik.setFieldValue("state", selectedState);
+                  // If hometown is set and not in the selected state, reset it
+                  if (formik.values.hometown) {
+                    const cityInState = citiesData[selectedState]?.includes(
+                      formik.values.hometown,
+                    );
+                    if (!cityInState) {
+                      formik.setFieldValue("hometown", "");
+                    }
+                  }
+                }}
+                onBlur={formik.handleBlur}
+                className="w-full outline-none text-sm bg-transparent"
+              >
+                <option value="">Select State</option>
+                {states.map((state, i) => (
+                  <option key={i} value={state}>
+                    {state}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {formik.touched.state && formik.errors.state && (
+              <span className="text-red-500 text-xs">
+                {formik.errors.state}
+              </span>
+            )}
+          </div>
+          {/* <div className="flex flex-col gap-1">
+            <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
               <label className="text-xs text-gray-400">Hometown</label>
 
               <select
@@ -204,7 +269,9 @@ export default function BasicInfo({ setSubmit, onNext }) {
 
                   formik.setFieldValue("hometown", selectedCity);
 
-                  const found = cityStateMap.find(c => c.city === selectedCity);
+                  const found = cityStateMap.find(
+                    (c) => c.city === selectedCity,
+                  );
 
                   if (found) {
                     formik.setFieldValue("state", found.state);
@@ -214,13 +281,12 @@ export default function BasicInfo({ setSubmit, onNext }) {
                 className="w-full outline-none text-sm bg-transparent"
               >
                 <option value="">Select City</option>
-                {cityStateMap.map((item, i) => (
-                  <option key={i} value={item.city}>
-                    {item.city}
+                {filteredCities.map((city, i) => (
+                  <option key={i} value={city}>
+                    {city}
                   </option>
                 ))}
               </select>
-
             </div>
 
             {formik.touched.hometown && formik.errors.hometown && (
@@ -228,7 +294,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
                 {formik.errors.hometown}
               </span>
             )}
-          </div>
+          </div> */}
           {/* <InputField label="Hometown" name="hometown" formik={formik} /> */}
           {/* <InputField label="Contact Email" name="email" type="email" formik={formik} /> */}
 
@@ -237,11 +303,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
               {/* US Flag + Code */}
 
               <span className="text-xl pr-2">
-                <img
-                  src={Flagus}
-                  alt="US flag"
-                  className="w-6 h-4 mr-2"
-                />
+                <img src={Flagus} alt="US flag" className="w-6 h-4 mr-2" />
               </span>
 
               <span className="text-sm text-gray-500">+1</span>
@@ -259,10 +321,17 @@ export default function BasicInfo({ setSubmit, onNext }) {
             </div>
 
             {formik.touched.phone && formik.errors.phone && (
-              <span className="text-red-500 text-xs">{formik.errors.phone}</span>
+              <span className="text-red-500 text-xs">
+                {formik.errors.phone}
+              </span>
             )}
           </div>
-          <InputField label="School Name" name="schoolName" maxLength={150} formik={formik} />
+          <InputField
+            label="School Name"
+            name="schoolName"
+            maxLength={150}
+            formik={formik}
+          />
           <div className="relative">
             <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
               <label className="text-xs text-gray-400">Committed College</label>
@@ -276,18 +345,18 @@ export default function BasicInfo({ setSubmit, onNext }) {
 
                 <span className="text-gray-400">
                   <RiArrowDropDownLine size={22} color="black" />
-
                 </span>
               </div>
 
-
               {isOpen && (
                 <div className="absolute z-10 w-full mt-2 border rounded-xl bg-white shadow-lg max-h-60 overflow-y-auto">
-
                   {isLoading && (
                     <div className="p-3 space-y-2">
                       {Array.from({ length: 5 }).map((_, i) => (
-                        <div key={i} className="flex items-center gap-3 animate-pulse">
+                        <div
+                          key={i}
+                          className="flex items-center gap-3 animate-pulse"
+                        >
                           <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
                           <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                         </div>
@@ -296,7 +365,9 @@ export default function BasicInfo({ setSubmit, onNext }) {
                   )}
 
                   {data?.data?.length === 0 ? (
-                    <div className="p-4 text-center text-gray-500">No institutions found</div>
+                    <div className="p-4 text-center text-gray-500">
+                      No institutions found
+                    </div>
                   ) : (
                     data?.data?.map((school) => (
                       <div
@@ -305,7 +376,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
                           setSelectedSchool({
                             id: school._id,
                             name: school.name,
-                            logo: school.logo
+                            logo: school.logo,
                           });
 
                           formik.setFieldValue("committedCollege", school._id);
@@ -323,12 +394,15 @@ export default function BasicInfo({ setSubmit, onNext }) {
                           {school.name}
                         </span>
                       </div>
-                    )))}
+                    ))
+                  )}
 
                   {data?.data?.length > 0 && (
                     <div className="mb-2">
                       <Pagination
-                        pagination={data?.pagination || { currentPage: 1, totalPages: 1 }}
+                        pagination={
+                          data?.pagination || { currentPage: 1, totalPages: 1 }
+                        }
                         onPageChange={(p) => setPage(p)}
                       />
                     </div>
@@ -336,13 +410,18 @@ export default function BasicInfo({ setSubmit, onNext }) {
                 </div>
               )}
             </div>
-            {formik.touched.committedCollege && formik.errors.committedCollege && (
-              <span className="text-red-500 text-xs">{formik.errors.committedCollege}</span>
-            )}
+            {formik.touched.committedCollege &&
+              formik.errors.committedCollege && (
+                <span className="text-red-500 text-xs">
+                  {formik.errors.committedCollege}
+                </span>
+              )}
           </div>
-          <div >
+          <div>
             <div className="bg-white rounded-xl px-4 py-3 border border-gray-50">
-              <label className="block text-xs text-gray-400 mb-4">Grad Year</label>
+              <label className="block text-xs text-gray-400 mb-4">
+                Grad Year
+              </label>
               <select
                 value={formik.values.gradYear}
                 name="gradYear"
@@ -359,7 +438,9 @@ export default function BasicInfo({ setSubmit, onNext }) {
               </select>
             </div>
             {formik.touched.gradYear && formik.errors.gradYear && (
-              <span className="text-red-500 text-xs">{formik.errors.gradYear}</span>
+              <span className="text-red-500 text-xs">
+                {formik.errors.gradYear}
+              </span>
             )}
           </div>
           <InputField label="GPA" name="gpa" formik={formik} type="number" />
@@ -376,6 +457,3 @@ export default function BasicInfo({ setSubmit, onNext }) {
     </form>
   );
 }
-
-
-

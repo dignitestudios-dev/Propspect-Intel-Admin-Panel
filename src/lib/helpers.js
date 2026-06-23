@@ -2,9 +2,11 @@
 // The functions that you're using multiple times must be there.
 // e.g. formatDateToMMDDYYYY, formatEpochToMMDDYYYY, etc.
 export const formatDate = (date) => {
-  if (!date) return "--------";
+  if (!date) return "N/A";
 
   const d = new Date(date);
+
+  if (isNaN(d.getTime())) return "N/A";
 
   return d.toLocaleDateString("en-US", {
     month: "short",
@@ -55,7 +57,9 @@ export const formatAthleteForCSV = (athlete) => {
     Email: athlete.basicInfo?.email,
     Phone: athlete.basicInfo?.phone,
     Hometown: athlete.basicInfo?.hometown,
-    DOB: new Date(athlete.basicInfo?.dob).toLocaleDateString(),
+    DOB: athlete.basicInfo?.dob
+      ? new Date(athlete.basicInfo.dob).toLocaleDateString()
+      : "",
     Position: athlete.basicInfo?.position,
     Height: athlete.basicInfo?.height,
     Weight: athlete.basicInfo?.weight,
@@ -122,11 +126,29 @@ export const formatAthleteForCSV = (athlete) => {
   };
 };
 
-
 export const getTodayLocal = () => {
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = String(today.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+};
+
+export const formatPhoneNumber = (phone) => {
+  if (!phone) return "N/A";
+
+  // keep digits only
+  const digits = phone.replace(/\D/g, "");
+
+  // remove leading 1 if present
+  const normalized =
+    digits.length === 11 && digits.startsWith("1") ? digits.slice(1) : digits;
+
+  // format 10-digit US number
+  if (normalized.length === 10) {
+    return `+1 (${normalized.slice(0, 3)}) ${normalized.slice(3, 6)}-${normalized.slice(6)}`;
+  }
+
+  // fallback
+  return phone;
 };

@@ -14,7 +14,11 @@ import { HiUsers } from "react-icons/hi";
 import AddUserModal from "../../components/app/User/AddUserModal";
 import DeleteModal from "../../components/global/DeleteModal";
 import SuccessModal from "../../components/global/SuccessModal";
-import { getStatesUsers, getUserActivity, getUsers } from "../../lib/query/queryFn";
+import {
+  getStatesUsers,
+  getUserActivity,
+  getUsers,
+} from "../../lib/query/queryFn";
 import { useQuery } from "@tanstack/react-query";
 import TableSkeleton from "../../components/global/TableSkeleton";
 import axiosinstance from "../../axios";
@@ -28,7 +32,7 @@ export default function Users() {
   const containerRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState("");
   const [editUser, setEditUser] = useState(null);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [userStatus, setUserStatus] = useState("Active");
@@ -39,93 +43,97 @@ export default function Users() {
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search, 500);
   const [successType, setSuccessType] = useState("");
-  const [cursorId, setCursorId] = useState('')
+  const [cursorId, setCursorId] = useState("");
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [activityList, setActivityList] = useState([]);
   const [userActivityLoading, setUserActivityLoading] = useState(false);
 
-
-
-
   const openActivityModal = (user) => {
     setSelectedUser(user);
     setIsModalOpen(true);
-
   };
-
-
-
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["users", page, debouncedSearch],
     queryFn: () => getUsers({ page, search: debouncedSearch }),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
-
   });
-  const { data: userState, isLoading: userLoading, isError: isErrorState, } = useQuery({
+  const {
+    data: userState,
+    isLoading: userLoading,
+    isError: isErrorState,
+  } = useQuery({
     queryKey: ["userStates"],
     queryFn: getStatesUsers,
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
-
   });
 
-
-  const { data: userActivity, isLoading: userActivityLoad, refetch: refetchUserActivity } = useQuery({
+  const {
+    data: userActivity,
+    isLoading: userActivityLoad,
+    refetch: refetchUserActivity,
+  } = useQuery({
     queryKey: ["userActivity", selectedUser?._id],
-    queryFn: () => getUserActivity(selectedUser?._id, ''),
+    queryFn: () => getUserActivity(selectedUser?._id, ""),
     enabled: !!selectedUser?._id,
     keepPreviousData: true,
   });
 
-  const fetchUserActivity = useCallback(async (cursor = '') => {
-    const isFirstLoad = cursor === '';
+  const fetchUserActivity = useCallback(
+    async (cursor = "") => {
+      const isFirstLoad = cursor === "";
 
-
-    if (isFirstLoad) {
-      setUserActivityLoading(true);
-      setLoadingMore(false);
-    } else {
-      if (loadingMore) return;
-      setLoadingMore(true);
-    }
-
-    try {
-      const res = await getUserActivity(selectedUser._id, cursor);
-      const newData = res?.data || [];
-
-      if (newData.length === 0) {
-        setHasMore(false);
-        return;
+      if (isFirstLoad) {
+        setUserActivityLoading(true);
+        setLoadingMore(false);
+      } else {
+        if (loadingMore) return;
+        setLoadingMore(true);
       }
 
-      setActivityList(prev => [...prev, ...newData]);
-      setCursorId(newData[newData.length - 1]._id);
-    } catch (err) {
-      console.error("Failed to load activities", err);
-    } finally {
-      setUserActivityLoading(false);
-      setLoadingMore(false);
-    }
-  }, [selectedUser, loadingMore]);
+      try {
+        const res = await getUserActivity(selectedUser._id, cursor);
+        const newData = res?.data || [];
 
+        if (newData.length === 0) {
+          setHasMore(false);
+          return;
+        }
+
+        setActivityList((prev) => [...prev, ...newData]);
+        setCursorId(newData[newData.length - 1]._id);
+      } catch (err) {
+        console.error("Failed to load activities", err);
+      } finally {
+        setUserActivityLoading(false);
+        setLoadingMore(false);
+      }
+    },
+    [selectedUser, loadingMore],
+  );
 
   useEffect(() => {
     if (selectedUser?._id) {
       setActivityList([]);
-      setCursorId('');
+      setCursorId("");
       setHasMore(true);
       setLoadingMore(false);
       setUserActivityLoading(false);
-      fetchUserActivity('');
+      fetchUserActivity("");
     }
   }, [selectedUser?._id]);
 
+  // Reset page to 1 when search changes
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
 
   const handleScroll = () => {
-    if (!containerRef.current || loadingMore || !hasMore || userActivityLoading) return;
+    if (!containerRef.current || loadingMore || !hasMore || userActivityLoading)
+      return;
 
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
     if (scrollTop + clientHeight >= scrollHeight - 50) {
@@ -133,7 +141,7 @@ export default function Users() {
     }
   };
   const handleDelete = async () => {
-    setDeleteLoading(true)
+    setDeleteLoading(true);
     try {
       const response = await axiosinstance.delete(`/user/${deleteId}`);
       if (response.status === 200) {
@@ -144,24 +152,19 @@ export default function Users() {
     } catch (err) {
       ErrorToast(err?.response?.data?.message || "Failed to delete user");
     } finally {
-      setDeleteLoading(false)
+      setDeleteLoading(false);
     }
-  }
+  };
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= data?.pagination?.totalPages) {
       setPage(newPage);
     }
   };
 
-
-
-
   return (
     <div className="w-full space-y-6">
-
       <div className="  px-4 pt-4 ">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-
           <div>
             <div className="flex items-center gap-2 text-sm text-gray-400">
               <HiUsers className="text-2xl text-black" />
@@ -215,9 +218,7 @@ export default function Users() {
         </div>
       </div>
       <div className="border-2 border-white p-4 rounded-xl bg-white bg-opacity-30  shadow-sm">
-
         <div className="flex flex-wrap items-center justify-between gap-4 p-2">
-
           <h1 className="font-bold">All Users</h1>
           <div className="relative">
             <FiSearch className="absolute left-3 top-2.5 text-gray-400" />
@@ -229,7 +230,6 @@ export default function Users() {
               className="pl-9 pr-3 py-2 border rounded-md text-sm focus:outline-none"
             />
           </div>
-
         </div>
         <div className="overflow-x-auto border rounded-xl mt-4">
           <table className="w-full text-sm">
@@ -265,14 +265,18 @@ export default function Users() {
                     <td className="px-5 py-4 flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full overflow-hidden">
                         <img
-                          src={user?.profilePicture || "https://placehold.co/600x400"}
+                          src={
+                            user?.profilePicture ||
+                            "https://placehold.co/600x400"
+                          }
                           alt="user_profile"
                           className="w-9 h-9 rounded-full object-cover"
                         />
                       </div>
                       <span className="font-medium text-gray-800 max-w-[140px] truncate block">
                         {user?.name}
-                      </span>                    </td>
+                      </span>{" "}
+                    </td>
 
                     <td>{user?.email}</td>
 
@@ -286,8 +290,11 @@ export default function Users() {
 
                     <td>
                       <span
-                        className={`px-3 py-1 text-xs rounded-md font-medium ${user.isActive ? "bg-white text-green-600" : "bg-white text-orange-600"
-                          }`}
+                        className={`px-3 py-1 text-xs rounded-md font-medium ${
+                          user.isActive
+                            ? "bg-white text-green-600"
+                            : "bg-white text-orange-600"
+                        }`}
                       >
                         ● {user.isActive ? "Active" : "Inactive"}
                       </span>
@@ -327,7 +334,6 @@ export default function Users() {
           onPageChange={handlePageChange}
         />
 
-
         {isAddUserModalOpen && (
           <AddUserModal
             setIsAddUserModalOpen={setIsAddUserModalOpen}
@@ -339,14 +345,12 @@ export default function Users() {
             setIsSuccess={setIsSuccess}
             successType={successType}
             setSuccessType={setSuccessType}
-
           />
         )}
 
         {isModalOpen && (
           <div className="fixed inset-0  z-50  flex items-center justify-end bg-black bg-opacity-40 backdrop-blur-sm">
             <div className="bg-white rounded-2xl h-full shadow-xl w-full max-w-md mx overflow-hidden">
-
               <div className="flex items-center justify-between px-6 py-4 border-b">
                 <h2 className="text-lg font-bold text-gray-800">
                   Monitor User Activity
@@ -359,39 +363,49 @@ export default function Users() {
                 </button>
               </div>
 
-
               <div
                 className="p-6 max-h-[90vh] overflow-y-auto "
                 ref={containerRef}
-                onScroll={handleScroll}>
+                onScroll={handleScroll}
+              >
                 {userActivityLoading ? (
                   <StatsSkeleton count={5} />
                 ) : activityList?.length > 0 ? (
                   activityList?.map((event, index, arr) => {
-                    const date = new Date(event.createdAt).toLocaleDateString("en-US", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    });
-
-                    const time = new Date(event.createdAt).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    });
-
-                    const type = event.metaData?.type;
-                    const prevDate = index > 0
-                      ? new Date(arr[index - 1].createdAt).toLocaleDateString("en-US", {
+                    const date = new Date(event.createdAt).toLocaleDateString(
+                      "en-US",
+                      {
                         day: "2-digit",
                         month: "short",
                         year: "numeric",
-                      })
-                      : null;
+                      },
+                    );
+
+                    const time = new Date(event.createdAt).toLocaleTimeString(
+                      "en-US",
+                      {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      },
+                    );
+
+                    const type = event.metaData?.type;
+                    const prevDate =
+                      index > 0
+                        ? new Date(arr[index - 1].createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )
+                        : null;
 
                     const showDate = date !== prevDate;
                     return (
-                      <div key={index} className="mb-6" >
+                      <div key={index} className="mb-6">
                         {showDate && (
                           <h3 className="text-center text-sm font-bold text-gray-800 mb-4">
                             {date}
@@ -399,8 +413,6 @@ export default function Users() {
                         )}
 
                         <div className="relative pl-8">
-
-
                           <div className="absolute -left-[17px] top-1 w-8 h-8 rounded-full border bg-white flex items-center justify-center shadow-sm">
                             <div className="bg p-1 rounded-sm">
                               <span className="text-[8px] text-white font-bold">
@@ -409,9 +421,10 @@ export default function Users() {
                             </div>
                           </div>
 
-
                           <div className="flex flex-col">
-                            <span className="text-xs text-gray-400">{time}</span>
+                            <span className="text-xs text-gray-400">
+                              {time}
+                            </span>
 
                             <span className="text-sm font-bold text-gray-800">
                               {event.title}
@@ -431,7 +444,9 @@ export default function Users() {
 
                             {type === "Filters" && (
                               <div className="text-xs text-gray-500 mt-1">
-                                {Object.entries(event.metaData?.filter || {}).map(([key, val]) => (
+                                {Object.entries(
+                                  event.metaData?.filter || {},
+                                ).map(([key, val]) => (
                                   <div key={key}>
                                     {key}: {val}
                                   </div>
@@ -454,7 +469,9 @@ export default function Users() {
                     No activity found
                   </p>
                 )}
-                {loadingMore && <p className="text-center py-2">Loading more...</p>}
+                {loadingMore && (
+                  <p className="text-center py-2">Loading more...</p>
+                )}
               </div>
             </div>
           </div>

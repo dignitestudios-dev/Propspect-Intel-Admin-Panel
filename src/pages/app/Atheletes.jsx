@@ -14,7 +14,11 @@ import AddAthleteModal from "../../components/athlete/AddAthleteModal";
 import AthleteAiModal from "../../components/athlete/AthleteAiModal";
 import DeleteModal from "../../components/global/DeleteModal";
 import useDebounce, { useAppDispatch } from "../../lib/store/hook";
-import { setAthleteId, setFormData, setMode } from "../../lib/store/feature/athleteFormSlice";
+import {
+  setAthleteId,
+  setFormData,
+  setMode,
+} from "../../lib/store/feature/athleteFormSlice";
 import { getAthelete, getAtheleteCount } from "../../lib/query/queryFn";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { calculateAge, formatAthleteForCSV } from "../../lib/helpers";
@@ -24,14 +28,6 @@ import axiosinstance from "../../axios";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 import StatsSkeleton from "../../components/global/StatsSkeleton";
 import { Emptyimg } from "../../assets/export";
-const ageRanges = [
-  "10-20",
-  "20-30",
-  "30-40",
-  "40-50",
-  "50-60"
-]
-
 const positions = [
   "Point Guard",
   "Shooting Guard",
@@ -42,49 +38,53 @@ const positions = [
 export default function Atheletes() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [isAddAthlete, setIsAddAthlete] = useState(false);
   const [aiModal, setAiModal] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
-  const [selectedId, setSelectedId] = useState(null)
-  const [search, setSearch] = useState('')
-  const [page, setPage] = useState(1)
-  const [tabs, setTabs] = useState('All')
-  const debouncedSearch = useDebounce(search, 500)
-  const [filterOpen, setFilterOpen] = useState(false)
-  const [selectedIds, setSelectedIds] = useState([])
-  const [archiveLoading, setArchiveLoading] = useState(false)
-  const [csvLoading, setCsvLoading] = useState(false)
-  const [csvExportLoading, setCsvExportLoading] = useState(false)
+  const [selectedId, setSelectedId] = useState(null);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [tabs, setTabs] = useState("All");
+  const debouncedSearch = useDebounce(search, 500);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [archiveLoading, setArchiveLoading] = useState(false);
+  const [csvLoading, setCsvLoading] = useState(false);
+  const [csvExportLoading, setCsvExportLoading] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [templateLoading, setTemplateLoading] = useState(false);
-  const [selectedAgeRange, setSelectedAgeRange] = useState("")
-  const [selectedPosition, setSelectedPosition] = useState("")
-  const [minAge, setMinAge] = useState("")
-  const [maxAge, setMaxAge] = useState("")
-  const [position, setPosition] = useState("")
+  // const [selectedAgeRange, setSelectedAgeRange] = useState("");
+  const [selectedGradYear, setSelectedGradYear] = useState("");
+  const [gradYear, setGradYear] = useState("");
+
+  const [selectedPosition, setSelectedPosition] = useState("");
+  const [position, setPosition] = useState("");
   const [uploaded, setUploaded] = useState(false);
 
-
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["athelete", page, debouncedSearch, tabs, minAge,
-      maxAge,
-      position],
-    queryFn: () => getAthelete({
-      page, search: debouncedSearch, active: tabs === "Active" ? true : tabs === "Archived" ? false : "all", minAge,
-      maxAge,
-      position
-    }),
+    queryKey: ["athelete", page, debouncedSearch, tabs, gradYear],
+    queryFn: () =>
+      getAthelete({
+        page,
+        search: debouncedSearch,
+        active: tabs === "Active" ? true : tabs === "Archived" ? false : "all",
+        gradYear,
+        // position,
+      }),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
-
   });
-  const { data: atheleteCount, isLoading: atheleteCountLoading, isError: atheleteCountisError, refetch: countrefetch } = useQuery({
+  const {
+    data: atheleteCount,
+    isLoading: atheleteCountLoading,
+    isError: atheleteCountisError,
+    refetch: countrefetch,
+  } = useQuery({
     queryKey: ["atheleteCount"],
     queryFn: () => getAtheleteCount(),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
-
   });
 
   const handlePageChange = (newPage) => {
@@ -94,101 +94,89 @@ export default function Atheletes() {
   };
 
   const handleApplyFilter = () => {
-
-    if (selectedAgeRange) {
-      const [min, max] = selectedAgeRange.split("-")
-      setMinAge(min)
-      setMaxAge(max)
-    }
-
-    setPosition(selectedPosition)
-    setFilterOpen(false)
-  }
+    // setPosition(selectedPosition);
+    setGradYear(selectedGradYear);
+    setPage(1);
+    setFilterOpen(false);
+  };
   const handleResetFilter = () => {
-    setSelectedAgeRange("")
-    setSelectedPosition("")
-    setMinAge("")
-    setMaxAge("")
-    setPosition("")
-    refetch()
-  }
+    // setSelectedAgeRange("");
+    setSelectedGradYear("");
+    setSelectedPosition("");
+    setGradYear("");
+    // setPosition("");
+    setPage(1);
+    refetch();
+  };
   const handleTabChange = (tab) => {
-    setTabs(tab)
+    setTabs(tab);
 
     queryClient.invalidateQueries({
-      queryKey: ["athelete"]
-    })
-  }
+      queryKey: ["athelete"],
+    });
+  };
   const handleBulkArchive = async () => {
-
     if (selectedIds.length === 0) {
-      ErrorToast("Please select athlete")
-      return
+      ErrorToast("Please select athlete");
+      return;
     }
-    setArchiveLoading(true)
+    setArchiveLoading(true);
     try {
-
       const response = await axiosinstance.post("/athlete/update/bulk/status", {
         ids: selectedIds,
-        isActive: false
-      })
+        isActive: false,
+      });
       if (response?.status === 200 || response?.status === 201) {
-        SuccessToast(response?.data?.message)
-        setSelectedIds([])
-        refetch()
-        countrefetch()
-
+        SuccessToast(response?.data?.message);
+        setSelectedIds([]);
+        refetch();
+        countrefetch();
       }
-
     } catch (error) {
-      ErrorToast(error?.response?.data?.message)
+      ErrorToast(error?.response?.data?.message);
     } finally {
-      setArchiveLoading(false)
+      setArchiveLoading(false);
     }
-  }
+  };
   const handleUnBulkArchive = async () => {
-
     if (selectedIds.length === 0) {
-      ErrorToast("Please select athlete")
-      return
+      ErrorToast("Please select athlete");
+      return;
     }
-    setArchiveLoading(true)
+    setArchiveLoading(true);
     try {
-
       const response = await axiosinstance.post("/athlete/update/bulk/status", {
         ids: selectedIds,
-        isActive: true
-      })
+        isActive: true,
+      });
       if (response?.status === 200 || response?.status === 201) {
-        SuccessToast(response?.data?.message)
-        setSelectedIds([])
-        refetch()
-        countrefetch()
-
+        SuccessToast(response?.data?.message);
+        setSelectedIds([]);
+        refetch();
+        countrefetch();
       }
-
     } catch (error) {
-      ErrorToast(error?.response?.data?.message)
+      ErrorToast(error?.response?.data?.message);
     } finally {
-      setArchiveLoading(false)
+      setArchiveLoading(false);
     }
-  }
+  };
   const handleDelete = async () => {
-    setIsDeleteLoading(true)
+    setIsDeleteLoading(true);
     try {
-      const response = await axiosinstance.delete(`/athlete/${selectedId}`)
+      const response = await axiosinstance.delete(`/athlete/${selectedId}`);
       if (response.status === 200 || response.status === 201) {
-        SuccessToast(response?.data?.message)
-        setIsDelete(false)
-        refetch()
-        countrefetch()
+        SuccessToast(response?.data?.message);
+        setIsDelete(false);
+        refetch();
+        countrefetch();
       }
     } catch (err) {
-      ErrorToast(err?.response?.data?.message)
+      ErrorToast(err?.response?.data?.message);
     } finally {
-      setIsDeleteLoading(false)
+      setIsDeleteLoading(false);
     }
-  }
+  };
 
   const handleSingleDownload = (athlete) => {
     const formattedData = formatAthleteForCSV(athlete);
@@ -198,7 +186,7 @@ export default function Atheletes() {
 
     const csv = [
       headers.join(","),
-      values.map(v => `"${v ?? ""}"`).join(",")
+      values.map((v) => `"${v ?? ""}"`).join(","),
     ].join("\n");
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -228,7 +216,7 @@ export default function Atheletes() {
         SuccessToast(response.data.message || "CSV uploaded successfully");
         setUploaded(true);
         refetch();
-        countrefetch()
+        countrefetch();
       }
     } catch (error) {
       ErrorToast(error?.response?.data?.message || "Upload failed");
@@ -267,16 +255,13 @@ export default function Atheletes() {
   };
 
   const handleCSVExport = async () => {
-
-
-    setCsvExportLoading(true)
+    setCsvExportLoading(true);
     try {
-
       const response = await axiosinstance.post("/athlete/export/csv", {
         athletes: selectedIds,
         ...(tabs === "Active" && { isActive: true }),
         ...(tabs === "Archived" && { isActive: false }),
-      })
+      });
       if (response.status === 200) {
         const blob = new Blob([response.data], { type: "text/csv" });
         const url = window.URL.createObjectURL(blob);
@@ -291,25 +276,21 @@ export default function Atheletes() {
         window.URL.revokeObjectURL(url);
 
         SuccessToast("Template downloaded");
-        setSelectedIds([])
-        refetch()
-        countrefetch()
+        setSelectedIds([]);
+        refetch();
+        countrefetch();
       }
     } catch (error) {
-      ErrorToast(error?.response?.data?.message)
+      ErrorToast(error?.response?.data?.message);
     } finally {
-      setCsvExportLoading(false)
+      setCsvExportLoading(false);
     }
-  }
-
-
+  };
 
   return (
     <div className="w-full space-y-6">
-
       <div className="  px-4 py-4 ">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-
           <div>
             <div className="flex items-center gap-2 text-sm text-gray-400">
               <FaFootballBall className="text-2xl text-black" />
@@ -323,14 +304,20 @@ export default function Atheletes() {
             </p>
           </div>
 
-
           <div className="flex items-center gap-3 flex-wrap">
-
             {/* Upload CSV */}
-            <label className={`flex items-center gap-2 px-4 py-2 text-sm rounded-md cursor-pointer 
-  bg-green-600 hover:bg-green-700 text-white`}>
+            <label
+              className={`flex items-center gap-2 px-4 py-2 text-sm rounded-md cursor-pointer 
+  bg-green-600 hover:bg-green-700 text-white`}
+            >
               <FiUpload />
-              <span>{csvLoading ? "Uploading..." : uploaded ? "Uploaded" : "Upload CSV"}</span>
+              <span>
+                {csvLoading
+                  ? "Uploading..."
+                  : uploaded
+                    ? "Uploaded"
+                    : "Upload CSV"}
+              </span>
               <input
                 type="file"
                 accept=".csv"
@@ -352,7 +339,6 @@ export default function Atheletes() {
               <span>Add Athlete</span>
             </button>
 
-
             <button
               onClick={handleDownloadTemplate}
               disabled={templateLoading}
@@ -362,7 +348,6 @@ export default function Atheletes() {
               <span>{templateLoading ? "Downloading..." : "Template"}</span>
             </button>
 
-
             <button
               onClick={handleCSVExport}
               disabled={csvExportLoading}
@@ -371,7 +356,6 @@ export default function Atheletes() {
               <FiDownload />
               <span>{csvExportLoading ? "Exporting..." : "Export CSV"}</span>
             </button>
-
           </div>
         </div>
       </div>
@@ -379,14 +363,16 @@ export default function Atheletes() {
       <div className="border-2 border-white p-4 rounded-xl bg-white bg-opacity-30">
         <h1 className="p-2 pb-4 pt-0 font-bold">Overview</h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 ">
-
           {atheleteCountLoading ? (
             <StatsSkeleton count={3} />
           ) : (
             [
               { label: "Total Athletes", value: atheleteCount?.totalAthlete },
               { label: "Active Athletes", value: atheleteCount?.activeAthlete },
-              { label: "Pending Requests", value: atheleteCount?.intrestPending },
+              {
+                label: "Pending Requests",
+                value: atheleteCount?.intrestPending,
+              },
             ].map((item, i) => (
               <div
                 key={i}
@@ -398,27 +384,21 @@ export default function Atheletes() {
                 <p className="text-sm mt-4 text-gray-500 ">{item.label}</p>
               </div>
             ))
-
           )}
         </div>
       </div>
 
-
-
-
       <div className="border-2 border-white p-4 rounded-xl bg-white bg-opacity-30  shadow-sm">
-
         <div className="flex flex-wrap items-center justify-between gap-4 p-2">
           <div className="flex gap-2 border border-white rounded-xl p-2 bg-[#EAEEF8] ">
-
-
             {["All", "Active", "Archived"].map((tab, i) => (
               <button
                 key={i}
-                className={`px-12 py-1.5 rounded-md text-sm font-medium ${tab === tabs
-                  ? "bg-white text-black"
-                  : "text-gray-500 hover:bg-gray-50"
-                  }`}
+                className={`px-12 py-1.5 rounded-md text-sm font-medium ${
+                  tab === tabs
+                    ? "bg-white text-black"
+                    : "text-gray-500 hover:bg-gray-50"
+                }`}
                 onClick={() => handleTabChange(tab)}
               >
                 {tab}
@@ -438,9 +418,9 @@ export default function Atheletes() {
 
               {filterOpen && (
                 <div className="absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-lg p-4 z-50 space-y-4">
-
                   {/* Age Range */}
-                  <div>
+
+                  {/* <div>
                     <label className="text-sm font-medium text-gray-600">
                       Age Range
                     </label>
@@ -458,10 +438,31 @@ export default function Atheletes() {
                         </option>
                       ))}
                     </select>
+                  </div> */}
+
+                  {/* {grad year} */}
+
+                  <div>
+                    <label className="text-sm font-medium text-gray-600">
+                      Grad Year
+                    </label>
+
+                    <select
+                      value={selectedGradYear}
+                      onChange={(e) => setSelectedGradYear(e.target.value)}
+                      className="w-full mt-1 border rounded-md px-2 py-1"
+                    >
+                      <option value="">Select Grad Year</option>
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <option key={i} value={(2027 + i).toString()}>
+                          {2027 + i}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   {/* Position */}
-                  <div>
+                  {/* <div>
                     <label className="text-sm font-medium text-gray-600">
                       Position
                     </label>
@@ -479,7 +480,7 @@ export default function Atheletes() {
                         </option>
                       ))}
                     </select>
-                  </div>
+                  </div> */}
 
                   {/* Buttons */}
                   <div className="flex justify-between pt-2">
@@ -497,7 +498,6 @@ export default function Atheletes() {
                       Apply
                     </button>
                   </div>
-
                 </div>
               )}
             </div>
@@ -513,7 +513,6 @@ export default function Atheletes() {
             </div>
           </div>
         </div>
-
 
         <div className="flex justify-end p-2">
           {tabs === "Archived" ? (
@@ -533,7 +532,6 @@ export default function Atheletes() {
           )}
         </div>
 
-
         <div className="overflow-x-auto border rounded-xl mt-4">
           <table className="w-full text-sm">
             <thead>
@@ -544,9 +542,9 @@ export default function Atheletes() {
                     checked={selectedIds.length === data?.data?.length}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedIds(data?.data?.map((a) => a._id))
+                        setSelectedIds(data?.data?.map((a) => a._id));
                       } else {
-                        setSelectedIds([])
+                        setSelectedIds([]);
                       }
                     }}
                     className="form-checkbox h-5 w-5 text-blue-600"
@@ -564,7 +562,7 @@ export default function Atheletes() {
             <tbody>
               {isLoading ? (
                 <TableSkeleton />
-              ) : (isError ? (
+              ) : isError ? (
                 <div className="col-span-3 text-center text-red-500">
                   Error loading athlete data
                 </div>
@@ -573,7 +571,8 @@ export default function Atheletes() {
                   <td colSpan="6" className="text-center py-4 text-gray-500">
                     No athlete found
                   </td>
-                </tr>) :
+                </tr>
+              ) : (
                 data?.data?.map((athlete, i) => (
                   <tr key={i} className="border-b last:border-none">
                     <td className="px-5 py-4">
@@ -582,20 +581,23 @@ export default function Atheletes() {
                         checked={selectedIds.includes(athlete._id)}
                         onChange={(e) => {
                           if (e.target.checked) {
-                            setSelectedIds((prev) => [...prev, athlete._id])
+                            setSelectedIds((prev) => [...prev, athlete._id]);
                           } else {
                             setSelectedIds((prev) =>
-                              prev.filter((id) => id !== athlete._id)
-                            )
+                              prev.filter((id) => id !== athlete._id),
+                            );
                           }
                         }}
                         className="form-checkbox h-5 w-5 text-blue-600"
                       />
                     </td>
                     <td className="px-5 py-4 flex items-center gap-3">
-
                       <div>
-                        <img src={athlete?.basicInfo?.image || Emptyimg} alt={athlete?.basicInfo?.name} className="w-9 h-9 rounded-full object-cover" />
+                        <img
+                          src={athlete?.basicInfo?.image || Emptyimg}
+                          alt={athlete?.basicInfo?.name}
+                          className="w-9 h-9 rounded-full object-cover"
+                        />
                       </div>
                       <span className="font-medium text-gray-800 max-w-[150px] truncate block">
                         {athlete?.basicInfo?.name || "N/A"}
@@ -608,10 +610,11 @@ export default function Atheletes() {
 
                     <td>
                       <span
-                        className={`px-3 py-3 text-xs rounded-md font-medium ${athlete?.isActive
-                          ? "bg-white text-green-600"
-                          : "bg-white text-orange-600"
-                          }`}
+                        className={`px-3 py-3 text-xs rounded-md font-medium ${
+                          athlete?.isActive
+                            ? "bg-white text-green-600"
+                            : "bg-white text-orange-600"
+                        }`}
                       >
                         ● {athlete?.isActive ? "Active" : "Archived"}
                       </span>
@@ -621,33 +624,41 @@ export default function Atheletes() {
                       <div className="flex gap-4 text-lg text-text-black">
                         <FiEye
                           onClick={() => {
-                            navigate(`/app/athlete-details/${athlete._id}`, { state: { atheleteCount } })
+                            navigate(`/app/athlete-details/${athlete._id}`, {
+                              state: { atheleteCount },
+                            });
                           }}
                           className="cursor-pointer hover:text-gray-700"
                         />
 
-                        <FiDownload onClick={() => handleSingleDownload(athlete)} className="cursor-pointer hover:text-gray-700" />
-                        <FiEdit2 onClick={() => {
-                          dispatch(setFormData(athlete))
-                          dispatch(setMode("edit"))
-                          dispatch(setAthleteId(athlete._id))
+                        <FiDownload
+                          onClick={() => handleSingleDownload(athlete)}
+                          className="cursor-pointer hover:text-gray-700"
+                        />
+                        <FiEdit2
+                          onClick={() => {
+                            dispatch(setFormData(athlete));
+                            dispatch(setMode("edit"));
+                            dispatch(setAthleteId(athlete._id));
 
-                          navigate("/app/athleteform")
-                        }} className="cursor-pointer hover:text-gray-700" />
+                            navigate("/app/athleteform");
+                          }}
+                          className="cursor-pointer hover:text-gray-700"
+                        />
 
                         <FiTrash2
                           onClick={() => {
+                            setSelectedId(athlete?._id);
 
-                            setSelectedId(athlete?._id)
-
-                            setIsDelete(true)
+                            setIsDelete(true);
                           }}
                           className="cursor-pointer hover:text-red-500"
                         />
                       </div>
                     </td>
                   </tr>
-                )))}
+                ))
+              )}
             </tbody>
           </table>
         </div>
