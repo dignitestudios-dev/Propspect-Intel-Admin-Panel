@@ -179,7 +179,7 @@ const CreateSchoolModal = ({ onClick, onNext, editMode, subject, setSubject, log
                 placeholder="Enter name"
                 onChange={(e) => {
                   const value = e.target.value;
-                  const filtered = value.replace(/[^A-Za-z0-9 ]/g, '');
+                  const filtered = value.replace(/[^A-Za-z0-9-& ]/g, '');
                   setSubject(filtered);
                   setError('');
                 }}
