@@ -349,7 +349,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
               </div>
 
               {isOpen && (
-                <div className="absolute z-10 w-full mt-2 border rounded-xl bg-white shadow-lg max-h-60 overflow-y-auto">
+                <div className="absolute z-50 w-full mt-2 border rounded-xl bg-white shadow-lg max-h-60 overflow-y-auto">
                   {isLoading && (
                     <div className="p-3 space-y-2">
                       {Array.from({ length: 5 }).map((_, i) => (
