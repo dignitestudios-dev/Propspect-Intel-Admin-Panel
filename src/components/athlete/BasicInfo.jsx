@@ -367,7 +367,7 @@ export default function BasicInfo({ setSubmit, onNext }) {
                       value={search}
                       onChange={(e) => {
                         setSearch(e.target.value);
-                        setPage(1); // search change hote hi first page
+                        setPage(1);
                       }}
                       placeholder="Search school..."
                       className="w-full px-3 py-2 text-sm border rounded-lg outline-none focus:ring-1 focus:ring-gray-400"
@@ -403,15 +403,8 @@ export default function BasicInfo({ setSubmit, onNext }) {
                           };
 
                           setSelectedSchool(college);
+
                           formik.setFieldValue("committedCollege", college);
-                          dispatch(
-                            updateSection({
-                              section: "basicInfo",
-                              data: {
-                                committedCollege: college,
-                              },
-                            })
-                          );
 
                           setIsOpen(false);
                         }}
