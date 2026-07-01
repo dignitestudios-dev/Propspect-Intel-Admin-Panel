@@ -24,15 +24,20 @@ export default function SchoolManagement() {
   const [deleteId, setDeleteId] = useState('')
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState("");
+  const [sortByName, setSortByName] = useState(false);
   const debouncedSearch = useDebounce(search, 500);
   const [subject, setSubject] = useState(editMode?.name || '');
   const [logo, setLogo] = useState(editMode?.logo ? { src: editMode.logo, name: "Logo.png", size: "2 mb" } : null);
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["school", page, debouncedSearch,],
-    queryFn: () => getSchool({ page, search: debouncedSearch, }),
+    queryKey: ["school", page, debouncedSearch, sortByName],
+    queryFn: () =>
+      getSchool({
+        page,
+        search: debouncedSearch,
+        sort: sortByName,
+      }),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
-
   });
 
 
@@ -97,6 +102,21 @@ export default function SchoolManagement() {
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 pr-3 py-2 border rounded-md text-sm focus:outline-none"
             />
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              id="sortName"
+              type="checkbox"
+              checked={sortByName}
+              onChange={(e) => {
+                setSortByName(e.target.checked)
+                setPage(1)
+              }}
+              className="w-4 h-4"
+            />
+            <label htmlFor="sortName" className="text-sm">
+              Sort by Name (A-Z)
+            </label>
           </div>
           <button
             onClick={() => {
