@@ -29,6 +29,8 @@ const Pagination = ({ pagination, onPageChange }) => {
 
             {pages.map((page) => (
                 <button
+                    type="button"
+
                     key={page}
                     onClick={() => onPageChange(page)}
                     className={`px-3 py-1 rounded-md ${page === currentPage
@@ -41,6 +43,7 @@ const Pagination = ({ pagination, onPageChange }) => {
             ))}
 
             <button
+                type="button"
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
                 className="px-3 py-1 rounded-md bg-gray-200 disabled:opacity-50"

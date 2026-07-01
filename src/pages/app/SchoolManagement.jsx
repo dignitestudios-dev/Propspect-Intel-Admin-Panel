@@ -1,4 +1,4 @@
-import { FiPlus } from "react-icons/fi";
+import { FiPlus, FiSearch } from "react-icons/fi";
 import { BiSolidNotification } from "react-icons/bi";
 import { bin, NoImageUpload, pen } from "../../assets/export";
 import { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ import axiosinstance from "../../axios";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
 import TableSkeleton from "../../components/global/TableSkeleton";
 import Pagination from "../../components/global/Pagination";
+import useDebounce from "../../lib/store/hook";
 
 export default function SchoolManagement() {
   const [editMode, setEditMode] = useState('')
@@ -22,11 +23,13 @@ export default function SchoolManagement() {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteId, setDeleteId] = useState('')
   const [page, setPage] = useState(1)
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
   const [subject, setSubject] = useState(editMode?.name || '');
   const [logo, setLogo] = useState(editMode?.logo ? { src: editMode.logo, name: "Logo.png", size: "2 mb" } : null);
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["school", page],
-    queryFn: () => getSchool({ page }),
+    queryKey: ["school", page, debouncedSearch,],
+    queryFn: () => getSchool({ page, search: debouncedSearch, }),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
 
@@ -84,18 +87,30 @@ export default function SchoolManagement() {
             </p>
           </div>
         </div>
-        <button
-          onClick={() => {
-            setEditMode(null);
-            setSubject("")
-            setLogo(null)
-            setAddSchoolModal(true)
-          }}
-          className="mt-4 sm:mt-0 flex items-center gap-2 px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors shadow-sm"
-        >
-          <FiPlus strokeWidth={3} />
-          <span>Add School</span>
-        </button>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-4 sm:mt-0">
+          <div className="relative">
+            <FiSearch className="absolute left-3 top-2.5 text-gray-400" />
+            <input
+              type="text"
+              value={search}
+              placeholder="Search"
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 pr-3 py-2 border rounded-md text-sm focus:outline-none"
+            />
+          </div>
+          <button
+            onClick={() => {
+              setEditMode(null);
+              setSubject("")
+              setLogo(null)
+              setAddSchoolModal(true)
+            }}
+            className="mt-4 sm:mt-0 flex items-center gap-2 px-5 py-2.5 bg-[#0085CA] text-white rounded-lg font-semibold hover:bg-[#0087cad4] transition-colors shadow-sm"
+          >
+            <FiPlus strokeWidth={3} />
+            <span>Add School</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Card Container */}
@@ -160,6 +175,7 @@ export default function SchoolManagement() {
       {addSchoolModal && (
         <CreateSchoolModal
           editMode={editMode}
+          setPage={setPage}
           isOpen={addSchoolModal}
           onNext={() => {
             setAddSchoolModal(false);

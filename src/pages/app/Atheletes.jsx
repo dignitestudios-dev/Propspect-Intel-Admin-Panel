@@ -394,11 +394,10 @@ export default function Atheletes() {
             {["All", "Active", "Archived"].map((tab, i) => (
               <button
                 key={i}
-                className={`px-12 py-1.5 rounded-md text-sm font-medium ${
-                  tab === tabs
+                className={`px-12 py-1.5 rounded-md text-sm font-medium ${tab === tabs
                     ? "bg-white text-black"
                     : "text-gray-500 hover:bg-gray-50"
-                }`}
+                  }`}
                 onClick={() => handleTabChange(tab)}
               >
                 {tab}
@@ -610,11 +609,10 @@ export default function Atheletes() {
 
                     <td>
                       <span
-                        className={`px-3 py-3 text-xs rounded-md font-medium ${
-                          athlete?.isActive
+                        className={`px-3 py-3 text-xs rounded-md font-medium ${athlete?.isActive
                             ? "bg-white text-green-600"
                             : "bg-white text-orange-600"
-                        }`}
+                          }`}
                       >
                         ● {athlete?.isActive ? "Active" : "Archived"}
                       </span>
@@ -641,7 +639,7 @@ export default function Atheletes() {
                             dispatch(setMode("edit"));
                             dispatch(setAthleteId(athlete._id));
 
-                            navigate("/app/athleteform");
+                            navigate(`/app/athleteform/${athlete._id}`);
                           }}
                           className="cursor-pointer hover:text-gray-700"
                         />

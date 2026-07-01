@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiArrowLeft, FiChevronRight } from "react-icons/fi";
 import BasicInfo from "../../components/athlete/BasicInfo";
 import Family from "../../components/athlete/Family";
@@ -9,11 +9,13 @@ import Education from "../../components/athlete/Education";
 import Achievements from "../../components/athlete/Achievements";
 import Media from "../../components/athlete/Media";
 import SuccessModal from "../../components/global/SuccessModal";
-import { useAppSelector } from "../../lib/store/hook";
+import { useAppDispatch, useAppSelector } from "../../lib/store/hook";
 import axiosinstance from "../../axios";
 import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
-import { useNavigate } from "react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getAtheleteById } from "../../lib/query/queryFn";
+import { setAthleteId, setFormData, setMode } from "../../lib/store/feature/athleteFormSlice";
 
 const TABS = [
   "Basic Info",
@@ -32,12 +34,30 @@ export default function AthleteFormManager() {
   const [activeTab, setActiveTab] = useState("Basic Info");
   const [athleteCreated, setAthleteCreated] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [submitCurrentForm, setSubmitCurrentForm] = useState(() => () => {});
+  const [submitCurrentForm, setSubmitCurrentForm] = useState(() => () => { });
   const formData = useAppSelector((s) => s.athleteForm.formData);
-  console.log("first===> data ", formData);
+
   const mode = useAppSelector((s) => s.athleteForm.mode);
   const atheletId = useAppSelector((s) => s.athleteForm.athleteId);
   const [successType, setSuccessType] = useState("");
+  const { id } = useParams();
+  const dispatch = useAppDispatch();
+
+  console.log(id, "id")
+  const isEdit = !!id;
+
+  const { data } = useQuery({
+    queryKey: ["athlete", id],
+    queryFn: () => getAtheleteById(id),
+    enabled: isEdit,
+  });
+
+  useEffect(() => {
+    if (data) {
+      dispatch(setMode("edit"));
+      dispatch(setFormData(data));
+    }
+  }, [data]);
   const handleNext = () => {
     const currentIndex = TABS.indexOf(activeTab);
     if (currentIndex < TABS.length - 1) {
@@ -144,7 +164,7 @@ export default function AthleteFormManager() {
       // });
 
       if (mode === "edit") {
-        const response = await axiosinstance.put(`/athlete/${atheletId}`, fd);
+        const response = await axiosinstance.put(`/athlete/${id}`, fd);
         if (response.status === 200 || response.status === 201) {
           SuccessToast(
             response?.data?.message || "Athlete created successfully",
@@ -213,11 +233,10 @@ export default function AthleteFormManager() {
             <React.Fragment key={tab}>
               <button
                 onClick={() => setActiveTab(tab)}
-                className={`px-5 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
-                  activeTab === tab
-                    ? " text-black font-extrabold"
-                    : "text-gray-400 hover:text-gray-600"
-                }`}
+                className={`px-5 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab
+                  ? " text-black font-extrabold"
+                  : "text-gray-400 hover:text-gray-600"
+                  }`}
               >
                 {tab}
               </button>
@@ -242,11 +261,10 @@ export default function AthleteFormManager() {
 
         <button
           disabled={activeTab === "Basic Info"}
-          className={`px-10 py-3 rounded-xl font-semibold border border-gray-100 transition-colors ${
-            activeTab === "Basic Info"
-              ? "text-gray-200 bg-gray-50 cursor-not-allowed"
-              : "text-gray-400 bg-white hover:bg-gray-50"
-          }`}
+          className={`px-10 py-3 rounded-xl font-semibold border border-gray-100 transition-colors ${activeTab === "Basic Info"
+            ? "text-gray-200 bg-gray-50 cursor-not-allowed"
+            : "text-gray-400 bg-white hover:bg-gray-50"
+            }`}
           onClick={handlePrevious}
         >
           Previous

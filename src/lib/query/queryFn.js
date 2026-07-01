@@ -134,9 +134,9 @@ export const getContactStats = async () => {
   const res = await axiosinstance.get(`/contact/stats`);
   return res.data.data;
 };
-export const getSchool = async ({ page = 1, itemsPerPage = 10 }) => {
+export const getSchool = async ({ page = 1, itemsPerPage = 10,search }) => {
   const res = await axiosinstance.get(
-    `/school?page=${page}&limit=${itemsPerPage}`,
+    `/school?page=${page}&limit=${itemsPerPage}&search=${search}`,
   );
   return res.data;
 };

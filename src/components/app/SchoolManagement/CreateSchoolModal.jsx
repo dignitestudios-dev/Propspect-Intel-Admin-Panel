@@ -17,6 +17,7 @@ const CreateSchoolModal = ({
   setSubject,
   logo,
   setLogo,
+  setPage
 }) => {
   const query = useQueryClient();
   const [error, setError] = useState("");
@@ -138,6 +139,7 @@ const CreateSchoolModal = ({
             : "School added successfully");
         SuccessToast(message);
         query.invalidateQueries({ queryKey: ["school"] });
+        setPage(1); 
         onNext();
       }
     } catch (err) {
