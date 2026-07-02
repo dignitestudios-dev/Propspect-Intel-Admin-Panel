@@ -100,12 +100,12 @@ const CreateSchoolModal = ({
   const handleAddOrEditSchool = async () => {
     if (!subject) return setError("Please enter School Name");
 
-    const validNameRegex = /^[A-Za-z0-9-& ]+$/;
-    if (!validNameRegex.test(subject.trim())) {
-      return setError(
-        "School Name can only contain letters, numbers, and spaces",
-      );
-    }
+    // const validNameRegex = /^[A-Za-z0-9-& ]+$/;
+    // if (!validNameRegex.test(subject.trim())) {
+    //   return setError(
+    //     "School Name can only contain letters, numbers, and spaces",
+    //   );
+    // }
 
     setLoading(true);
     try {
