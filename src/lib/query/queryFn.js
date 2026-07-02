@@ -134,10 +134,19 @@ export const getContactStats = async () => {
   const res = await axiosinstance.get(`/contact/stats`);
   return res.data.data;
 };
-export const getSchool = async ({ page = 1, itemsPerPage = 10 }) => {
-  const res = await axiosinstance.get(
-    `/school?page=${page}&limit=${itemsPerPage}`,
-  );
+export const getSchool = async ({
+  page = 1,
+  itemsPerPage = 10,
+  search,
+  sort = false,
+}) => {
+  let url = `/school?page=${page}&limit=${itemsPerPage}&search=${search}`;
+
+  if (sort) {
+    url += `&sortBy=name&sortOrder=asc`;
+  }
+
+  const res = await axiosinstance.get(url);
   return res.data;
 };
 export const getTopLocation = async () => {

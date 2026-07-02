@@ -17,6 +17,7 @@ const CreateSchoolModal = ({
   setSubject,
   logo,
   setLogo,
+  setPage
 }) => {
   const query = useQueryClient();
   const [error, setError] = useState("");
@@ -99,12 +100,12 @@ const CreateSchoolModal = ({
   const handleAddOrEditSchool = async () => {
     if (!subject) return setError("Please enter School Name");
 
-    const validNameRegex = /^[A-Za-z0-9-& ]+$/;
-    if (!validNameRegex.test(subject.trim())) {
-      return setError(
-        "School Name can only contain letters, numbers, and spaces",
-      );
-    }
+    // const validNameRegex = /^[A-Za-z0-9-& ]+$/;
+    // if (!validNameRegex.test(subject.trim())) {
+    //   return setError(
+    //     "School Name can only contain letters, numbers, and spaces",
+    //   );
+    // }
 
     setLoading(true);
     try {
@@ -138,6 +139,7 @@ const CreateSchoolModal = ({
             : "School added successfully");
         SuccessToast(message);
         query.invalidateQueries({ queryKey: ["school"] });
+        setPage(1); 
         onNext();
       }
     } catch (err) {

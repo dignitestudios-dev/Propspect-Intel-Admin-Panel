@@ -1,5 +1,5 @@
 import { FiEdit2 } from "react-icons/fi";
-import { useAppDispatch, useAppSelector } from "../../lib/store/hook";
+import useDebounce, { useAppDispatch, useAppSelector } from "../../lib/store/hook";
 import { useFormik } from "formik";
 import { updateSection } from "../../lib/store/feature/athleteFormSlice";
 import { useEffect, useState } from "react";
@@ -16,13 +16,16 @@ import { Emptyimg, Flagus } from "../../assets/export";
 
 export default function BasicInfo({ setSubmit, onNext }) {
   const basicInfo = useAppSelector((s) => s.athleteForm.formData.basicInfo);
+
   const dispatch = useAppDispatch();
   const [page, setPage] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
-  console.log(basicInfo, "basicInfo");
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
+
   const { data, isLoading } = useQuery({
-    queryKey: ["school", page],
-    queryFn: () => getSchool({ page }),
+    queryKey: ["school", page, debouncedSearch],
+    queryFn: () => getSchool({ page, search: debouncedSearch }),
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
   });
@@ -34,10 +37,10 @@ export default function BasicInfo({ setSubmit, onNext }) {
   const [selectedSchool, setSelectedSchool] = useState(
     initialSelectedSchool
       ? {
-          id: initialSelectedSchool._id,
-          name: initialSelectedSchool.name,
-          logo: initialSelectedSchool.logo,
-        }
+        id: initialSelectedSchool._id,
+        name: initialSelectedSchool.name,
+        logo: initialSelectedSchool.logo,
+      }
       : null,
   );
   const SchoolId = selectedSchool?.id || "";
@@ -114,27 +117,35 @@ export default function BasicInfo({ setSubmit, onNext }) {
     ? citiesData[formik.values.state] || []
     : cityStateMap.map((item) => item.city);
 
+  // useEffect(() => {
+  //   if (basicInfo?.committedCollege && data?.data) {
+  //     const existingSchool = data.data.find(
+  //       (s) => s._id === basicInfo.committedCollege.id,
+  //     );
+
+  //     if (existingSchool) {
+  //       setSelectedSchool({
+  //         id: existingSchool._id,
+  //         name: existingSchool.name,
+  //         logo: existingSchool.logo,
+  //       });
+
+  //       if (formik.values.committedCollege !== existingSchool._id) {
+  //         formik.setFieldValue("committedCollege", existingSchool._id);
+  //       }
+  //     }
+  //   }
+  // }, [basicInfo, data]);
+
   useEffect(() => {
-    if (basicInfo?.committedCollege && data?.data) {
-      const existingSchool = data.data.find(
-        (s) => s._id === basicInfo.committedCollege.id,
-      );
-
-      if (existingSchool) {
-        setSelectedSchool({
-          id: existingSchool._id,
-          name: existingSchool.name,
-          logo: existingSchool.logo,
-        });
-
-        if (formik.values.committedCollege !== existingSchool._id) {
-          formik.setFieldValue("committedCollege", existingSchool._id);
-        }
-      }
+    if (basicInfo?.committedCollege) {
+      setSelectedSchool({
+        id: basicInfo.committedCollege.id,
+        name: basicInfo.committedCollege.name,
+        logo: basicInfo.committedCollege.logo,
+      });
     }
-  }, [basicInfo, data]);
-
-  console.log("formik.errors --- > ", formik.errors);
+  }, [basicInfo?.committedCollege]);
 
   return (
     <form onSubmit={formik.handleSubmit} className="min-h-screen font-sans">
@@ -349,7 +360,19 @@ export default function BasicInfo({ setSubmit, onNext }) {
               </div>
 
               {isOpen && (
-                <div className="absolute z-50 w-full mt-2 border rounded-xl bg-white shadow-lg max-h-60 overflow-y-auto">
+                <div className="absolute z-10 w-full mt-2 border rounded-xl bg-white shadow-lg max-h-60 overflow-y-auto">
+                  <div className="p-2 border-b sticky top-0 bg-white z-20">
+                    <input
+                      type="text"
+                      value={search}
+                      onChange={(e) => {
+                        setSearch(e.target.value);
+                        setPage(1);
+                      }}
+                      placeholder="Search school..."
+                      className="w-full px-3 py-2 text-sm border rounded-lg outline-none focus:ring-1 focus:ring-gray-400"
+                    />
+                  </div>
                   {isLoading && (
                     <div className="p-3 space-y-2">
                       {Array.from({ length: 5 }).map((_, i) => (
@@ -373,13 +396,16 @@ export default function BasicInfo({ setSubmit, onNext }) {
                       <div
                         key={school._id}
                         onClick={() => {
-                          setSelectedSchool({
+                          const college = {
                             id: school._id,
                             name: school.name,
                             logo: school.logo,
-                          });
+                          };
 
-                          formik.setFieldValue("committedCollege", school._id);
+                          setSelectedSchool(college);
+
+                          formik.setFieldValue("committedCollege", college);
+
                           setIsOpen(false);
                         }}
                         className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-50"
