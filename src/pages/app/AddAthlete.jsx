@@ -164,7 +164,7 @@ export default function AthleteFormManager() {
       // });
 
       if (mode === "edit") {
-        const response = await axiosinstance.put(`/athlete/${id}`, fd);
+        const response = await axiosinstance.put(`/athlete/${id || atheletId}`, fd);
         if (response.status === 200 || response.status === 201) {
           SuccessToast(
             response?.data?.message || "Athlete created successfully",

@@ -262,7 +262,7 @@ export default function AthleteDetails() {
                     dispatch(setMode("edit"));
                     dispatch(setAthleteId(athlete._id));
 
-                    navigate("/app/athleteform");
+                    navigate(`/app/athleteform/${athlete._id}`);
                   }}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm flex items-center gap-2 hover:bg-blue-700"
                 >
